@@ -1,12 +1,7 @@
 <template>
   <div class="dashboard">
     <div>
-      <div class="d-flex justify-end">
-        <v-btn class="ma-5" outlined>Connect wallet</v-btn>
-      </div>
       <div class="d-flex justify-center">
-<!--<v-data-table :headers="['Bienes','Patrimonio','Deuda']" :items="['$ 2.000','$ 500','$']"-->
-<!--:items-per-page="5" class="elevation-1"></v-data-table>-->
         <v-simple-table class="ma-8">
           <template v-slot:default>
             <thead>
