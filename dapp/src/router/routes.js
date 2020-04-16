@@ -25,9 +25,15 @@ export default [
     component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
   },
   {
+    path: '/depositLending',
+    name: 'Lending / borrow',
+    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DepositLending.vue'),
+    icon: 'local_atm',
+  },
+  {
     path: '/account',
     name: 'Account',
-    icon: 'attach_money',
+    icon: 'person',
     publicShow: true,
     component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
   },
