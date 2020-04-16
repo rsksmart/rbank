@@ -6,6 +6,8 @@
 
 <script>
 import BaseLayout from '@/components/layouts/base/Index.vue';
+import { mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 
 export default {
   name: 'App',
@@ -22,8 +24,16 @@ export default {
       return `${this.layout.toLowerCase()}-layout`;
     },
   },
+  methods: {
+    ...mapActions({
+      loadController: constants.SESSION_INIT_CONTROLLER,
+    }),
+  },
   components: {
     BaseLayout,
+  },
+  created() {
+    this.loadController();
   },
 };
 </script>

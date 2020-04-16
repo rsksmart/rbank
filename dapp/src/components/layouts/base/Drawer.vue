@@ -7,7 +7,12 @@
   >
     <v-list dense>
       <template link v-for="(route, idx) in routes">
-        <v-list-item link :key="`item-list-${idx}`" @click="$router.push({name: route.name})">
+        <v-list-item
+          v-if="route.publicShow || isOwner"
+          link
+          :key="`item-list-${idx}`"
+          @click="$router.push({name: route.name})"
+        >
           <v-list-item-action>
             <v-icon>{{route.icon}}</v-icon>
           </v-list-item-action>
@@ -21,6 +26,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import routes from '@/router/routes';
 
 export default {
@@ -30,6 +37,11 @@ export default {
       routes,
       drawer: null,
     };
+  },
+  computed: {
+    ...mapState({
+      isOwner: (state) => state.Session.isOwner,
+    }),
   },
 };
 </script>

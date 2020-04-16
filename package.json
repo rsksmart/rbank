@@ -1,0 +1,29 @@
+{
+  "name": "rbank",
+  "version": "1.0.0",
+  "description": "rbank project",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test",
+    "compile": "truffle compile",
+    "build": "npm run compile && rm -rf ./dapp/src/contracts && cp -r ./build/contracts ./dapp/src",
+    "clean": "rm -rf ./build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsksmart/rbank.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsksmart/rbank/issues"
+  },
+  "homepage": "https://github.com/rsksmart/rbank#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1"
+  }
+}
