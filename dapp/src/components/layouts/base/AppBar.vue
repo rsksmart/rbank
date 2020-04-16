@@ -7,36 +7,41 @@
       <v-icon v-else>mdi-invert-colors</v-icon>
     </v-btn>
 
-    <v-btn icon @click="connect">
-      <v-icon v-if="connected">mdi-link</v-icon>
-      <v-icon v-else>mdi-link-off</v-icon>
+    <v-btn icon v-if="isLogged">
+      <v-icon>mdi-link</v-icon>
+    </v-btn>
+    <v-btn icon @click="connect" v-else>
+      <v-icon>mdi-link-off</v-icon>
     </v-btn>
   </v-app-bar>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import * as constants from '@/store/constants';
 
 export default {
   name: 'AppBar',
   computed: {
-    ...mapState({
-      connected: (state) => state.Session.connected,
+    ...mapGetters({
+      isLogged: constants.SESSION_IS_LOGGED,
     }),
     theme() {
       return this.$vuetify.theme.dark;
     },
   },
   methods: {
-    ...mapMutations({
-      sessionSetProperty: constants.SESSION_SET_PROPERTY,
+    ...mapActions({
+      connectToWeb3: constants.SESSION_CONNECT_WEB3,
     }),
-    connect() {
-      this.sessionSetProperty({
-        property: 'connected',
-        value: !this.connected,
-      });
+    async connect() {
+      try {
+        // eslint-disable-next-line no-undef
+        await ethereum.enable();
+      } catch (e) {
+        console.log(e);
+      }
+      this.connectToWeb3();
     },
     toggleTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;

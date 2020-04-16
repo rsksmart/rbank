@@ -4,19 +4,26 @@ export default [
   {
     path: '/',
     name: 'Home',
-    component: Home,
     icon: 'home',
+    component: Home,
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
     icon: 'dashboard',
+    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
   },
   {
     path: '/account',
     name: 'Account',
-    component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
     icon: 'attach_money',
+    component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    icon: 'settings',
+    check: true,
+    component: () => import(/* webpackChunkName: "settings" */ '@/views/Settings.vue'),
   },
 ];
