@@ -1,14 +1,8 @@
-import Web3 from 'web3';
 import * as constants from '@/store/constants';
 import ControllerContract from '@/contracts/Controller.json';
 import store from '@/store';
+import { ControllerAddress, web3 } from '@/store/modules/index';
 
-const ControllerAddres = '0x548980D2A5408261a57C4dc393f4345842c7Bcc2';
-
-let web3;
-if (window.web3) {
-  web3 = new Web3(window.web3.currentProvider);
-}
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', () => {
     store.dispatch(constants.SESSION_CONNECT_WEB3);
@@ -35,7 +29,6 @@ const actions = {
       .then((from) => state.instance.methods.owner()
         .call({ from }))
       .then((owner) => {
-        console.log(owner);
         commit(constants.SESSION_SET_PROPERTY, {
           property: 'isOwner',
           value: owner === state.account,
@@ -51,7 +44,7 @@ const actions = {
   },
   // eslint-disable-next-line no-shadow
   [constants.SESSION_INIT_CONTROLLER]: ({ commit }) => {
-    const instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddres);
+    const instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
     commit(constants.SESSION_SET_PROPERTY, {
       property: 'instance',
       value: instance,

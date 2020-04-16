@@ -26,7 +26,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      loadController: constants.SESSION_INIT_CONTROLLER,
+      loadControllerAtSession: constants.SESSION_INIT_CONTROLLER,
+      loadController: constants.CONTROLLER_INIT,
     }),
   },
   components: {
@@ -34,6 +35,7 @@ export default {
   },
   created() {
     this.loadController();
+    this.loadControllerAtSession();
   },
 };
 </script>
