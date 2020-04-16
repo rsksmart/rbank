@@ -18,12 +18,6 @@ window.addEventListener('load', async () => {
     web3 = new Web3(window.web3.currentProvider);
     // eslint-disable-next-line no-multi-assign,no-undef
     Vue.prototype.$web3 = Vue.web3 = web3;
-    try {
-      // eslint-disable-next-line no-undef
-      await ethereum.enable();
-    } catch (e) {
-      console.error(e);
-    }
   }
 });
 

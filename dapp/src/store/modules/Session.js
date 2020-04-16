@@ -3,7 +3,7 @@ import * as constants from '@/store/constants';
 import ControllerContract from '@/contracts/Controller.json';
 import store from '@/store';
 
-const ControllerAddres = '0x7fD8226865Fa4ea36b861C2Df126A8d9Af364D29';
+const ControllerAddres = '0x548980D2A5408261a57C4dc393f4345842c7Bcc2';
 
 let web3;
 if (window.web3) {
@@ -22,38 +22,40 @@ const state = {
 };
 
 const actions = {
-  [constants.SESSION_CONNECT_WEB3]: async ({ commit }) => {
+  // eslint-disable-next-line no-shadow
+  [constants.SESSION_CONNECT_WEB3]: ({ commit, state }) => {
     web3.eth.getAccounts()
       .then(([account]) => {
         commit(constants.SESSION_SET_PROPERTY, {
           property: 'account',
           value: account,
         });
+        return account;
       })
-      .catch(console.error);
-  },
-  // eslint-disable-next-line no-shadow
-  [constants.SESSION_INIT_CONTROLLER]: ({ commit, state }) => {
-    const controller = new web3.eth.Contract(ControllerContract.abi, ControllerAddres);
-    commit(constants.SESSION_SET_PROPERTY, {
-      property: 'instance',
-      value: controller,
-    });
-    controller.methods.owner()
-      .call({ from: state.account })
-      .then((isOwner) => {
-        console.log(isOwner);
+      .then((from) => state.instance.methods.owner()
+        .call({ from }))
+      .then((owner) => {
+        console.log(owner);
         commit(constants.SESSION_SET_PROPERTY, {
           property: 'isOwner',
-          value: isOwner,
+          value: owner === state.account,
         });
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e);
         commit(constants.SESSION_SET_PROPERTY, {
           property: 'isOwner',
           value: false,
         });
       });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.SESSION_INIT_CONTROLLER]: ({ commit }) => {
+    const instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddres);
+    commit(constants.SESSION_SET_PROPERTY, {
+      property: 'instance',
+      value: instance,
+    });
   },
 };
 
