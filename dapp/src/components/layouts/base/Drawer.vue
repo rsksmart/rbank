@@ -8,7 +8,7 @@
     <v-list dense>
       <template link v-for="(route, idx) in routes">
         <v-list-item
-          v-if="route.publicShow || isOwner"
+          v-if="route.publicShow || isOwner && route.name !== 'Market'"
           link
           :key="`item-list-${idx}`"
           @click="$router.push({name: route.name})"

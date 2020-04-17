@@ -47,6 +47,14 @@ export default [
     beforeEnter: requireAuth,
   },
   {
+    path: '/market/:id',
+    name: 'Market',
+    icon: 'local_convenience_store',
+    publicShow: false,
+    component: () => import(/* webpackChunkName: "market" */ '@/views/Market.vue'),
+    props: true,
+  },
+  {
     path: '*',
     redirect: { name: 'Home' },
   },
