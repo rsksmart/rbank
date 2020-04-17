@@ -1,6 +1,7 @@
 <template>
   <div class="settings">
     <h1>Settings</h1>
+    <controller-form/>
     <market-form/>
     <markets-list/>
   </div>
@@ -9,6 +10,7 @@
 <script>
 import { mapState } from 'vuex';
 
+import ControllerForm from '@/components/settings/ControllerForm.vue';
 import MarketForm from '@/components/settings/MarketForm.vue';
 import MarketsList from '@/components/settings/MarketsList.vue';
 
@@ -27,6 +29,7 @@ export default {
     },
   },
   components: {
+    ControllerForm,
     MarketForm,
     MarketsList,
   },

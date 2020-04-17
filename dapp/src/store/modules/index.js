@@ -7,7 +7,7 @@ import Web3 from 'web3';
 const files = require.context('.', false, /\.js$/);
 const modules = {};
 
-export const ControllerAddress = '0x548980D2A5408261a57C4dc393f4345842c7Bcc2';
+export const ControllerAddress = '0xCfEB869F69431e42cdB54A4F4f105C19C080A601';
 
 // eslint-disable-next-line import/no-mutable-exports
 export let web3;

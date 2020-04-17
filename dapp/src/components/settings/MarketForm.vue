@@ -49,7 +49,7 @@ export default {
     create() {
       console.log(this.newMarket);
       this.createMarket(this.newMarket);
-      // this.$refs.form.reset();
+      this.$refs.form.reset();
     },
   },
 };
