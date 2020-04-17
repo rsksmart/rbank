@@ -1,10 +1,12 @@
 import ControllerContract from '@/contracts/Controller.json';
 import MarketContract from '@/contracts/Market.json';
 import * as constants from '@/store/constants';
-import { ControllerAddress, send, web3, } from '@/store/modules';
+import { ControllerAddress, send, web3 } from '@/store/modules';
 
 const state = {
   controller: null,
+  collateralFactor: null,
+  liquidationFactor: null,
   markets: [],
 };
 
@@ -15,6 +17,41 @@ const actions = {
       property: 'controller',
       value: controller,
     });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_LOAD_COLLATERAL_FACTOR]: ({ commit, state }) => {
+    state.controller.methods.collateralFactor()
+      .call()
+      .then((collateralFactor) => {
+        commit(constants.CONTROLLER_SET_PROPERTY, {
+          property: 'collateralFactor',
+          value: collateralFactor,
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        commit(constants.CONTROLLER_SET_PROPERTY, {
+          property: 'collateralFactor',
+          value: -1,
+        });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR]: ({ commit, state }) => {
+    state.controller.methods.liquidationFactor()
+      .call()
+      .then((liquidationFactor) => {
+        commit(constants.CONTROLLER_SET_PROPERTY, {
+          property: 'liquidationFactor',
+          value: liquidationFactor,
+        });
+      })
+      .catch(() => {
+        commit(constants.CONTROLLER_SET_PROPERTY, {
+          property: 'liquidationFactor',
+          value: -1,
+        });
+      });
   },
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_LOAD_MARKETS]: async ({ commit, state }) => {
@@ -43,16 +80,49 @@ const actions = {
   ) => {
     const from = { from: rootState.Session.account };
     const market = new web3.eth.Contract(MarketContract.abi);
-    const deploy = market.deploy({
+    const deploySignature = market.deploy({
       data: MarketContract.bytecode,
       arguments: [tokenAddress, marketBaseBorrowRate],
     });
-    send(deploy, from)
-      .then((instance) => instance.options.address)
-      .then((contractAddress) => state.controller.methods.addMarket(contractAddress))
+    send(deploySignature, from)
+      .then((marketInstance) => {
+        const setControllerSignature = marketInstance.methods.setController(
+          state.controller.options.address,
+        );
+        send(setControllerSignature, from);
+        return marketInstance.options.address;
+      })
+      .then((marketAddress) => state.controller.methods.addMarket(marketAddress))
       .then((signature) => send(signature, from))
       .then(() => {
         dispatch(constants.CONTROLLER_LOAD_MARKETS);
+      });
+  },
+  [constants.CONTROLLER_SET_COLLATERAL_FACTOR]: (
+    // eslint-disable-next-line no-shadow
+    { dispatch, rootState, state },
+    collateralFactor,
+  ) => {
+    console.log(collateralFactor);
+    send(
+      state.controller.methods.setCollateralFactor(collateralFactor),
+      { from: rootState.Session.account },
+    )
+      .then(() => {
+        dispatch(constants.CONTROLLER_LOAD_COLLATERAL_FACTOR);
+      });
+  },
+  [constants.CONTROLLER_SET_LIQUIDATION_FACTOR]: (
+    // eslint-disable-next-line no-shadow
+    { dispatch, rootState, state },
+    liquidationFactor,
+  ) => {
+    send(
+      state.controller.methods.setLiquidationFactor(liquidationFactor),
+      { from: rootState.Session.account },
+    )
+      .then(() => {
+        dispatch(constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR);
       });
   },
 };
