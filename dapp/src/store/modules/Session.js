@@ -1,7 +1,7 @@
 import * as constants from '@/store/constants';
 import ControllerContract from '@/contracts/Controller.json';
 import store from '@/store';
-import {ControllerAddress, web3} from '@/store/modules/index';
+import { ControllerAddress, web3 } from '@/store/modules/index';
 
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', () => {
@@ -44,9 +44,9 @@ const actions = {
 
 const mutations = {
   // eslint-disable-next-line no-shadow
-  [constants.SESSION_SET_PROPERTY]: (state, value) => {
-    const property = Object.entries(value)[0][0];
-    state[property] = value[property];
+  [constants.SESSION_SET_PROPERTY]: (state, data) => {
+    const [[property, value]] = Object.entries(data);
+    state[property] = value;
   },
 };
 
