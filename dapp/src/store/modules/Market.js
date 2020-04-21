@@ -40,11 +40,9 @@ const actions = {
 
 const mutations = {
   // eslint-disable-next-line no-shadow
-  [constants.MARKET_SET_PROPERTY]: (state, prop) => {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [property, value] of Object.entries(prop)) {
-      state[property] = value;
-    }
+  [constants.MARKET_SET_PROPERTY]: (state, value) => {
+    const property = Object.entries(value)[0][0];
+    state[property] = value[property];
   },
 };
 

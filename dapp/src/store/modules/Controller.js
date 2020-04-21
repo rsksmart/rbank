@@ -13,10 +13,7 @@ const state = {
 const actions = {
   [constants.CONTROLLER_INIT]: ({ commit }) => {
     const controller = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
-    commit(constants.CONTROLLER_SET_PROPERTY, {
-      property: 'controller',
-      value: controller,
-    });
+    commit(constants.CONTROLLER_SET_PROPERTY, { controller });
   },
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_LOAD_COLLATERAL_FACTOR]: ({ commit, state }) => {
@@ -63,10 +60,7 @@ const actions = {
         const marketAddress = await state.controller.methods.marketList(control - 1)
           .call();
         markets.push(marketAddress);
-        commit(constants.CONTROLLER_SET_PROPERTY, {
-          property: 'markets',
-          value: markets,
-        });
+        commit(constants.CONTROLLER_SET_PROPERTY, { markets });
         control += 1;
       }
     } catch (e) {
@@ -129,8 +123,9 @@ const actions = {
 
 const mutations = {
   // eslint-disable-next-line no-shadow
-  [constants.CONTROLLER_SET_PROPERTY]: (state, { property, value }) => {
-    state[property] = value;
+  [constants.CONTROLLER_SET_PROPERTY]: (state, value) => {
+    const property = Object.entries(value)[0][0];
+    state[property] = value[property];
   },
 };
 
