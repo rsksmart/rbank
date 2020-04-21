@@ -1,5 +1,5 @@
 import MarketContract from '@/contracts/Market.json';
-import { send, web3 } from '@/store/modules';
+import { send, web3 } from '@/handlers';
 
 export default class Market {
   constructor(marketAddress) {
@@ -22,7 +22,7 @@ export default class Market {
     });
   }
 
-  get totalSupply() {
+  get eventualTotalSupply() {
     return new Promise((resolve, reject) => {
       this.instance.methods.totalSupply()
         .call()
@@ -31,7 +31,7 @@ export default class Market {
     });
   }
 
-  get totalBorrows() {
+  get eventualTotalBorrows() {
     return new Promise((resolve, reject) => {
       this.instance.methods.totalBorrows()
         .call()
@@ -40,7 +40,7 @@ export default class Market {
     });
   }
 
-  get controller() {
+  get eventualControllerAddress() {
     return new Promise((resolve, reject) => {
       this.instance.methods.controller()
         .call()
@@ -49,7 +49,7 @@ export default class Market {
     });
   }
 
-  get token() {
+  get eventualTokenAddress() {
     return new Promise((resolve, reject) => {
       this.instance.methods.token()
         .call()

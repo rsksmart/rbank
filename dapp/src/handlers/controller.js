@@ -1,5 +1,5 @@
 import ControllerContract from '@/contracts/Controller.json';
-import { ControllerAddress, send, web3 } from '@/store/modules';
+import { ControllerAddress, send, web3 } from '@/handlers';
 
 export default class Controller {
   constructor() {
@@ -7,7 +7,7 @@ export default class Controller {
     this.instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
   }
 
-  get collateralFactor() {
+  get eventualCollateralFactor() {
     return new Promise((resolve, reject) => {
       this.instance.methods.collateralFactor()
         .call()
@@ -16,7 +16,7 @@ export default class Controller {
     });
   }
 
-  get liquidationFactor() {
+  get eventualLiquidationFactor() {
     return new Promise((resolve, reject) => {
       this.instance.methods.liquidationFactor()
         .call()
@@ -25,7 +25,7 @@ export default class Controller {
     });
   }
 
-  get markets() {
+  get eventualMarketAddresses() {
     let control = 1;
     const markets = [];
     // eslint-disable-next-line no-async-promise-executor

@@ -1,7 +1,7 @@
 import * as constants from '@/store/constants';
 import ControllerContract from '@/contracts/Controller.json';
 import store from '@/store';
-import { ControllerAddress, web3 } from '@/store/modules/index';
+import { ControllerAddress, web3 } from '@/handlers';
 
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', () => {

@@ -1,5 +1,5 @@
 import TokenContract from '@/contracts/FaucetToken.json';
-import { send, web3 } from '@/store/modules';
+import { send, web3 } from '@/handlers';
 
 export default class Controller {
   constructor(tokenAddress) {
@@ -22,7 +22,7 @@ export default class Controller {
     });
   }
 
-  get name() {
+  get eventualName() {
     return new Promise((resolve, reject) => {
       this.instance.methods.name()
         .call()
@@ -31,7 +31,7 @@ export default class Controller {
     });
   }
 
-  get decimals() {
+  get eventualDecimals() {
     return new Promise((resolve, reject) => {
       this.instance.methods.decimals()
         .call()
@@ -40,7 +40,7 @@ export default class Controller {
     });
   }
 
-  get symbol() {
+  get eventualSymbol() {
     return new Promise((resolve, reject) => {
       this.instance.methods.symbol()
         .call()
