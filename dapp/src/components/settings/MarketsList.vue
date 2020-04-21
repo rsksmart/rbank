@@ -12,8 +12,7 @@
               <v-list-item-subtitle class="text-center">Price</v-list-item-subtitle>
             </v-list-item>
             <market-list-item v-for="(marketAddress, idx) in marketAddresses"
-              :key="`market-list-item-${idx}`" :marketAddress="marketAddress"
-              :eventualPrice="controller.getPrice(marketAddress)"/>
+              :key="`market-list-item-${idx}`" :marketAddress="marketAddress"/>
           </v-list>
         </v-card>
       </div>
@@ -21,16 +20,10 @@
 </template>
 
 <script>
-import Controller from '@/handlers/controller';
 import MarketListItem from '@/components/settings/MarketListItem.vue';
 
 export default {
   name: 'MarketsList',
-  data() {
-    return {
-      controller: null,
-    };
-  },
   props: {
     marketAddresses: {
       type: Array,
@@ -39,9 +32,6 @@ export default {
   },
   components: {
     MarketListItem,
-  },
-  created() {
-    this.controller = new Controller();
   },
 };
 </script>

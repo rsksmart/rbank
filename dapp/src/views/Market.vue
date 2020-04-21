@@ -1,15 +1,35 @@
 <template>
   <div>
-    <h1>Market</h1>
-    <h2>Address: {{id}}</h2>
-    <price/>
+    <h1>Market {{id}}</h1>
+    <v-container fluid>
+      <v-row>
+        <h2>Market price</h2>
+      </v-row>
+      <v-form ref="form" :lazy-validation="true">
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              v-model="price"
+              label="Market Price"
+              type="number"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-btn
+            class="success"
+            @click="setPrice">
+            Set Price
+          </v-btn>
+        </v-row>
+      </v-form>
+    </v-container>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import * as constants from '@/store/constants';
-import Price from '@/components/market/Price.vue';
+import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
 
 export default {
   name: 'Market',
@@ -19,16 +39,28 @@ export default {
       required: true,
     },
   },
-  components: {
-    Price,
+  data() {
+    return {
+      controller: null,
+      price: null,
+    };
   },
-  methods: {
-    ...mapActions({
-      initMarket: constants.MARKET_INIT,
+  computed: {
+    ...mapState({
+      from: (state) => ({ from: state.Session.account }),
     }),
   },
+  methods: {
+    setPrice() {
+      this.controller.setPrice(this.from, this.id, this.price);
+    },
+  },
   created() {
-    this.initMarket(this.id);
+    this.controller = new Controller();
+    this.controller.getPrice(this.id)
+      .then((price) => {
+        this.price = price;
+      });
   },
 };
 </script>

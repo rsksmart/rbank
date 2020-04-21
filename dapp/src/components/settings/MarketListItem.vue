@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 
@@ -34,11 +35,12 @@ export default {
     },
     eventualPrice: {
       type: Promise,
-      required: true,
+      required: false,
     },
   },
   data() {
     return {
+      controller: null,
       market: null,
       marketTotalSupply: null,
       marketTotalBorrows: null,
@@ -56,6 +58,7 @@ export default {
     },
   },
   created() {
+    this.controller = new Controller();
     this.market = new Market(this.marketAddress);
     this.market.eventualTotalSupply
       .then((totalSupply) => {
@@ -75,7 +78,7 @@ export default {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
       });
-    this.eventualPrice
+    this.controller.getPrice(this.marketAddress)
       .then((price) => {
         this.price = price;
       });

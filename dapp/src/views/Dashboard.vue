@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <div>
-      <markets-list/>
+      <markets-list :marketAddresses="marketAddresses"/>
     </div>
     <v-divider class="ma-5"></v-divider>
     <div>
@@ -63,12 +63,15 @@
 </template>
 
 <script>
+import Controller from '@/handlers/controller';
 import MarketsList from '../components/settings/MarketsList.vue';
 
 export default {
   name: 'Dashboard',
   data() {
     return {
+      controller: null,
+      marketAddresses: [],
       assets: 2000,
       patrimony: 500,
       debt: 500,
@@ -78,8 +81,20 @@ export default {
       rif_t: 'https://assets.coingecko.com/coins/images/7460/large/RIF.png',
     };
   },
+  methods: {
+    loadMarkets() {
+      this.controller.eventualMarketAddresses
+        .then((marketAddresses) => {
+          this.marketAddresses = marketAddresses;
+        });
+    },
+  },
   components: {
     MarketsList,
+  },
+  created() {
+    this.controller = new Controller();
+    this.loadMarkets();
   },
 };
 </script>
