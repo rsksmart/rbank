@@ -1,7 +1,7 @@
 import * as constants from '@/store/constants';
 import ControllerContract from '@/contracts/Controller.json';
 import store from '@/store';
-import { ControllerAddress, web3 } from '@/store/modules/index';
+import {ControllerAddress, web3} from '@/store/modules/index';
 
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', () => {
@@ -20,42 +20,33 @@ const actions = {
   [constants.SESSION_CONNECT_WEB3]: ({ commit, state }) => {
     web3.eth.getAccounts()
       .then(([account]) => {
-        commit(constants.SESSION_SET_PROPERTY, {
-          property: 'account',
-          value: account,
-        });
+        commit(constants.SESSION_SET_PROPERTY, { account });
         return account;
       })
       .then((from) => state.instance.methods.owner()
         .call({ from }))
       .then((owner) => {
         commit(constants.SESSION_SET_PROPERTY, {
-          property: 'isOwner',
-          value: owner === state.account,
+          isOwner: owner === state.account,
         });
       })
       .catch((e) => {
         console.error(e);
-        commit(constants.SESSION_SET_PROPERTY, {
-          property: 'isOwner',
-          value: false,
-        });
+        commit(constants.SESSION_SET_PROPERTY, { isOwner: false });
       });
   },
   // eslint-disable-next-line no-shadow
   [constants.SESSION_INIT_CONTROLLER]: ({ commit }) => {
     const instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
-    commit(constants.SESSION_SET_PROPERTY, {
-      property: 'instance',
-      value: instance,
-    });
+    commit(constants.SESSION_SET_PROPERTY, { instance });
   },
 };
 
 const mutations = {
   // eslint-disable-next-line no-shadow
-  [constants.SESSION_SET_PROPERTY]: (state, { property, value }) => {
-    state[property] = value;
+  [constants.SESSION_SET_PROPERTY]: (state, value) => {
+    const property = Object.entries(value)[0][0];
+    state[property] = value[property];
   },
 };
 
