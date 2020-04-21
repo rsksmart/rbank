@@ -9,7 +9,6 @@
 <script>
 import { mapActions } from 'vuex';
 import * as constants from '@/store/constants';
-
 import Price from '@/components/market/Price.vue';
 
 export default {
@@ -20,16 +19,16 @@ export default {
       required: true,
     },
   },
+  components: {
+    Price,
+  },
   methods: {
     ...mapActions({
       initMarket: constants.MARKET_INIT,
     }),
   },
-  components: {
-    Price,
-  },
   created() {
-    this.initMarket();
+    this.initMarket(this.id);
   },
 };
 </script>

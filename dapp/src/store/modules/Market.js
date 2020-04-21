@@ -1,33 +1,62 @@
-import MarketContract from '@/contracts/Market.json';
 import * as constants from '@/store/constants';
-import { send, web3 } from '@/store/modules';
+import Controller from '@/handlers/controller';
+import Market from '@/handlers/market';
 
 const state = {
-  market: null,
   price: null,
-  marketAddress: null,
+  address: null,
+  tokenAddress: null,
+  totalSupply: null,
+  totalBorrows: null,
 };
 
 const actions = {
-  // eslint-disable-next-line no-shadow
-  [constants.MARKET_INIT]: ({ commit, dispatch, state }) => {
-    const market = new web3.eth.Contract(MarketContract.abi, state.marketAddress);
-    commit(constants.MARKET_SET_PROPERTY, { market });
+  [constants.MARKET_INIT]: ({ commit, dispatch }, address) => {
+    commit(constants.MARKET_SET_PROPERTY, { address });
     dispatch(constants.MARKET_LOAD_PRICE);
+    dispatch(constants.MARKET_LOAD_TOKEN_ADDRESS);
+    dispatch(constants.MARKET_LOAD_TOTAL_SUPPLY);
+    dispatch(constants.MARKET_LOAD_TOTAL_BORROWS);
   },
   // eslint-disable-next-line no-shadow
-  [constants.MARKET_LOAD_PRICE]: ({ commit, rootState, state }) => {
-    rootState.Controller.controller.methods.prices(state.marketAddress)
-      .call()
+  [constants.MARKET_LOAD_PRICE]: ({ commit, state }) => {
+    const ctrl = new Controller();
+    ctrl.getPrice(state.address)
       .then((price) => {
         commit(constants.MARKET_SET_PROPERTY, { price });
       });
   },
   // eslint-disable-next-line no-shadow
+  [constants.MARKET_LOAD_TOKEN_ADDRESS]: ({ commit, state }) => {
+    const market = new Market(state.address);
+    market.token
+      .then((tokenAddress) => {
+        commit(constants.MARKET_SET_PROPERTY, { tokenAddress });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.MARKET_LOAD_TOTAL_SUPPLY]: ({ commit, state }) => {
+    const market = new Market(state.address);
+    market.totalSupply
+      .then((totalSupply) => {
+        commit(constants.MARKET_SET_PROPERTY, { totalSupply });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.MARKET_LOAD_TOTAL_BORROWS]: ({ commit, state }) => {
+    const market = new Market(state.address);
+    market.totalBorrows
+      .then((totalBorrows) => {
+        commit(constants.MARKET_SET_PROPERTY, { totalBorrows });
+      });
+  },
+  // eslint-disable-next-line no-shadow
   [constants.MARKET_SET_PRICE]: ({ dispatch, rootState, state }, price) => {
-    send(
-      rootState.Controller.controller.methods.setPrice(state.marketAddress, price),
+    const ctrl = new Controller();
+    ctrl.setPrice(
       { from: rootState.Session.account },
+      state.address,
+      price,
     )
       .then(() => {
         dispatch(constants.MARKET_LOAD_PRICE);

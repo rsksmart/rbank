@@ -1,27 +1,18 @@
-import ControllerContract from '@/contracts/Controller.json';
-import MarketContract from '@/contracts/Market.json';
 import * as constants from '@/store/constants';
-import { ControllerAddress, send, web3 } from '@/store/modules';
+import Controller from '@/handlers/controller';
+import Market from '@/handlers/market';
+
+const controller = new Controller();
 
 const state = {
-  controller: null,
   collateralFactor: null,
   liquidationFactor: null,
   markets: [],
 };
 
 const actions = {
-  [constants.CONTROLLER_INIT]: ({ commit }) => {
-    const controller = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
-    commit(constants.CONTROLLER_SET_PROPERTY, {
-      property: 'controller',
-      value: controller,
-    });
-  },
-  // eslint-disable-next-line no-shadow
-  [constants.CONTROLLER_LOAD_COLLATERAL_FACTOR]: ({ commit, state }) => {
-    state.controller.methods.collateralFactor()
-      .call()
+  [constants.CONTROLLER_LOAD_COLLATERAL_FACTOR]: ({ commit }) => {
+    controller.collateralFactor
       .then((collateralFactor) => {
         commit(constants.CONTROLLER_SET_PROPERTY, {
           property: 'collateralFactor',
@@ -36,10 +27,8 @@ const actions = {
         });
       });
   },
-  // eslint-disable-next-line no-shadow
-  [constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR]: ({ commit, state }) => {
-    state.controller.methods.liquidationFactor()
-      .call()
+  [constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR]: ({ commit }) => {
+    controller.liquidationFactor
       .then((liquidationFactor) => {
         commit(constants.CONTROLLER_SET_PROPERTY, {
           property: 'liquidationFactor',
@@ -53,73 +42,51 @@ const actions = {
         });
       });
   },
-  // eslint-disable-next-line no-shadow
-  [constants.CONTROLLER_LOAD_MARKETS]: async ({ commit, state }) => {
-    let control = 1;
-    const markets = [];
-    try {
-      while (control) {
-        // eslint-disable-next-line no-await-in-loop
-        const marketAddress = await state.controller.methods.marketList(control - 1)
-          .call();
-        markets.push(marketAddress);
+  [constants.CONTROLLER_LOAD_MARKETS]: ({ commit }) => {
+    controller.markets
+      .then((markets) => {
         commit(constants.CONTROLLER_SET_PROPERTY, {
           property: 'markets',
           value: markets,
         });
-        control += 1;
-      }
-    } catch (e) {
-      control = 0;
-    }
+      });
   },
   [constants.CONTROLLER_CREATE_MARKET]: (
-    // eslint-disable-next-line no-shadow
-    { dispatch, rootState, state },
+    { dispatch, rootState },
     { tokenAddress, marketBaseBorrowRate },
   ) => {
     const from = { from: rootState.Session.account };
-    const market = new web3.eth.Contract(MarketContract.abi);
-    const deploySignature = market.deploy({
-      data: MarketContract.bytecode,
-      arguments: [tokenAddress, marketBaseBorrowRate],
-    });
-    send(deploySignature, from)
-      .then((marketInstance) => {
-        const setControllerSignature = marketInstance.methods.setController(
-          state.controller.options.address,
+    Market.deploy(
+      from,
+      tokenAddress,
+      marketBaseBorrowRate,
+    )
+      .then((marketAddress) => {
+        const market = new Market(marketAddress);
+        market.setController(
+          from,
+          controller.address,
         );
-        send(setControllerSignature, from);
-        return marketInstance.options.address;
+        return marketAddress;
       })
-      .then((marketAddress) => state.controller.methods.addMarket(marketAddress))
-      .then((signature) => send(signature, from))
+      .then((marketAddress) => controller.addMarket(from, marketAddress))
       .then(() => {
         dispatch(constants.CONTROLLER_LOAD_MARKETS);
       });
   },
-  [constants.CONTROLLER_SET_COLLATERAL_FACTOR]: (
-    // eslint-disable-next-line no-shadow
-    { dispatch, rootState, state },
-    collateralFactor,
-  ) => {
-    console.log(collateralFactor);
-    send(
-      state.controller.methods.setCollateralFactor(collateralFactor),
+  [constants.CONTROLLER_SET_COLLATERAL_FACTOR]: ({ dispatch, rootState }, collateralFactor) => {
+    controller.setCollateralFactor(
       { from: rootState.Session.account },
+      collateralFactor,
     )
       .then(() => {
         dispatch(constants.CONTROLLER_LOAD_COLLATERAL_FACTOR);
       });
   },
-  [constants.CONTROLLER_SET_LIQUIDATION_FACTOR]: (
-    // eslint-disable-next-line no-shadow
-    { dispatch, rootState, state },
-    liquidationFactor,
-  ) => {
-    send(
-      state.controller.methods.setLiquidationFactor(liquidationFactor),
+  [constants.CONTROLLER_SET_LIQUIDATION_FACTOR]: ({ dispatch, rootState }, liquidationFactor) => {
+    controller.setLiquidationFactor(
       { from: rootState.Session.account },
+      liquidationFactor,
     )
       .then(() => {
         dispatch(constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR);

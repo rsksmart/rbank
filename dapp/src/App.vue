@@ -27,14 +27,12 @@ export default {
   methods: {
     ...mapActions({
       loadControllerAtSession: constants.SESSION_INIT_CONTROLLER,
-      loadController: constants.CONTROLLER_INIT,
     }),
   },
   components: {
     BaseLayout,
   },
   created() {
-    this.loadController();
     this.loadControllerAtSession();
   },
 };
