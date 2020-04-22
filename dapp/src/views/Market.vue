@@ -49,24 +49,32 @@
 
         <v-card-actions class="d-flex justify-space-around">
           <v-btn x-large raise color="green" dark class="my-2"
-            @click="setSupplyForm()">
+            @click="showSupplyForm">
             Supply
           </v-btn>
-          <v-btn x-large depressed color="blue" dark class="my-2">Borrow</v-btn>
+          <v-btn x-large depressed color="blue" dark class="my-2"
+            @click="showBorrowForm">
+            Borrow
+          </v-btn>
           <v-btn x-large depressed color="teal" dark class="my-2">Redeem</v-btn>
           <v-btn x-large depressed color="indigo lighten-1" dark class="my-2">Pay debt</v-btn>
         </v-card-actions>
       </v-card>
     </template>
+    <component :is="actionForm" :marketAddress="id" @formSucceed="reset"/>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import Controller from '@/handlers/controller';
+
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 import Price from '@/components/market/Price.vue';
+
+import SupplyForm from '@/components/market/SupplyForm.vue';
+import BorrowForm from '@/components/market/BorrowForm.vue';
 
 export default {
   name: 'Market',
@@ -81,6 +89,7 @@ export default {
       controller: null,
       price: null,
       market: null,
+      token: null,
       totalSupply: null,
       totalBorrows: null,
       tokenName: null,
@@ -90,6 +99,7 @@ export default {
       supplyOf: null,
       borrowBy: null,
       baseBorrowRate: null,
+      actionForm: null,
     };
   },
   computed: {
@@ -100,54 +110,88 @@ export default {
     }),
   },
   methods: {
-    setSupplyForm() {
-      this.$router.push({
-        name: 'MarketSupply',
-        params: { marketAddress: this.id },
-      });
+    reset() {
+      this.actionForm = null;
+      this.loadMarketTotalSupply();
+      this.loadMarketTotalBorrows();
+      this.loadMarketSupplyOf();
+      this.loadMarketBorrowBy();
+      this.loadTokenBalanceOf();
+    },
+    showSupplyForm() {
+      this.actionForm = 'SupplyForm';
+    },
+    showBorrowForm() {
+      this.actionForm = 'BorrowForm';
+    },
+    loadTokenBalanceOf() {
+      this.token.balanceOf(this.account)
+        .then((balanceOf) => {
+          this.tokenBalanceOf = balanceOf;
+        });
+    },
+    loadMarketTotalSupply() {
+      this.market.eventualTotalSupply
+        .then((totalSupply) => {
+          this.totalSupply = totalSupply;
+        });
+    },
+    loadMarketTotalBorrows() {
+      this.market.eventualTotalBorrows
+        .then((totalBorrows) => {
+          this.totalBorrows = totalBorrows;
+        });
+    },
+    loadMarketSupplyOf() {
+      this.market.getSupplyOf(this.account)
+        .then((supplyOf) => {
+          this.supplyOf = supplyOf;
+        });
+    },
+    loadMarketBorrowBy() {
+      this.market.getBorrowBy(this.account)
+        .then((borrowBy) => {
+          this.borrowBy = borrowBy;
+        });
+    },
+    loadMarketBaseBorrowRate() {
+      this.market.eventualBaseBorrowRate
+        .then((baseBorrowRate) => {
+          this.baseBorrowRate = baseBorrowRate;
+        });
     },
   },
   components: {
     Price,
+    SupplyForm,
+    BorrowForm,
   },
   created() {
     this.controller = new Controller();
     this.market = new Market(this.id);
+    this.market.eventualTokenAddress
+      .then((tokenAddress) => {
+        this.token = new Token(tokenAddress);
+        return [
+          this.token.eventualName,
+          this.token.eventualSymbol,
+        ];
+      })
+      .then((tokenPromises) => Promise.all(tokenPromises))
+      .then(([tokenName, tokenSymbol]) => {
+        this.tokenName = tokenName;
+        this.tokenSymbol = tokenSymbol;
+        this.loadTokenBalanceOf();
+      });
     this.controller.getPrice(this.id)
       .then((price) => {
         this.price = price;
       });
-    this.market.eventualTotalSupply
-      .then((totalSupply) => {
-        this.totalSupply = totalSupply;
-      });
-    this.market.eventualTotalBorrows
-      .then((totalBorrows) => {
-        this.totalBorrows = totalBorrows;
-      });
-    this.market.eventualBaseBorrowRate
-      .then((baseBorrowRate) => {
-        this.baseBorrowRate = baseBorrowRate;
-      });
-    this.market.getSupplyOf(this.account)
-      .then((supplyOf) => {
-        this.supplyOf = supplyOf;
-      });
-    this.market.getBorrowBy(this.account)
-      .then((borrowBy) => {
-        this.borrowBy = borrowBy;
-      });
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol, token.balanceOf(this.account)];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol, tokenBalanceOf]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.tokenBalanceOf = tokenBalanceOf;
-      });
+    this.loadMarketTotalSupply();
+    this.loadMarketTotalBorrows();
+    this.loadMarketSupplyOf();
+    this.loadMarketBorrowBy();
+    this.loadMarketBaseBorrowRate();
   },
 };
 </script>

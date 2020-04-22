@@ -1,15 +1,15 @@
 <template>
-  <v-card class="SupplyForm ma-5" :lazy-validation="true" max-width="80%">
+  <v-card class="BorrowForm ma-5" :lazy-validation="true" max-width="80%">
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>Borrow from market {{marketAddress}} of token {{tokenSymbol}}</h2>
         </v-row>
         <v-row>
           <v-col class="pb-0">
             <v-text-field
               v-model="amount"
-              label="Supply amount"
+              label="Borrow amount"
               type="number"
               required>
             </v-text-field>
@@ -18,8 +18,8 @@
       </v-container>
     </v-card-text>
     <v-card-actions class="pl-6 pb-4 pt-0">
-      <v-btn color="success" @click="supply">
-        Supply
+      <v-btn color="success" @click="borrow">
+        Borrow
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -31,7 +31,7 @@ import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 
 export default {
-  name: 'SupplyForm',
+  name: 'BorrowForm',
   props: {
     marketAddress: {
       type: String,
@@ -41,7 +41,6 @@ export default {
   data() {
     return {
       market: null,
-      token: null,
       amount: null,
       tokenName: null,
       tokenSymbol: null,
@@ -55,9 +54,8 @@ export default {
     }),
   },
   methods: {
-    supply() {
-      this.token.approve(this.from, this.marketAddress, this.amount)
-        .then(() => this.market.supply(this.from, this.amount))
+    borrow() {
+      this.market.borrow(this.from, this.amount)
         .then(() => {
           this.$emit('formSucceed');
         });
@@ -67,8 +65,8 @@ export default {
     this.market = new Market(this.marketAddress);
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
+        const token = new Token(tokenAddress);
+        return [token.eventualName, token.eventualSymbol];
       })
       .then((tokenPromises) => Promise.all(tokenPromises))
       .then(([tokenName, tokenSymbol]) => {
