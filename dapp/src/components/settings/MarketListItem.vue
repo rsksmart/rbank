@@ -33,10 +33,6 @@ export default {
       type: String,
       required: true,
     },
-    eventualPrice: {
-      type: Promise,
-      required: false,
-    },
   },
   data() {
     return {

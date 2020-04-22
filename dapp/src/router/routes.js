@@ -55,6 +55,14 @@ export default [
     props: true,
   },
   {
+    path: '/market/:marketAddress/supply',
+    name: 'MarketSupply',
+    icon: 'add',
+    publicShow: false,
+    component: () => import(/* webpackChunkName: "market" */ '@/components/market/SupplyForm.vue'),
+    props: true,
+  },
+  {
     path: '*',
     redirect: { name: 'Home' },
   },

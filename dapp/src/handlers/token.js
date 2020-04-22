@@ -48,4 +48,21 @@ export default class Controller {
         .catch(reject);
     });
   }
+
+  balanceOf(account) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.balanceOf(account)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  approve(from, spenderAddress, amount) {
+    return new Promise((resolve, reject) => {
+      send(this.instance.methods.approve(spenderAddress, amount), from)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
 }

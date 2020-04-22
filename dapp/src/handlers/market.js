@@ -49,6 +49,15 @@ export default class Market {
     });
   }
 
+  get eventualBaseBorrowRate() {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.baseBorrowRate()
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   get eventualTokenAddress() {
     return new Promise((resolve, reject) => {
       this.instance.methods.token()
@@ -67,9 +76,35 @@ export default class Market {
     });
   }
 
+  getSupplyOf(accountAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.supplyOf(accountAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getBorrowBy(accountAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.borrowBy(accountAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   setController(from, controllerAddress) {
     return new Promise((resolve, reject) => {
       send(this.instance.methods.setController(controllerAddress), from)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  supply(from, amount) {
+    return new Promise((resolve, reject) => {
+      send(this.instance.methods.supply(amount), from)
         .then(resolve)
         .catch(reject);
     });
