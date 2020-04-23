@@ -11,6 +11,7 @@
               v-model="amount"
               label="Supply amount"
               type="number"
+              :rules="[rules.required, rules.minBalance]"
               required>
             </v-text-field>
           </v-col>
@@ -45,6 +46,11 @@ export default {
       amount: null,
       tokenName: null,
       tokenSymbol: null,
+      tokenBalance: null,
+      rules: {
+        required: (value) => !!value || 'Required.',
+        minBalance: (value) => this.tokenBalance >= value || 'Not enough funds',
+      },
     };
   },
   computed: {
@@ -62,6 +68,12 @@ export default {
           this.$emit('formSucceed');
         });
     },
+    getBalance() {
+      this.token.balanceOf(this.account)
+        .then((balance) => {
+          this.tokenBalance = balance;
+        });
+    },
   },
   created() {
     this.market = new Market(this.marketAddress);
@@ -74,6 +86,7 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+        this.getBalance();
       });
   },
 };
