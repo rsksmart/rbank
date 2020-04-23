@@ -125,4 +125,12 @@ export default class Market {
         .catch(reject);
     });
   }
+
+  payBorrow(from, amount) {
+    return new Promise((resolve, reject) => {
+      send(this.instance.methods.payBorrow(amount), from)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
 }

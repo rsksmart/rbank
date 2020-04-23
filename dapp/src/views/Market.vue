@@ -60,7 +60,10 @@
                  @click="showRedeemForm">
             Redeem
           </v-btn>
-          <v-btn x-large depressed color="indigo lighten-1" dark class="my-2">Pay debt</v-btn>
+          <v-btn x-large depressed color="indigo lighten-1" dark class="my-2"
+                 @click="showPayBorrowForm">
+            Pay debt
+          </v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -79,6 +82,7 @@ import Price from '@/components/market/Price.vue';
 import SupplyForm from '@/components/market/SupplyForm.vue';
 import BorrowForm from '@/components/market/BorrowForm.vue';
 import RedeemForm from '@/components/market/RedeemForm.vue';
+import PayBorrowForm from '@/components/market/PayBorrowForm.vue';
 
 export default {
   name: 'Market',
@@ -131,6 +135,9 @@ export default {
     showRedeemForm() {
       this.actionForm = 'RedeemForm';
     },
+    showPayBorrowForm() {
+      this.actionForm = 'PayBorrowForm';
+    },
     loadTokenBalanceOf() {
       this.token.balanceOf(this.account)
         .then((balanceOf) => {
@@ -173,6 +180,7 @@ export default {
     SupplyForm,
     BorrowForm,
     RedeemForm,
+    PayBorrowForm,
   },
   created() {
     this.controller = new Controller();
