@@ -10,6 +10,7 @@
             <v-text-field
               v-model="amount"
               label="Borrow amount"
+              :rules="[rules.required, rules.liquidity]"
               type="number"
               required>
             </v-text-field>
@@ -29,6 +30,7 @@
 import { mapState } from 'vuex';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
+import Controller from '@/handlers/controller';
 
 export default {
   name: 'BorrowForm',
@@ -40,10 +42,17 @@ export default {
   },
   data() {
     return {
+      controller: null,
       market: null,
+      marketPrice: null,
       amount: null,
       tokenName: null,
       tokenSymbol: null,
+      liquidity: null,
+      rules: {
+        required: (value) => !!value || 'Required.',
+        liquidity: (value) => this.liquidity >= this.marketPrice * 2 * value || 'not enough liquidity',
+      },
     };
   },
   computed: {
@@ -60,9 +69,16 @@ export default {
           this.$emit('formSucceed');
         });
     },
+    getLiquidity() {
+      this.controller.getLiquidity(this.account)
+        .then((liquidity) => {
+          this.liquidity = liquidity;
+        });
+    },
   },
   created() {
     this.market = new Market(this.marketAddress);
+    this.controller = new Controller();
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
         const token = new Token(tokenAddress);
@@ -72,6 +88,11 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+      });
+    this.getLiquidity();
+    this.controller.getPrice(this.marketAddress)
+      .then((price) => {
+        this.marketPrice = price;
       });
   },
 };

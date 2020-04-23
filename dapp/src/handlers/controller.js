@@ -44,6 +44,15 @@ export default class Controller {
     });
   }
 
+  getLiquidity(account) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.getAccountLiquidity(account)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   getPrice(marketAddress) {
     return new Promise((resolve, reject) => {
       this.instance.methods.prices(marketAddress)
