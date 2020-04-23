@@ -7,16 +7,14 @@
       <v-row>
         <v-col cols="6">
           <v-text-field
-            :value="colFac"
-            @input="collateralFactor = $event"
+            v-model="collateralFactor"
             label="Collateral Factor"
             type="number"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
           <v-text-field
-            :value="liqFac"
-            @input="liquidationFactor = $event"
+            v-model="liquidationFactor"
             label="Liquidation Factor"
             type="number"
           ></v-text-field>
@@ -34,38 +32,41 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
 
 export default {
   name: 'ControllerForm',
   data() {
     return {
+      controller: null,
       collateralFactor: null,
       liquidationFactor: null,
     };
   },
   computed: {
     ...mapState({
-      colFac: (state) => state.Controller.collateralFactor,
-      liqFac: (state) => state.Controller.liquidationFactor,
+      from: (state) => ({ from: state.Session.account }),
     }),
   },
   methods: {
-    ...mapActions({
-      loadCollateral: constants.CONTROLLER_LOAD_COLLATERAL_FACTOR,
-      loadLiquidation: constants.CONTROLLER_LOAD_LIQUIDATION_FACTOR,
-      setCollateral: constants.CONTROLLER_SET_COLLATERAL_FACTOR,
-      setLiquidation: constants.CONTROLLER_SET_LIQUIDATION_FACTOR,
-    }),
     setFactors() {
-      this.setCollateral(this.collateralFactor);
-      this.setLiquidation(this.liquidationFactor);
+      this.controller
+        .setCollateralFactor(this.from, this.collateralFactor);
+      this.controller
+        .setLiquidationFactor(this.from, this.liquidationFactor);
     },
   },
   created() {
-    this.loadCollateral();
-    this.loadLiquidation();
+    this.controller = new Controller();
+    this.controller.eventualCollateralFactor
+      .then((collateralFactor) => {
+        this.collateralFactor = collateralFactor;
+      });
+    this.controller.eventualLiquidationFactor
+      .then((liquidationFactor) => {
+        this.liquidationFactor = liquidationFactor;
+      });
   },
 };
 </script>

@@ -8,17 +8,17 @@
         <v-col cols="12">
           <v-form ref="form" :lazy-validation="true">
             <v-text-field
-              v-model="newMarket.tokenAddress"
+              v-model="tokenAddress"
               label="Token Base Address"
               required
             ></v-text-field>
             <v-text-field
-              v-model="newMarket.marketBaseBorrowRate"
+              v-model="marketBaseBorrowRate"
               label="Market Base Borrow Rate"
               type="number"
               required
             ></v-text-field>
-            <v-btn color="success" @click="create">
+            <v-btn color="success" @click="createMarket">
               Create Market
             </v-btn>
           </v-form>
@@ -29,28 +29,44 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
+import Market from '@/handlers/market';
 
 export default {
   name: 'MarketForm',
   data() {
     return {
-      newMarket: {
-        tokenAddress: null,
-        marketBaseBorrowRate: null,
-      },
+      controller: null,
+      tokenAddress: null,
+      marketBaseBorrowRate: null,
     };
   },
-  methods: {
-    ...mapActions({
-      createMarket: constants.CONTROLLER_CREATE_MARKET,
+  computed: {
+    ...mapState({
+      from: (state) => ({ from: state.Session.account }),
     }),
-    create() {
-      console.log(this.newMarket);
-      this.createMarket(this.newMarket);
+  },
+  methods: {
+    createMarket() {
+      Market.deploy(
+        this.from,
+        this.tokenAddress,
+        this.marketBaseBorrowRate,
+      )
+        .then((marketAddress) => {
+          const market = new Market(marketAddress);
+          market.setController(this.from, this.controller.address);
+          return this.controller.addMarket(this.from, marketAddress);
+        })
+        .then(() => {
+          this.$emit('marketCreated');
+        });
       this.$refs.form.reset();
     },
+  },
+  created() {
+    this.controller = new Controller();
   },
 };
 </script>

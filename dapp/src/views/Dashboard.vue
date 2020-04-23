@@ -1,26 +1,7 @@
 <template>
   <div class="dashboard">
     <div>
-      <div class="d-flex justify-center">
-        <v-simple-table class="ma-8">
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-center">Bienes</th>
-                <th class="text-left">Patrimonio</th>
-                <th class="text-left">Deuda</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>${{ assets }}</td>
-                <td>${{ patrimony }}</td>
-                <td>${{ debt }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </div>
+      <markets-list :marketAddresses="marketAddresses"/>
     </div>
     <v-divider class="ma-5"></v-divider>
     <div>
@@ -82,10 +63,15 @@
 </template>
 
 <script>
+import Controller from '@/handlers/controller';
+import MarketsList from '../components/settings/MarketsList.vue';
+
 export default {
   name: 'Dashboard',
   data() {
     return {
+      controller: null,
+      marketAddresses: [],
       assets: 2000,
       patrimony: 500,
       debt: 500,
@@ -94,6 +80,21 @@ export default {
       rif: 'https://developers.rsk.co/assets/img/rif/rif-logo.png',
       rif_t: 'https://assets.coingecko.com/coins/images/7460/large/RIF.png',
     };
+  },
+  methods: {
+    loadMarkets() {
+      this.controller.eventualMarketAddresses
+        .then((marketAddresses) => {
+          this.marketAddresses = marketAddresses;
+        });
+    },
+  },
+  components: {
+    MarketsList,
+  },
+  created() {
+    this.controller = new Controller();
+    this.loadMarkets();
   },
 };
 </script>

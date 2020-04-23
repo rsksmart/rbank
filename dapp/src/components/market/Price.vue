@@ -1,7 +1,8 @@
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row class="d-flex flex-column">
       <h2>Market price</h2>
+      <a>{{ marketAddress }}</a>
     </v-row>
     <v-form ref="form" :lazy-validation="true">
       <v-row>
@@ -26,8 +27,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
 
 export default {
   name: 'Price',
@@ -36,18 +37,28 @@ export default {
       marketPrice: null,
     };
   },
+  props: {
+    marketAddress: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
   methods: {
-    ...mapActions({
-      setMarketPrice: constants.MARKET_SET_PRICE,
-    }),
     setPrice() {
-      this.setMarketPrice(this.marketPrice);
+      this.controller.setPrice(this.from, this.marketAddress, this.marketPrice);
     },
   },
   computed: {
     ...mapState({
-      price: (state) => state.Market.price,
+      from: (state) => ({ from: state.Session.account }),
     }),
+  },
+  created() {
+    this.controller = new Controller();
   },
 };
 </script>

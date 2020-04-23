@@ -1,62 +1,37 @@
 <template>
-  <div class="MarketsList">
-    <h2>Current Markets</h2>
-    <v-card
-      class="mx-auto"
-      max-width="50%"
-      tile
-    >
-      <v-list
-        nav
-      >
-        <template v-for="(market, idx) in markets">
-          <v-list-item
-            :key="`market-${idx}`"
-            @click="setMarket(market)"
-          >
-            <v-list-item-content>
-              <v-list-item-action>
-                <v-icon>local_convenience_store</v-icon>
-              </v-list-item-action>
-              <v-list-item-title>
-                {{market}}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-card>
+  <div>
+    <h2 class="d-flex justify-center text-center">Current Markets</h2>
+    <div class="d-flex justify-center">
+      <v-card width="70%">
+          <v-list>
+            <v-list-item>
+              <v-list-item-subtitle class="text-center">Symbol</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Asset</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Borrows</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Supplies</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Price</v-list-item-subtitle>
+            </v-list-item>
+            <market-list-item v-for="(marketAddress, idx) in marketAddresses"
+              :key="`market-list-item-${idx}`" :marketAddress="marketAddress"/>
+          </v-list>
+        </v-card>
+      </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
-import * as constants from '@/store/constants';
+import MarketListItem from '@/components/settings/MarketListItem.vue';
 
 export default {
   name: 'MarketsList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
-  },
-  methods: {
-    ...mapActions({
-      loadMarkets: constants.CONTROLLER_LOAD_MARKETS,
-    }),
-    ...mapMutations({
-      setProperty: constants.MARKET_SET_PROPERTY,
-    }),
-    setMarket(marketAddress) {
-      this.setProperty({ marketAddress });
-      this.$router.push({
-        name: 'Market',
-        params: { id: marketAddress },
-      });
+  props: {
+    marketAddresses: {
+      type: Array,
+      default: () => ([]),
     },
   },
-  created() {
-    this.loadMarkets();
+  components: {
+    MarketListItem,
   },
 };
 </script>
