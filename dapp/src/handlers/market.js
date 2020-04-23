@@ -117,4 +117,12 @@ export default class Market {
         .catch(reject);
     });
   }
+
+  redeem(from, amount) {
+    return new Promise((resolve, reject) => {
+      send(this.instance.methods.redeem(amount), from)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
 }

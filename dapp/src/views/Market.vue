@@ -30,7 +30,7 @@
           </v-row>
         </v-card-text>
       </v-card>
-      <v-card max-width="80%"  class="ma-5">
+      <v-card max-width="80%" class="ma-5">
         <v-card-text>
           <p class="display-1 text--primary">
             Balance
@@ -49,14 +49,17 @@
 
         <v-card-actions class="d-flex justify-space-around">
           <v-btn x-large raise color="green" dark class="my-2"
-            @click="showSupplyForm">
+                 @click="showSupplyForm">
             Supply
           </v-btn>
           <v-btn x-large depressed color="blue" dark class="my-2"
-            @click="showBorrowForm">
+                 @click="showBorrowForm">
             Borrow
           </v-btn>
-          <v-btn x-large depressed color="teal" dark class="my-2">Redeem</v-btn>
+          <v-btn x-large depressed color="teal" dark class="my-2"
+                 @click="showRedeemForm">
+            Redeem
+          </v-btn>
           <v-btn x-large depressed color="indigo lighten-1" dark class="my-2">Pay debt</v-btn>
         </v-card-actions>
       </v-card>
@@ -75,6 +78,7 @@ import Price from '@/components/market/Price.vue';
 
 import SupplyForm from '@/components/market/SupplyForm.vue';
 import BorrowForm from '@/components/market/BorrowForm.vue';
+import RedeemForm from '@/components/market/RedeemForm.vue';
 
 export default {
   name: 'Market',
@@ -124,6 +128,9 @@ export default {
     showBorrowForm() {
       this.actionForm = 'BorrowForm';
     },
+    showRedeemForm() {
+      this.actionForm = 'RedeemForm';
+    },
     loadTokenBalanceOf() {
       this.token.balanceOf(this.account)
         .then((balanceOf) => {
@@ -165,6 +172,7 @@ export default {
     Price,
     SupplyForm,
     BorrowForm,
+    RedeemForm,
   },
   created() {
     this.controller = new Controller();
