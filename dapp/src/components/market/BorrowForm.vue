@@ -19,7 +19,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions class="pl-6 pb-4 pt-0">
-      <v-btn color="success" @click="borrow">
+      <v-btn :disabled="!validForm" color="success" @click="borrow">
         Borrow
       </v-btn>
     </v-card-actions>
@@ -49,9 +49,10 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       liquidity: null,
+      validForm: false,
       rules: {
-        required: (value) => !!value || 'Required.',
-        liquidity: (value) => this.liquidity >= this.marketPrice * 2 * value || 'not enough liquidity',
+        required: () => (!!this.amount || 'Required.'),
+        liquidity: () => (this.liquidity >= this.marketPrice * 2 * this.amount || 'not enough liquidity'),
       },
     };
   },
@@ -74,6 +75,11 @@ export default {
         .then((liquidity) => {
           this.liquidity = liquidity;
         });
+    },
+  },
+  watch: {
+    amount() {
+      this.validForm = typeof this.rules.liquidity() !== 'string' && typeof this.rules.required() !== 'string';
     },
   },
   created() {

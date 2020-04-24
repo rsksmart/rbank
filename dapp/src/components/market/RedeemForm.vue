@@ -11,6 +11,7 @@
               v-model="amount"
               label="Redeem amount"
               type="number"
+              :rules="[rules.required, rules.marketSupply, rules.userSupply]"
               required>
             </v-text-field>
           </v-col>
@@ -18,7 +19,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions class="pl-6 pb-4 pt-0">
-      <v-btn color="success" @click="redeem">
+      <v-btn color="success" @click="redeem" :disabled="!validForm">
         Redeem
       </v-btn>
     </v-card-actions>
@@ -44,6 +45,14 @@ export default {
       amount: null,
       tokenName: null,
       tokenSymbol: null,
+      validForm: false,
+      marketSupply: null,
+      userSupply: null,
+      rules: {
+        required: () => !!this.amount || 'Required.',
+        marketSupply: () => this.marketSupply >= this.amount || 'Market does not have enough funds',
+        userSupply: () => this.userSupply >= this.amount || 'You do not have enough funds on this market',
+      },
     };
   },
   computed: {
@@ -58,6 +67,13 @@ export default {
         .then(() => this.$emit('formSucceed'));
     },
   },
+  watch: {
+    amount() {
+      this.validForm = typeof this.rules.required() !== 'string'
+        && typeof this.rules.marketSupply() !== 'string'
+        && typeof this.rules.userSupply() !== 'string';
+    },
+  },
   created() {
     this.market = new Market(this.marketAddress);
     this.market.eventualTokenAddress
@@ -69,6 +85,14 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+      });
+    this.market.getSupplyOf(this.account)
+      .then((supply) => {
+        this.userSupply = supply;
+      });
+    this.market.eventualTotalSupply
+      .then((totalSupply) => {
+        this.marketSupply = totalSupply;
       });
   },
 };

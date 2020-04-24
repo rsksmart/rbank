@@ -19,7 +19,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions class="pl-6 pb-4 pt-0">
-      <v-btn color="success" @click="supply">
+      <v-btn color="success" @click="supply" :disabled="!validForm">
         Supply
       </v-btn>
     </v-card-actions>
@@ -47,9 +47,10 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       tokenBalance: null,
+      validForm: false,
       rules: {
-        required: (value) => !!value || 'Required.',
-        minBalance: (value) => this.tokenBalance >= value || 'Not enough funds',
+        required: () => !!this.amount || 'Required.',
+        minBalance: () => this.tokenBalance >= this.amount || 'Not enough funds',
       },
     };
   },
@@ -73,6 +74,11 @@ export default {
         .then((balance) => {
           this.tokenBalance = balance;
         });
+    },
+  },
+  watch: {
+    amount() {
+      this.validForm = typeof this.rules.minBalance() !== 'string' && typeof this.rules.required() !== 'string';
     },
   },
   created() {
