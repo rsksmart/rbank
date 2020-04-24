@@ -10,6 +10,7 @@
             <v-text-field
               v-model="amount"
               label="Borrow amount"
+              :rules="[rules.required, rules.liquidity]"
               type="number"
               required>
             </v-text-field>
@@ -18,7 +19,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions class="pl-6 pb-4 pt-0">
-      <v-btn color="success" @click="borrow">
+      <v-btn :disabled="!validForm" color="success" @click="borrow">
         Borrow
       </v-btn>
     </v-card-actions>
@@ -29,6 +30,7 @@
 import { mapState } from 'vuex';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
+import Controller from '@/handlers/controller';
 
 export default {
   name: 'BorrowForm',
@@ -40,10 +42,18 @@ export default {
   },
   data() {
     return {
+      controller: null,
       market: null,
+      marketPrice: null,
       amount: null,
       tokenName: null,
       tokenSymbol: null,
+      liquidity: null,
+      validForm: false,
+      rules: {
+        required: () => (!!this.amount || 'Required.'),
+        liquidity: () => (this.liquidity >= this.marketPrice * 2 * this.amount || 'not enough liquidity'),
+      },
     };
   },
   computed: {
@@ -60,9 +70,21 @@ export default {
           this.$emit('formSucceed');
         });
     },
+    getLiquidity() {
+      this.controller.getLiquidity(this.account)
+        .then((liquidity) => {
+          this.liquidity = liquidity;
+        });
+    },
+  },
+  watch: {
+    amount() {
+      this.validForm = typeof this.rules.liquidity() !== 'string' && typeof this.rules.required() !== 'string';
+    },
   },
   created() {
     this.market = new Market(this.marketAddress);
+    this.controller = new Controller();
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
         const token = new Token(tokenAddress);
@@ -72,6 +94,11 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+      });
+    this.getLiquidity();
+    this.controller.getPrice(this.marketAddress)
+      .then((price) => {
+        this.marketPrice = price;
       });
   },
 };
