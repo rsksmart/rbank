@@ -72,13 +72,14 @@ export default {
     getBalance() {
       this.token.balanceOf(this.account)
         .then((balance) => {
-          this.tokenBalance = balance;
+          this.tokenBalance = Number(balance);
         });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.minBalance() !== 'string' && typeof this.rules.required() !== 'string';
+      this.validForm = typeof this.rules.minBalance() !== 'string'
+        && typeof this.rules.required() !== 'string';
     },
   },
   created() {

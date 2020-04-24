@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import ControllerContract from '@/contracts/Controller.json';
 import { ControllerAddress, send, web3 } from '@/handlers';
 
@@ -27,21 +28,15 @@ export default class Controller {
   }
 
   get eventualMarketAddresses() {
-    let control = 1;
-    const markets = [];
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve) => {
-      try {
-        while (control) {
-          // eslint-disable-next-line no-await-in-loop
-          const marketAddress = await this.instance.methods.marketList(control - 1)
-            .call();
-          markets.push(marketAddress);
-          control += 1;
-        }
-      } catch {
-        resolve(markets);
-      }
+    return new Promise((resolve, reject) => {
+      this.instance.methods.marketListSize()
+        .call()
+        .then((marketListSize) => _.range(marketListSize))
+        .then((indices) => indices.map((index) => this.instance.methods.marketList(index)
+          .call()))
+        .then((promises) => Promise.all(promises))
+        .then(resolve)
+        .catch(reject);
     });
   }
 

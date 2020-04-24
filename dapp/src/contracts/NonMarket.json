@@ -1,0 +1,183 @@
+{
+  "contractName": "NonMarket",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/NonMarket.sol\":\"NonMarket\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/NonMarket.sol\":{\"keccak256\":\"0xf14940abf1a3556f2d9e7c3cbad9e55f66b915c718fced32659746e3f07ebdb9\",\"urls\":[\"bzz-raw://566300f5df1419401496f48cfb124d4d22650edac59c370d1757d20df1378cfe\",\"dweb:/ipfs/QmUQU1jWonzvgL9AqP5VqMgEtcugVr4P3moirPe2YwFehR\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a723158203abc65eaacca7a1e16494ae02387e4bcc9526b3214bf571a0cb67e9f87a7f8b664736f6c63430005100032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a723158203abc65eaacca7a1e16494ae02387e4bcc9526b3214bf571a0cb67e9f87a7f8b664736f6c63430005100032",
+  "sourceMap": "35:51:4:-;;;58:26;8:9:-1;5:2;;;30:1;27;20:12;5:2;58:26:4;35:51;;;;;;",
+  "deployedSourceMap": "35:51:4:-;;;;;",
+  "source": "pragma solidity >= 0.5.0 < 0.7.0;\n\ncontract NonMarket {\n  constructor() public {\n  }\n}\n",
+  "sourcePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/NonMarket.sol",
+  "ast": {
+    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/NonMarket.sol",
+    "exportedSymbols": {
+      "NonMarket": [
+        1327
+      ]
+    },
+    "id": 1328,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1322,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:33:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1327,
+        "linearizedBaseContracts": [
+          1327
+        ],
+        "name": "NonMarket",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 1325,
+              "nodeType": "Block",
+              "src": "79:5:4",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 1326,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1323,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "69:2:4"
+            },
+            "returnParameters": {
+              "id": 1324,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "79:0:4"
+            },
+            "scope": 1327,
+            "src": "58:26:4",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1328,
+        "src": "35:51:4"
+      }
+    ],
+    "src": "0:87:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/NonMarket.sol",
+    "exportedSymbols": {
+      "NonMarket": [
+        1327
+      ]
+    },
+    "id": 1328,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1322,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:33:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1327,
+        "linearizedBaseContracts": [
+          1327
+        ],
+        "name": "NonMarket",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 1325,
+              "nodeType": "Block",
+              "src": "79:5:4",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 1326,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1323,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "69:2:4"
+            },
+            "returnParameters": {
+              "id": 1324,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "79:0:4"
+            },
+            "scope": 1327,
+            "src": "58:26:4",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1328,
+        "src": "35:51:4"
+      }
+    ],
+    "src": "0:87:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.23",
+  "updatedAt": "2020-04-24T00:29:57.413Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

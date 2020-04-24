@@ -88,11 +88,11 @@ export default {
       });
     this.market.getSupplyOf(this.account)
       .then((supply) => {
-        this.userSupply = supply;
+        this.userSupply = Number(supply);
       });
     this.market.eventualTotalSupply
       .then((totalSupply) => {
-        this.marketSupply = totalSupply;
+        this.marketSupply = Number(totalSupply);
       });
   },
 };
