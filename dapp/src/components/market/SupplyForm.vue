@@ -8,7 +8,7 @@
         <v-row>
           <v-col class="pb-0">
             <v-text-field
-              v-model="amount"
+              v-model.number="amount"
               label="Supply amount"
               type="number"
               :rules="[rules.required, rules.minBalance]"

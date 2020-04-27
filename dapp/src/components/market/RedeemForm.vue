@@ -8,7 +8,7 @@
         <v-row>
           <v-col class="pb-0">
             <v-text-field
-              v-model="amount"
+              v-model.number="amount"
               label="Redeem amount"
               type="number"
               :rules="[rules.required, rules.marketSupply, rules.userSupply]"
@@ -46,11 +46,11 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       validForm: false,
-      marketSupply: null,
       userSupply: null,
+      balanceOfMarket: null,
       rules: {
         required: () => !!this.amount || 'Required.',
-        marketSupply: () => this.marketSupply >= this.amount || 'Market does not have enough funds',
+        marketSupply: () => this.balanceOfMarket >= this.amount || 'Market does not have enough funds',
         userSupply: () => this.userSupply >= this.amount || 'You do not have enough funds on this market',
       },
     };
@@ -79,20 +79,17 @@ export default {
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
         const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol];
+        return [token.eventualName, token.eventualSymbol, token.balanceOf(this.marketAddress)];
       })
       .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
+      .then(([tokenName, tokenSymbol, balanceOfMarket]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+        this.balanceOfMarket = Number(balanceOfMarket);
       });
-    this.market.getSupplyOf(this.account)
+    this.market.getUpdatedSupplyOf(this.account)
       .then((supply) => {
         this.userSupply = Number(supply);
-      });
-    this.market.eventualTotalSupply
-      .then((totalSupply) => {
-        this.marketSupply = Number(totalSupply);
       });
   },
 };

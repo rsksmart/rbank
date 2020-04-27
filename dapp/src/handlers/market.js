@@ -85,9 +85,27 @@ export default class Market {
     });
   }
 
+  getUpdatedSupplyOf(accountAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.updatedSupplyOf(accountAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   getBorrowBy(accountAddress) {
     return new Promise((resolve, reject) => {
       this.instance.methods.borrowBy(accountAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getUpdatedBorrowBy(accountAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.updatedBorrowBy(accountAddress)
         .call()
         .then(resolve)
         .catch(reject);
