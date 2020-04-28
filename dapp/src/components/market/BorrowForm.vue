@@ -59,13 +59,12 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
       isOwner: (state) => state.Session.isOwner,
     }),
   },
   methods: {
     borrow() {
-      this.market.borrow(this.from, this.amount)
+      this.market.borrow(this.account, this.amount)
         .then(() => {
           this.$emit('formSucceed');
         });

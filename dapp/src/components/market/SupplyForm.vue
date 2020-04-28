@@ -57,14 +57,13 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
       isOwner: (state) => state.Session.isOwner,
     }),
   },
   methods: {
     supply() {
-      this.token.approve(this.from, this.marketAddress, this.amount)
-        .then(() => this.market.supply(this.from, this.amount))
+      this.token.approve(this.account, this.marketAddress, this.amount)
+        .then(() => this.market.supply(this.account, this.amount))
         .then(() => {
           this.$emit('formSucceed');
         });

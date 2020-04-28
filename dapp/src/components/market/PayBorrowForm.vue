@@ -68,13 +68,12 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
     }),
   },
   methods: {
     payBorrow() {
-      this.token.approve(this.from, this.marketAddress, this.amount)
-        .then(() => this.market.payBorrow(this.from, this.amount))
+      this.token.approve(this.account, this.marketAddress, this.amount)
+        .then(() => this.market.payBorrow(this.account, this.amount))
         .then(() => {
           this.$emit('formSucceed');
         });

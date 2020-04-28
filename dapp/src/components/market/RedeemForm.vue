@@ -58,12 +58,11 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
     }),
   },
   methods: {
     redeem() {
-      this.market.redeem(this.from, this.amount)
+      this.market.redeem(this.account, this.amount)
         .then(() => this.$emit('formSucceed'));
     },
   },

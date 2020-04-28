@@ -112,41 +112,41 @@ export default class Market {
     });
   }
 
-  setController(from, controllerAddress) {
+  setController(account, controllerAddress) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.setController(controllerAddress), from)
+      send(this.instance.methods.setController(controllerAddress), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  supply(from, amount) {
+  supply(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.supply(amount), from)
+      send(this.instance.methods.supply(amount), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  borrow(from, amount) {
+  borrow(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.borrow(amount), from)
+      send(this.instance.methods.borrow(amount), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  redeem(from, amount) {
+  redeem(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.redeem(amount), from)
+      send(this.instance.methods.redeem(amount), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  payBorrow(from, amount) {
+  payBorrow(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.payBorrow(amount), from)
+      send(this.instance.methods.payBorrow(amount), account)
         .then(resolve)
         .catch(reject);
     });

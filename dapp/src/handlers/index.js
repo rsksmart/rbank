@@ -21,10 +21,11 @@ if (window.web3) {
 /**
  * Sends a transaction to the blockchain
  * @param {Object} signature Encoded signature of the method to be performed
- * @param {Object} from Sender's account
+ * @param {Object} account Sender's account
  * @return {Promise<txObjectResponse>} Response of the performed transaction
  */
-export const send = (signature, from) => new Promise((resolve, reject) => {
+export const send = (signature, account) => new Promise((resolve, reject) => {
+  const from = { from: account };
   signature.estimateGas(from)
     .then((gas) => signature.send({
       ...from,
