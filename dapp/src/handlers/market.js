@@ -85,6 +85,15 @@ export default class Market {
     });
   }
 
+  getUpdatedSupplyOf(accountAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.updatedSupplyOf(accountAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   getBorrowBy(accountAddress) {
     return new Promise((resolve, reject) => {
       this.instance.methods.borrowBy(accountAddress)
@@ -94,41 +103,50 @@ export default class Market {
     });
   }
 
-  setController(from, controllerAddress) {
+  getUpdatedBorrowBy(accountAddress) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.setController(controllerAddress), from)
+      this.instance.methods.updatedBorrowBy(accountAddress)
+        .call()
         .then(resolve)
         .catch(reject);
     });
   }
 
-  supply(from, amount) {
+  setController(account, controllerAddress) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.supply(amount), from)
+      send(this.instance.methods.setController(controllerAddress), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  borrow(from, amount) {
+  supply(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.borrow(amount), from)
+      send(this.instance.methods.supply(amount), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  redeem(from, amount) {
+  borrow(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.redeem(amount), from)
+      send(this.instance.methods.borrow(amount), account)
         .then(resolve)
         .catch(reject);
     });
   }
 
-  payBorrow(from, amount) {
+  redeem(account, amount) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.payBorrow(amount), from)
+      send(this.instance.methods.redeem(amount), account)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  payBorrow(account, amount) {
+    return new Promise((resolve, reject) => {
+      send(this.instance.methods.payBorrow(amount), account)
         .then(resolve)
         .catch(reject);
     });

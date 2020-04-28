@@ -49,12 +49,17 @@ export default {
   },
   methods: {
     setPrice() {
-      this.controller.setPrice(this.from, this.marketAddress, this.marketPrice);
+      this.controller.setPrice(this.account, this.marketAddress, this.marketPrice)
+        .then(() => {
+          this.$router.push({
+            name: 'Settings',
+          });
+        });
     },
   },
   computed: {
     ...mapState({
-      from: (state) => ({ from: state.Session.account }),
+      account: (state) => state.Session.account,
     }),
   },
   created() {

@@ -44,20 +44,20 @@ export default {
   },
   computed: {
     ...mapState({
-      from: (state) => ({ from: state.Session.account }),
+      account: (state) => state.Session.account,
     }),
   },
   methods: {
     createMarket() {
       Market.deploy(
-        this.from,
+        this.account,
         this.tokenAddress,
         this.marketBaseBorrowRate,
       )
         .then((marketAddress) => {
           const market = new Market(marketAddress);
-          market.setController(this.from, this.controller.address);
-          return this.controller.addMarket(this.from, marketAddress);
+          market.setController(this.account, this.controller.address);
+          return this.controller.addMarket(this.account, marketAddress);
         })
         .then(() => {
           this.$emit('marketCreated');

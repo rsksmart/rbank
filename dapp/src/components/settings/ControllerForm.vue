@@ -46,15 +46,15 @@ export default {
   },
   computed: {
     ...mapState({
-      from: (state) => ({ from: state.Session.account }),
+      account: (state) => state.Session.account,
     }),
   },
   methods: {
     setFactors() {
       this.controller
-        .setCollateralFactor(this.from, this.collateralFactor);
+        .setCollateralFactor(this.account, this.collateralFactor);
       this.controller
-        .setLiquidationFactor(this.from, this.liquidationFactor);
+        .setLiquidationFactor(this.account, this.liquidationFactor);
     },
   },
   created() {

@@ -91,9 +91,9 @@ export default class Controller {
     });
   }
 
-  addMarket(from, marketAddress) {
+  addMarket(account, marketAddress) {
     return new Promise((resolve, reject) => {
-      send(this.instance.methods.addMarket(marketAddress), from)
+      send(this.instance.methods.addMarket(marketAddress), account)
         .then(resolve)
         .catch(reject);
     });

@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["account"],{"77be":function(n,t,c){"use strict";c.r(t);var e=function(){var n=this,t=n.$createElement;n._self._c;return n._m(0)},u=[function(){var n=this,t=n.$createElement,c=n._self._c||t;return c("div",{staticClass:"account"},[c("h1",[n._v("Account")])])}],a={name:"Account"},s=a,l=c("2877"),o=Object(l["a"])(s,e,u,!1,null,null,null);t["default"]=o.exports}}]);
+//# sourceMappingURL=account.80792b25.js.map

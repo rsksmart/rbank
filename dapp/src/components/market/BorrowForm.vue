@@ -8,7 +8,7 @@
         <v-row>
           <v-col class="pb-0">
             <v-text-field
-              v-model="amount"
+              v-model.number="amount"
               label="Borrow amount"
               :rules="[rules.required, rules.liquidity]"
               type="number"
@@ -59,13 +59,12 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
       isOwner: (state) => state.Session.isOwner,
     }),
   },
   methods: {
     borrow() {
-      this.market.borrow(this.from, this.amount)
+      this.market.borrow(this.account, this.amount)
         .then(() => {
           this.$emit('formSucceed');
         });
@@ -73,13 +72,14 @@ export default {
     getLiquidity() {
       this.controller.getLiquidity(this.account)
         .then((liquidity) => {
-          this.liquidity = liquidity;
+          this.liquidity = Number(liquidity);
         });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.liquidity() !== 'string' && typeof this.rules.required() !== 'string';
+      this.validForm = typeof this.rules.liquidity() !== 'string'
+        && typeof this.rules.required() !== 'string';
     },
   },
   created() {
@@ -98,7 +98,7 @@ export default {
     this.getLiquidity();
     this.controller.getPrice(this.marketAddress)
       .then((price) => {
-        this.marketPrice = price;
+        this.marketPrice = Number(price);
       });
   },
 };
