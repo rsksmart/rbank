@@ -46,7 +46,6 @@
             <v-col class="display-1 text-center" cols="4">{{ borrowBy }}</v-col>
           </v-row>
         </v-card-text>
-
         <v-card-actions class="d-flex justify-space-around">
           <v-btn x-large raise color="green" dark class="my-2"
                  @click="showSupplyForm">
@@ -66,8 +65,8 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <component :is="actionForm" :marketAddress="id" @formSucceed="reset" id="scroll-target"/>
     </template>
-    <component :is="actionForm" :marketAddress="id" @formSucceed="reset"/>
   </div>
 </template>
 
@@ -116,6 +115,9 @@ export default {
       from: (state) => ({ from: state.Session.account }),
       isOwner: (state) => state.Session.isOwner,
     }),
+    pageHeight() {
+      return document.body.scrollHeight;
+    },
   },
   methods: {
     reset() {
@@ -128,15 +130,19 @@ export default {
     },
     showSupplyForm() {
       this.actionForm = 'SupplyForm';
+      this.$vuetify.goTo(this.pageHeight);
     },
     showBorrowForm() {
       this.actionForm = 'BorrowForm';
+      this.$vuetify.goTo(this.pageHeight);
     },
     showRedeemForm() {
       this.actionForm = 'RedeemForm';
+      this.$vuetify.goTo(this.pageHeight);
     },
     showPayBorrowForm() {
       this.actionForm = 'PayBorrowForm';
+      this.$vuetify.goTo(this.pageHeight);
     },
     loadTokenBalanceOf() {
       this.token.balanceOf(this.account)
