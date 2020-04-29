@@ -8,6 +8,7 @@ import vuetify from './plugins/vuetify';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import '@mdi/font/css/materialdesignicons.css';
 import './sass/main.scss';
+require('./filters');
 
 Vue.config.productionTip = false;
 
@@ -19,11 +20,6 @@ window.addEventListener('load', async () => {
     // eslint-disable-next-line no-multi-assign,no-undef
     Vue.prototype.$web3 = Vue.web3 = web3;
   }
-});
-
-Vue.filter('formatPrice', (value) => {
-  const val = (value / 1).toFixed(2).replace('.', ',');
-  return `$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 });
 
 new Vue({

@@ -6,7 +6,7 @@
           {{ tokenName }} ({{ tokenSymbol }})
         </v-list-item-title>
         <v-list-item-subtitle>
-          {{ price * marketSupplyOf | formatPrice }}
+          {{ updatedSupplyCash | formatPrice }}
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-avatar tile size="80">
@@ -46,6 +46,9 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    updatedSupplyCash() {
+      return this.price * this.marketSupplyOf;
+    },
   },
   created() {
     this.controller = new Controller();
