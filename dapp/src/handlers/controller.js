@@ -67,6 +67,15 @@ export default class Controller {
     });
   }
 
+  getMarketByToken(tokenAddress) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.marketsByToken(tokenAddress)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   setCollateralFactor(from, collateralFactor) {
     return new Promise((resolve, reject) => {
       send(this.instance.methods.setCollateralFactor(collateralFactor), from)

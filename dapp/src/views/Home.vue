@@ -2,10 +2,6 @@
   <v-container>
     <v-row class="text-center">
       <v-col cols="12">
-        <v-row class="text-center">
-          <div class="col-9"></div>
-          <v-btn large color="secondary" class="col-3">Dashboard</v-btn>
-        </v-row>
         <v-img
           :src="require('../assets/r_bank.jpg')"
           class="my-3"
