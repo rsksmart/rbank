@@ -112,7 +112,6 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      from: (state) => ({ from: state.Session.account }),
       isOwner: (state) => state.Session.isOwner,
     }),
     pageHeight() {
@@ -163,13 +162,13 @@ export default {
         });
     },
     loadMarketSupplyOf() {
-      this.market.getSupplyOf(this.account)
+      this.market.getUpdatedSupplyOf(this.account)
         .then((supplyOf) => {
           this.supplyOf = supplyOf;
         });
     },
     loadMarketBorrowBy() {
-      this.market.getBorrowBy(this.account)
+      this.market.getUpdatedBorrowBy(this.account)
         .then((borrowBy) => {
           this.borrowBy = borrowBy;
         });

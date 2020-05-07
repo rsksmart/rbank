@@ -28,12 +28,18 @@ export default {
     ...mapState({
       isOwner: (state) => state.Session.isOwner,
     }),
+    pageHeight() {
+      return document.body.scrollHeight;
+    },
   },
   watch: {
     isOwner(val) {
       if (!val) {
         this.$router.push({ name: 'Home' });
       }
+    },
+    marketAddresses() {
+      this.$vuetify.goTo(this.pageHeight);
     },
   },
   methods: {
