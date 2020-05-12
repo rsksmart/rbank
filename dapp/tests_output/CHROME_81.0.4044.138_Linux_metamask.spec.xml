@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="2">
+
+  <testsuite name="metamask.spec"
+    errors="1" failures="0" hostname="" id="" package="metamask.spec" skipped="0"
+    tests="2" time="17.11" timestamp="">
+  
+    <testcase name="Simple Google search" classname="metamask.spec" time="4.523" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="Metamask connection on Google chrome" classname="metamask.spec" time="12.59" assertions="2">
+
+    
+
+    
+      <error message="Error while running &#34;perform&#34; command: Timeout while waiting (10000ms) for the .perform() command callback to be called." type="error">Error: Error while running &#34;perform&#34; command: Timeout while waiting (10000ms) for the .perform() command callback to be called.
+    at Timeout.timeoutId.setTimeout [as _onTimeout] (/home/annipi/IOVLABS/rbank/dapp/node_modules/nightwatch/lib/api/client-commands/perform.js:56:26)
+    at ontimeout (timers.js:436:11)
+    at tryOnTimeout (timers.js:300:5)
+    at listOnTimeout (timers.js:263:5)
+    at Timer.processTimers (timers.js:223:10)</error>
+    
+    </testcase>
+  
+
+  
+    <system-err>
+      [0;31m  Error: Error while running &#34;perform&#34; command: Timeout while waiting (10000ms) for the .perform() command callback to be called.[0m
+[0;90m   [0m
+    </system-err>
+  
+
+  
+  </testsuite>
+</testsuites>

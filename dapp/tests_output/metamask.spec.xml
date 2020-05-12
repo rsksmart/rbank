@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="0">
+
+  <testsuite name="metamask.spec"
+    errors="1" failures="0" hostname="" id="" package="metamask.spec" skipped="2"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+      [0;31m  Error: An error occurred while retrieving a new session: &#34;session not created: cannot process extension #1&#34;[0m
+[0;90m       at endReadableNT (_stream_readable.js:1145:12)[0m
+    </system-err>
+  
+
+  
+    
+    <testcase
+      name="Simple Google search" classname="metamask.spec">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="Metamask connection on Google chrome" classname="metamask.spec">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>
