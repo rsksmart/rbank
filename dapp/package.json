@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "e2e": "clear && node_modules/.bin/nightwatch /test-browser/tests/metamask.spec.js --config nightwatch.conf.js --env chrome"
+    "e2e-chrome": "clear && node_modules/.bin/nightwatch /test-browser/tests --config nightwatch.conf.js --env chrome",
+    "selenium": "node_modules/.bin/selenium-standalone install && node_modules/.bin/selenium-standalone start"
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
