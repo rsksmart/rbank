@@ -39,6 +39,13 @@ export default [
     component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
   },
   {
+    path: '/redeem',
+    name: 'Redeem',
+    icon: 'store',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "redeem" */ '@/views/Redeem.vue'),
+  },
+  {
     path: '/settings',
     name: 'Settings',
     icon: 'settings',

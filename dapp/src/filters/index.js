@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 Vue.filter('formatPrice', (value) => {
   const val = (value / 1).toFixed(2).replace('.', ',');
