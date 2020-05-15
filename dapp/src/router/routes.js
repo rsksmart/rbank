@@ -26,7 +26,7 @@ export default [
   },
   {
     path: '/depositLending',
-    name: 'Lending / borrow',
+    name: 'Lending / Borrow',
     icon: 'local_atm',
     publicShow: true,
     component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DepositLending.vue'),
@@ -53,6 +53,14 @@ export default [
     publicShow: false,
     component: () => import(/* webpackChunkName: "market" */ '@/views/Market.vue'),
     props: true,
+  },
+  {
+    path: '/borrows',
+    name: 'Borrows',
+    icon: 'credit_card_outline',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "market" */ '@/views/Borrows.vue'),
+    beforeEnter: requireAuth,
   },
   {
     path: '*',
