@@ -1,14 +1,14 @@
 <template>
-  <div class="Redeem">
-    <redeem-list :redeemList="testList"/>
+  <div class="Liquidated">
+    <liquidated-list :liquidatedList="testList"/>
   </div>
 </template>
 
 <script>
-import RedeemList from '@/components/redeem/RedeemList.vue';
+import LiquidatedList from '@/components/liquidate/LiquidatedList.vue';
 
 export default {
-  name: 'Redeem',
+  name: 'Liquidated',
   data() {
     return {
       testList: [
@@ -26,7 +26,7 @@ export default {
     };
   },
   components: {
-    RedeemList,
+    LiquidatedList,
   },
 };
 </script>

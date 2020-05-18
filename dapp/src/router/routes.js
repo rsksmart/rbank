@@ -39,11 +39,11 @@ export default [
     component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
   },
   {
-    path: '/redeem',
-    name: 'Redeem',
-    icon: 'store',
+    path: '/liquidate',
+    name: 'Liquidations',
+    icon: 'local_mall',
     publicShow: true,
-    component: () => import(/* webpackChunkName: "redeem" */ '@/views/Redeem.vue'),
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Liquidated.vue'),
   },
   {
     path: '/settings',

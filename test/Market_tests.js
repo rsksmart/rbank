@@ -177,7 +177,7 @@ contract('Market', function (accounts) {
             assert.equal(cash, 0);
         });
 
-        it('redeem token amount', async function () {
+        it('liquidate token amount', async function () {
             await this.market.setController(this.controller.address);
             await this.market2.setController(this.controller.address);
 
@@ -279,7 +279,7 @@ contract('Market', function (accounts) {
             creationBlock2 = (await this.market2.accrualBlockNumber()).toNumber();
         });
 
-        it('cannot redeem token amount without enough liquidity', async function () {
+        it('cannot liquidate token amount without enough liquidity', async function () {
             await this.market2.borrow(1, { from: alice });
 
             const aliceSupply = await this.market.supplyOf(alice);

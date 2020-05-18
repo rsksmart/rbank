@@ -16,8 +16,8 @@
               </v-col>
             </v-row>
           </v-list-item>
-          <redeem-item v-for="(redeem, idx) in redeemList"
-                       :key="`redeem-item-${idx}`" :redeem="redeem"/>
+          <liquidated-item v-for="(liquidated, idx) in liquidatedList"
+                       :key="`liquidated-item-${idx}`" :liquidated="liquidated"/>
         </v-list>
       </v-card>
     </v-container>
@@ -25,18 +25,18 @@
 </template>
 
 <script>
-import RedeemItem from '@/components/redeem/RedeemItem.vue';
+import LiquidatedItem from '@/components/liquidate/LiquidatedItem.vue';
 
 export default {
-  name: 'RedeemList',
+  name: 'LiquidatedList',
   props: {
-    redeemList: {
+    liquidatedList: {
       type: Array,
       required: true,
     },
   },
   components: {
-    RedeemItem,
+    LiquidatedItem,
   },
 };
 </script>

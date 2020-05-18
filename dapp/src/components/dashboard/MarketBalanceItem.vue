@@ -6,8 +6,11 @@
           {{ tokenName }} ({{ tokenSymbol }})
         </v-list-item-title>
         <v-list-item-subtitle>
-          {{ updatedSupplyCash | formatPrice }}
+          {{ marketSupplyOf }}
         </v-list-item-subtitle>
+        <v-list-item-title>
+          {{ updatedSupplyCash | formatPrice }}
+        </v-list-item-title>
       </v-list-item-content>
       <v-list-item-avatar tile size="80">
         <v-img :src="btc"></v-img>
