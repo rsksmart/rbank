@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Liquidate loan of account {{accountAddress}}}</h2>
+          <h2>Liquidate loan of account {{accountAddress}}</h2>
         </v-row>
         <v-row>
           <v-col class="pb-0">

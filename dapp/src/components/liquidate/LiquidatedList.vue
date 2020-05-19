@@ -1,7 +1,7 @@
 <template>
   <div class="RedeemList">
     <v-container fluid class="d-flex justify-center">
-      <v-card width="70%" elevation="0">
+      <v-card width="80%" elevation="0">
         <v-list>
           <v-list-item>
             <v-row>
