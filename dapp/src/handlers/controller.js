@@ -76,6 +76,15 @@ export default class Controller {
     });
   }
 
+  getAccountHealth(account) {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.getAccountHealth(account)
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   setCollateralFactor(from, collateralFactor) {
     return new Promise((resolve, reject) => {
       send(this.instance.methods.setCollateralFactor(collateralFactor), from)

@@ -63,13 +63,28 @@ contract Controller {
 
         (supplyValue, borrowValue) = getAccountValues(account);
 
-        borrowValue *= collateralFactor;
+        borrowValue *= collateralFactor + MANTISSA;
         borrowValue /= MANTISSA;
 
         if (borrowValue < supplyValue)
             liquidity = supplyValue - borrowValue;
 
         return liquidity;
+    }
+
+    function getAccountHealth(address account) public view returns (uint) {
+        uint supplyValue;
+        uint borrowValue;
+
+        (supplyValue, borrowValue) = getAccountValues(account);
+        
+        if (supplyValue == 0 || borrowValue == 0)
+            return 0;
+
+        borrowValue *= liquidationFactor + MANTISSA;
+        borrowValue /= MANTISSA;
+        
+        return supplyValue * MANTISSA / borrowValue;
     }
 
     function getAccountValues(address account) public view returns (uint supplyValue, uint borrowValue) {
