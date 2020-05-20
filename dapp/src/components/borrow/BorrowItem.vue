@@ -18,7 +18,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ tokenBalance }}
+                {{ maxBorrowAllowed }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,7 +33,8 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <borrow-form @formSucceed="reset" :marketAddress="marketAddress"/>
+      <borrow-form @formSucceed="reset" :marketAddress="marketAddress"
+                    :maxAmountAllowed="maxBorrowAllowed"/>
     </template>
   </div>
 </template>
@@ -41,6 +42,7 @@
 <script>
 import BorrowForm from '@/components/market/BorrowForm.vue';
 import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 
@@ -60,6 +62,9 @@ export default {
       tokenBalance: null,
       tokenName: null,
       tokenSymbol: null,
+      liquidity: null,
+      marketPrice: null,
+      maxBorrowAllowed: null,
     };
   },
   computed: {
@@ -81,11 +86,23 @@ export default {
           this.tokenBalance = Number(balance);
         });
     },
+    getMaxBorrowAllowed() {
+      this.controller.getLiquidity(this.account)
+        .then((liquidity) => {
+          this.liquidity = Number(liquidity);
+          return this.controller.getPrice(this.marketAddress);
+        })
+        .then((price) => {
+          this.marketPrice = Number(price);
+          this.maxBorrowAllowed = Number(this.liquidity / (this.marketPrice * 2));
+        });
+    },
   },
   components: {
     BorrowForm,
   },
   created() {
+    this.controller = new Controller();
     this.market = new Market(this.marketAddress);
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
@@ -98,10 +115,7 @@ export default {
         this.tokenSymbol = tokenSymbol;
         this.getBalance();
       });
+    this.getMaxBorrowAllowed();
   },
 };
 </script>
-
-<style scoped>
-
-</style>

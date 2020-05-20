@@ -9,7 +9,7 @@ import BorrowList from '@/components/borrow/BorrowList.vue';
 import Controller from '@/handlers/controller';
 
 export default {
-  name: 'Borrows',
+  name: 'Borrow',
   data() {
     return {
       controller: null,
@@ -33,7 +33,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>
