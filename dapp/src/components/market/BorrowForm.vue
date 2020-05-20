@@ -90,7 +90,7 @@ export default {
     },
     maxAmount() {
       if (this.maxAmount) {
-        this.amount = Math.floor(this.maxAmountAllowed);
+        this.amount = this.maxAmountAllowed;
       } else {
         this.amount = null;
       }

@@ -18,7 +18,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ tokenBalance }}
+                {{ maxRedeemAmount }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,7 +33,8 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <redeem-form @formSucceed="reset" :marketAddress="marketAddress"/>
+      <redeem-form @formSucceed="reset" :marketAddress="marketAddress"
+                   :maxAmountAllowed="maxRedeemAmount"/>
     </template>
   </div>
 </template>
@@ -60,6 +61,9 @@ export default {
       tokenBalance: null,
       tokenName: null,
       tokenSymbol: null,
+      userSupply: null,
+      balanceOfMarket: null,
+      maxRedeemAmount: null,
     };
   },
   computed: {
@@ -70,15 +74,24 @@ export default {
   methods: {
     reset() {
       this.flag = false;
-      this.getBalance();
+      this.getMaxRedeemAmount();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
+    getMaxRedeemAmount() {
+      this.market.getUpdatedSupplyOf(this.account)
+        .then((supply) => {
+          this.userSupply = Number(supply);
+          return this.token.balanceOf(this.marketAddress);
+        })
+        .then((balanceOfMarket) => {
+          this.balanceOfMarket = Number(balanceOfMarket);
+          if (this.balanceOfMarket >= this.userSupply) {
+            this.maxRedeemAmount = this.userSupply;
+          } else {
+            this.maxRedeemAmount = this.balanceOfMarket;
+          }
         });
     },
   },
@@ -96,12 +109,8 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
-        this.getBalance();
+        this.getMaxRedeemAmount();
       });
   },
 };
 </script>
-
-<style scoped>
-
-</style>

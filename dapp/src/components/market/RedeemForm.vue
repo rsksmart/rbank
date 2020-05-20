@@ -1,12 +1,12 @@
 <template>
-  <v-card class="RedeemForm ma-5" :lazy-validation="true" max-width="80%">
+  <v-card class="RedeemForm mx-5" :lazy-validation="true">
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
           <h2>Redeem from market {{marketAddress}} of token {{tokenSymbol}}</h2>
         </v-row>
         <v-row>
-          <v-col class="pb-0">
+          <v-col cols="10" class="pb-0">
             <v-text-field
               v-model.number="amount"
               label="Redeem amount"
@@ -14,6 +14,9 @@
               :rules="[rules.required, rules.marketSupply, rules.userSupply]"
               required>
             </v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-switch color="success" v-model="maxAmount" label="Máximo"/>
           </v-col>
         </v-row>
       </v-container>
@@ -38,6 +41,10 @@ export default {
       type: String,
       required: true,
     },
+    maxAmountAllowed: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -48,6 +55,7 @@ export default {
       validForm: false,
       userSupply: null,
       balanceOfMarket: null,
+      maxAmount: false,
       rules: {
         required: () => !!this.amount || 'Required.',
         marketSupply: () => this.balanceOfMarket >= this.amount || 'Market does not have enough funds',
@@ -71,6 +79,13 @@ export default {
       this.validForm = typeof this.rules.required() !== 'string'
         && typeof this.rules.marketSupply() !== 'string'
         && typeof this.rules.userSupply() !== 'string';
+    },
+    maxAmount() {
+      if (this.maxAmount) {
+        this.amount = this.maxAmountAllowed;
+      } else {
+        this.amount = null;
+      }
     },
   },
   created() {
