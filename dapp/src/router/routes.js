@@ -32,11 +32,18 @@ export default [
     component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DepositLending.vue'),
   },
   {
-    path: '/account',
-    name: 'Account',
-    icon: 'person',
+    path: '/supply',
+    name: 'Supply',
+    icon: 'get_app',
     publicShow: true,
-    component: () => import(/* webpackChunkName: "account" */ '@/views/Account.vue'),
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Supply.vue'),
+  },
+  {
+    path: '/liquidate',
+    name: 'Liquidations',
+    icon: 'local_mall',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Liquidated.vue'),
   },
   {
     path: '/settings',

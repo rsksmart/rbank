@@ -1,12 +1,12 @@
 <template>
-  <v-card class="SupplyForm ma-5" :lazy-validation="true" max-width="80%">
+  <v-card class="SupplyForm mx-5" :lazy-validation="true">
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
           <h2>Supply to market {{marketAddress}} of token {{tokenSymbol}}</h2>
         </v-row>
         <v-row>
-          <v-col class="pb-0">
+          <v-col cols="10" class="pb-0">
             <v-text-field
               v-model.number="amount"
               label="Supply amount"
@@ -14,6 +14,9 @@
               :rules="[rules.required, rules.minBalance]"
               required>
             </v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-switch color="success" v-model="maxAmount" label="Máximo"/>
           </v-col>
         </v-row>
       </v-container>
@@ -41,6 +44,7 @@ export default {
   },
   data() {
     return {
+      maxAmount: false,
       market: null,
       token: null,
       amount: null,
@@ -79,6 +83,13 @@ export default {
     amount() {
       this.validForm = typeof this.rules.minBalance() !== 'string'
         && typeof this.rules.required() !== 'string';
+    },
+    maxAmount() {
+      if (this.maxAmount) {
+        this.amount = this.tokenBalance;
+      } else {
+        this.amount = null;
+      }
     },
   },
   created() {

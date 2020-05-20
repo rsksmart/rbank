@@ -36,6 +36,8 @@ contract Market is MarketInterface {
 
     event Supply(address user, uint amount);
     event Redeem(address user, uint amount);
+    event Borrow(address user, uint amount);
+    event PayBorrow(address user, uint amount);
 
     constructor(ERC20 _token, uint _baseBorrowRate) public {
         require(ERC20(_token).totalSupply() >= 0);
@@ -178,7 +180,7 @@ contract Market is MarketInterface {
 
         (supplierSupplyValue, supplierBorrowValue) = controller.getAccountValues(supplier);
 
-        require(supplierSupplyValue >= supplierBorrowValue * controller.collateralFactor() / controller.MANTISSA());
+        require(supplierSupplyValue >= supplierBorrowValue * (controller.MANTISSA() + controller.collateralFactor()) / controller.MANTISSA());
     }
 
     function borrow(uint amount) public {
@@ -203,6 +205,8 @@ contract Market is MarketInterface {
         borrowSnapshot.interestIndex = borrowIndex;
 
         totalBorrows += amount;
+        
+        emit Borrow(msg.sender, amount);
     }
 
     function accrueInterest() public {
@@ -265,10 +269,18 @@ contract Market is MarketInterface {
     }
 
     function payBorrow(uint amount) public {
-        payBorrowInternal(msg.sender, msg.sender, amount);
+        uint paid;
+        uint additional;
+        
+        (paid, additional) = payBorrowInternal(msg.sender, msg.sender, amount);
+        
+        emit PayBorrow(msg.sender, paid);
+        
+        if (additional > 0)
+            emit Supply(msg.sender, additional);
     }
 
-    function payBorrowInternal(address payer, address borrower, uint amount) internal {
+    function payBorrowInternal(address payer, address borrower, uint amount) internal returns (uint paid, uint supplied) {
         accrueInterest();
 
         BorrowSnapshot storage snapshot = borrows[borrower];
@@ -294,6 +306,8 @@ contract Market is MarketInterface {
 
         if (additional > 0)
             supplyInternal(payer, additional);
+            
+        return (amount, additional);
     }
 }
 
