@@ -39,6 +39,28 @@ export default [
     component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Supply.vue'),
   },
   {
+    path: '/redeem',
+    name: 'Redeem',
+    icon: 'get_app',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Redeem.vue'),
+  },
+  {
+    path: '/borrows',
+    name: 'Borrows',
+    icon: 'credit_card',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "market" */ '@/views/Borrows.vue'),
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/payBorrow',
+    name: 'PayBorrow',
+    icon: 'credit_card',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/PayBorrow.vue'),
+  },
+  {
     path: '/liquidate',
     name: 'Liquidations',
     icon: 'local_mall',
@@ -60,14 +82,6 @@ export default [
     publicShow: false,
     component: () => import(/* webpackChunkName: "market" */ '@/views/Market.vue'),
     props: true,
-  },
-  {
-    path: '/borrows',
-    name: 'Borrows',
-    icon: 'credit_card_outline',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "market" */ '@/views/Borrows.vue'),
-    beforeEnter: requireAuth,
   },
   {
     path: '*',

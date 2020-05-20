@@ -1,15 +1,15 @@
 <template>
   <div>
-    <borrow-list :marketAddresses="marketAddresses"/>
+    <redeem-list :marketAddresses="marketAddresses"/>
   </div>
 </template>
 
 <script>
-import BorrowList from '@/components/borrow/BorrowList.vue';
+import RedeemList from '@/components/redeem/RedeemList.vue';
 import Controller from '@/handlers/controller';
 
 export default {
-  name: 'Borrows',
+  name: 'Redeem',
   data() {
     return {
       controller: null,
@@ -17,7 +17,7 @@ export default {
     };
   },
   components: {
-    BorrowList,
+    RedeemList,
   },
   methods: {
     loadMarkets() {
