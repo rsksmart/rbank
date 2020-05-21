@@ -1,12 +1,12 @@
 <template>
-  <v-card class="PayBorrowForm ma-5" :lazy-validation="true" max-width="80%">
+  <v-card class="PayBorrowForm mx-5" :lazy-validation="true">
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
           <h2>PayBorrow of market {{marketAddress}} of token {{tokenSymbol}}</h2>
         </v-row>
         <v-row>
-          <v-col class="pb-0">
+          <v-col cols="10" class="pb-0">
             <v-text-field
               v-model.number="amount"
               label="Debt amount"
@@ -19,6 +19,9 @@
               ]"
               required>
             </v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-switch color="success" v-model="maxAmount" label="Máximo"/>
           </v-col>
         </v-row>
       </v-container>
@@ -43,6 +46,10 @@ export default {
       type: String,
       required: true,
     },
+    maxAmountAllowed: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -54,6 +61,7 @@ export default {
       borrowByUser: null,
       balanceOfUser: null,
       validForm: false,
+      maxAmount: false,
       rules: {
         required: () => !!this.amount || 'Required.',
         debtExists: () => (this.borrowByUser > 0 && !!this.amount)
@@ -85,6 +93,13 @@ export default {
         && typeof this.rules.debtExists() !== 'string'
         && typeof this.rules.hasEnoughTokens() !== 'string'
         && typeof this.rules.notBiggerThanDebt() !== 'string';
+    },
+    maxAmount() {
+      if (this.maxAmount) {
+        this.amount = this.maxAmountAllowed;
+      } else {
+        this.amount = null;
+      }
     },
   },
   created() {
