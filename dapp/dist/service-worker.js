@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.5c4d24b80833a4f80be73c0fd39304b7.js"
+  "/precache-manifest.bdf6b8c8a9bcc99418e9bda6b9cfdbf2.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "rbank"});
