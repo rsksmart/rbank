@@ -4,32 +4,32 @@
       <v-card width="20%" class="ma-5">
         <v-list-item>
           <v-list-item-content>
-            <div class="overline mb-4">Depositado</div>
-            <v-list-item-title class="headline">$ {{profit}}</v-list-item-title>
+            <div class="overline mb-4">Supplied</div>
+            <v-list-item-title class="headline">{{supplied | formatPrice}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card>
       <v-card width="20%" class="ma-5">
         <v-list-item>
           <v-list-item-content>
-            <div class="overline mb-4">Deuda</div>
-            <v-list-item-title class="headline">$ {{profit}}</v-list-item-title>
+            <div class="overline mb-4">Debt</div>
+            <v-list-item-title class="headline">{{borrowed | formatPrice}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card>
       <v-card width="20%" class="ma-5">
         <v-list-item>
           <v-list-item-content>
-            <div class="overline mb-4">Poder de deuda</div>
-            <v-list-item-title class="headline">$ {{profit}}</v-list-item-title>
+            <div class="overline mb-4">Debt power</div>
+            <v-list-item-title class="headline">{{liquidity | formatPrice}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card>
       <v-card width="20%" class="ma-5">
         <v-list-item>
           <v-list-item-content>
-            <div class="overline mb-4">Intereses generados</div>
-            <v-list-item-title class="headline">$ {{profit}}</v-list-item-title>
+            <div class="overline mb-4">Earnings</div>
+            <v-list-item-title class="headline">0</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card>
@@ -38,7 +38,9 @@
       <v-card width="90%" class="my-auto py-auto">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="headline">Health Factor</v-list-item-title>
+            <v-list-item-title class="headline">
+              Health Factor {{accountHealth}}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <div class="d-flex justify-space-around mb-4">
@@ -153,11 +155,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
+
 export default {
   name: 'DepositLending',
   data() {
     return {
-      debt: 2000,
+      controller: null,
+      accountHealth: null,
+      supplied: null,
+      borrowed: null,
+      liquidity: null,
       profit: 50000,
       factor: 66,
       btc: {
@@ -174,9 +183,26 @@ export default {
       taken: 2000,
     };
   },
+  computed: {
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
+  },
+  created() {
+    this.controller = new Controller();
+    this.controller.getAccountHealth(this.account)
+      .then((accountHealth) => {
+        this.accountHealth = Number(accountHealth);
+      });
+    this.controller.getAccountValues(this.account)
+      .then((result) => {
+        this.supplied = Number(result.supplyValue);
+        this.borrowed = Number(result.borrowValue);
+      });
+    this.controller.getLiquidity(this.account)
+      .then((liquidity) => {
+        this.liquidity = Number(liquidity);
+      });
+  },
 };
 </script>
-
-<style scoped>
-
-</style>

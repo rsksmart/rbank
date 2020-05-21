@@ -26,7 +26,7 @@ export default [
   },
   {
     path: '/depositLending',
-    name: 'Lending / borrow',
+    name: 'Lending',
     icon: 'local_atm',
     publicShow: true,
     component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DepositLending.vue'),
@@ -34,9 +34,31 @@ export default [
   {
     path: '/supply',
     name: 'Supply',
-    icon: 'get_app',
+    icon: 'archive',
     publicShow: true,
     component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Supply.vue'),
+  },
+  {
+    path: '/borrow',
+    name: 'Borrow',
+    icon: 'attach_money',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "market" */ '@/views/Borrow.vue'),
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/payBorrow',
+    name: 'PayBorrow',
+    icon: 'credit_card',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/PayBorrow.vue'),
+  },
+  {
+    path: '/redeem',
+    name: 'Redeem',
+    icon: 'unarchive',
+    publicShow: true,
+    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Redeem.vue'),
   },
   {
     path: '/liquidate',

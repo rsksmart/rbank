@@ -18,6 +18,12 @@
     <v-list-item-title class="text-center">
       {{ price }}
     </v-list-item-title>
+    <v-list-item-title class="text-center">
+      {{ cash }}
+    </v-list-item-title>
+    <v-list-item-title class="text-center">
+      {{ baseBorrowRate }}
+    </v-list-item-title>
   </v-list-item>
 </template>
 
@@ -43,6 +49,8 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       price: null,
+      cash: null,
+      baseBorrowRate: null,
     };
   },
   methods: {
@@ -74,6 +82,12 @@ export default {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
       });
+    this.market.eventualCash
+      // eslint-disable-next-line no-return-assign
+      .then((cash) => this.cash = cash);
+    this.market.eventualBaseBorrowRate
+      // eslint-disable-next-line no-return-assign
+      .then((rate) => this.baseBorrowRate = rate);
     this.controller.getPrice(this.marketAddress)
       .then((price) => {
         this.price = price;

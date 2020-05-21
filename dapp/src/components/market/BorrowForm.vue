@@ -1,12 +1,12 @@
 <template>
-  <v-card class="BorrowForm ma-5" :lazy-validation="true" max-width="80%">
+  <v-card class="BorrowForm mx-5" :lazy-validation="true">
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
           <h2>Borrow from market {{marketAddress}} of token {{tokenSymbol}}</h2>
         </v-row>
         <v-row>
-          <v-col class="pb-0">
+          <v-col cols="10" class="pb-0">
             <v-text-field
               v-model.number="amount"
               label="Borrow amount"
@@ -14,6 +14,9 @@
               type="number"
               required>
             </v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-switch color="success" v-model="maxAmount" label="Máximo"/>
           </v-col>
         </v-row>
       </v-container>
@@ -39,6 +42,10 @@ export default {
       type: String,
       required: true,
     },
+    maxAmountAllowed: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -50,6 +57,7 @@ export default {
       tokenSymbol: null,
       liquidity: null,
       validForm: false,
+      maxAmount: false,
       rules: {
         required: () => (!!this.amount || 'Required.'),
         liquidity: () => (this.liquidity >= this.marketPrice * 2 * this.amount || 'not enough liquidity'),
@@ -59,7 +67,6 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      isOwner: (state) => state.Session.isOwner,
     }),
   },
   methods: {
@@ -80,6 +87,13 @@ export default {
     amount() {
       this.validForm = typeof this.rules.liquidity() !== 'string'
         && typeof this.rules.required() !== 'string';
+    },
+    maxAmount() {
+      if (this.maxAmount) {
+        this.amount = this.maxAmountAllowed;
+      } else {
+        this.amount = null;
+      }
     },
   },
   created() {
