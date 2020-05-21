@@ -18,7 +18,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ tokenBalance }}
+                {{ updatedBorrowBy }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,7 +33,8 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <pay-borrow-form @formSucceed="reset" :marketAddress="marketAddress"/>
+      <pay-borrow-form @formSucceed="reset" :marketAddress="marketAddress"
+                       :maxAmountAllowed="updatedBorrowBy"/>
     </template>
   </div>
 </template>
@@ -57,7 +58,7 @@ export default {
       flag: false,
       market: null,
       token: null,
-      tokenBalance: null,
+      updatedBorrowBy: null,
       tokenName: null,
       tokenSymbol: null,
     };
@@ -70,15 +71,15 @@ export default {
   methods: {
     reset() {
       this.flag = false;
-      this.getBalance();
+      this.getUpdatedBorrowBy();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
+    getUpdatedBorrowBy() {
+      this.market.getUpdatedBorrowBy(this.account)
+        .then((borrowBy) => {
+          this.updatedBorrowBy = Number(borrowBy);
         });
     },
   },
@@ -96,7 +97,7 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
-        this.getBalance();
+        this.getUpdatedBorrowBy();
       });
   },
 };

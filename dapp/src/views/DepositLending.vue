@@ -29,7 +29,7 @@
         <v-list-item>
           <v-list-item-content>
             <div class="overline mb-4">Earnings</div>
-            <v-list-item-title class="headline">0</v-list-item-title>
+            <v-list-item-title class="headline">...</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card>
@@ -39,7 +39,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="headline">
-              Health Factor {{accountHealth}}
+              Health Factor {{accountHealth / controller.MANTISSA}}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -65,98 +65,14 @@
         </div>
       </v-card>
     </div>
-    <div class="d-flex justify-space-around my-5">
-      <v-card width="25%" outlined>
-        <v-list-item three-line>
-          <v-list-item-avatar tile size="80">
-            <v-img :src="btc_leaf.src"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="headline mb-1 text-right">$ {{btc_leaf.price}}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-divider class="mx-5"></v-divider>
-        <v-list class="transparent">
-          <v-list-item>
-            <v-list-item-title>Suministrado</v-list-item-title>
-            <v-list-item-subtitle class="text-right">
-              {{given}}
-            </v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-        <v-divider class="mx-5"></v-divider>
-        <h3 class="text-center ma-2">Tasas anuales</h3>
-        <div class="d-flex justify-space-around">
-          <v-card width="45%" class="ma-2">
-            <v-list-item>
-              <v-list-item-content>
-                <div class="overline mb-4 text-center">Suministro</div>
-                <v-list-item-title class="headline text-center">{{giver_rate}} %
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-card>
-          <v-card width="45%" class="ma-2">
-            <v-list-item>
-              <v-list-item-content>
-                <div class="overline mb-4 text-center">Tomador</div>
-                <v-list-item-title class="headline text-center">{{taker_rate}} %
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-card>
-        </div>
-      </v-card>
-      <v-card width="25%" outlined>
-        <v-list-item three-line>
-          <v-list-item-avatar tile size="80">
-            <v-img :src="btc.src"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="headline mb-1 text-right">$ {{btc.price}}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-divider class="mx-5"></v-divider>
-        <v-list class="transparent">
-          <v-list-item>
-            <v-list-item-title>Suministrador</v-list-item-title>
-            <v-list-item-subtitle class="text-right">
-              {{taken}}
-            </v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-        <v-divider class="mx-5"></v-divider>
-        <h3 class="text-center ma-2">Tasas anuales</h3>
-        <div class="d-flex justify-space-around">
-          <v-card width="45%" class="ma-2">
-            <v-list-item>
-              <v-list-item-content>
-                <div class="overline mb-4 text-center">Suministro</div>
-                <v-list-item-title class="headline text-center">{{giver_rate}} %
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-card>
-          <v-card width="45%" class="ma-2">
-            <v-list-item>
-              <v-list-item-content>
-                <div class="overline mb-4 text-center">Tomador</div>
-                <v-list-item-title class="headline text-center">{{taker_rate}} %
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-card>
-        </div>
-      </v-card>
-    </div>
+    <market-detail-list :marketAddresses="marketAddresses"/>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import Controller from '@/handlers/controller';
+import MarketDetailList from '@/components/lending/MarketDetailList.vue';
 
 export default {
   name: 'DepositLending',
@@ -167,6 +83,7 @@ export default {
       supplied: null,
       borrowed: null,
       liquidity: null,
+      marketAddresses: null,
       profit: 50000,
       factor: 66,
       btc: {
@@ -188,6 +105,9 @@ export default {
       account: (state) => state.Session.account,
     }),
   },
+  components: {
+    MarketDetailList,
+  },
   created() {
     this.controller = new Controller();
     this.controller.getAccountHealth(this.account)
@@ -202,6 +122,10 @@ export default {
     this.controller.getLiquidity(this.account)
       .then((liquidity) => {
         this.liquidity = Number(liquidity);
+      });
+    this.controller.eventualMarketAddresses
+      .then((marketAddresses) => {
+        this.marketAddresses = marketAddresses;
       });
   },
 };
