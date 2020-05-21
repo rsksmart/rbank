@@ -62,7 +62,10 @@ export default class Controller {
     return new Promise((resolve, reject) => {
       this.instance.methods.getAccountValues(account)
         .call()
-        .then(resolve)
+        .then((values) => resolve({
+          supplyValue: Number(values.supplyValue),
+          borrowValue: Number(values.borrowValue),
+        }))
         .catch(reject);
     });
   }

@@ -25,7 +25,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                5%
+                ... %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>

@@ -39,8 +39,11 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="headline">
-              Health Factor {{accountHealth / controller.MANTISSA}}
+              Health Factor: {{factor}} %
             </v-list-item-title>
+            <v-list-item-subtitle>
+              Account in risk when health factor is bigger than 50%
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <div class="d-flex justify-space-around mb-4">
@@ -52,14 +55,14 @@
           </v-card>
           <v-progress-linear
           background-color="blue-grey lighten-5"
-          color="light-green darken-4"
+          :color="barColor"
           height="30" stripped
-          :value="100-factor">
+          :value="factor">
           </v-progress-linear>
           <v-card class="d-flex justify-center mx-2" min-width="50"
             color="red lighten-1" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
-              {{factor}} %
+              50 %
             </v-card-text>
           </v-card>
         </div>
@@ -84,21 +87,16 @@ export default {
       borrowed: null,
       liquidity: null,
       marketAddresses: null,
-      profit: 50000,
-      factor: 66,
-      btc: {
-        src: 'https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png',
-        price: 50.2,
-      },
-      btc_leaf: {
-        src: 'https://developers.rsk.co/defi/img/btc-logo.svg',
-        price: 50.2,
-      },
-      taker_rate: 7,
-      giver_rate: 5,
-      given: 30000,
-      taken: 2000,
+      factor: null,
+      barColor: null,
     };
+  },
+  methods: {
+    calculateHealth() {
+      this.factor = (this.borrowed === 0 || this.supplied === 0)
+        ? 0 : (this.borrowed / this.supplied) * 100;
+      this.barColor = (this.factor <= 50) ? 'light-green darken-4' : 'red';
+    },
   },
   computed: {
     ...mapState({
@@ -115,9 +113,10 @@ export default {
         this.accountHealth = Number(accountHealth);
       });
     this.controller.getAccountValues(this.account)
-      .then((result) => {
-        this.supplied = Number(result.supplyValue);
-        this.borrowed = Number(result.borrowValue);
+      .then(({ supplyValue, borrowValue }) => {
+        this.supplied = Number(supplyValue);
+        this.borrowed = Number(borrowValue);
+        this.calculateHealth();
       });
     this.controller.getLiquidity(this.account)
       .then((liquidity) => {

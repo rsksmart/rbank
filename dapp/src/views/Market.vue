@@ -46,26 +46,7 @@
             <v-col class="display-1 text-center" cols="4">{{ borrowBy }}</v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="d-flex justify-space-around">
-          <v-btn x-large raise color="green" dark class="my-2"
-                 @click="showSupplyForm">
-            Supply
-          </v-btn>
-          <v-btn x-large depressed color="blue" dark class="my-2"
-                 @click="showBorrowForm">
-            Borrow
-          </v-btn>
-          <v-btn x-large depressed color="teal" dark class="my-2"
-                 @click="showRedeemForm">
-            Redeem
-          </v-btn>
-          <v-btn x-large depressed color="indigo lighten-1" dark class="my-2"
-                 @click="showPayBorrowForm">
-            Pay debt
-          </v-btn>
-        </v-card-actions>
       </v-card>
-      <component :is="actionForm" :marketAddress="id" @formSucceed="reset" id="scroll-target"/>
     </template>
   </div>
 </template>
@@ -77,11 +58,6 @@ import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 import Price from '@/components/market/Price.vue';
-
-import SupplyForm from '@/components/market/SupplyForm.vue';
-import BorrowForm from '@/components/market/BorrowForm.vue';
-import RedeemForm from '@/components/market/RedeemForm.vue';
-import PayBorrowForm from '@/components/market/PayBorrowForm.vue';
 
 export default {
   name: 'Market',
@@ -127,22 +103,6 @@ export default {
       this.loadMarketBorrowBy();
       this.loadTokenBalanceOf();
     },
-    showSupplyForm() {
-      this.actionForm = 'SupplyForm';
-      this.$vuetify.goTo(this.pageHeight);
-    },
-    showBorrowForm() {
-      this.actionForm = 'BorrowForm';
-      this.$vuetify.goTo(this.pageHeight);
-    },
-    showRedeemForm() {
-      this.actionForm = 'RedeemForm';
-      this.$vuetify.goTo(this.pageHeight);
-    },
-    showPayBorrowForm() {
-      this.actionForm = 'PayBorrowForm';
-      this.$vuetify.goTo(this.pageHeight);
-    },
     loadTokenBalanceOf() {
       this.token.balanceOf(this.account)
         .then((balanceOf) => {
@@ -182,10 +142,6 @@ export default {
   },
   components: {
     Price,
-    SupplyForm,
-    BorrowForm,
-    RedeemForm,
-    PayBorrowForm,
   },
   created() {
     this.controller = new Controller();
