@@ -9,7 +9,9 @@
                  <v-list-item-subtitle class="text-center">Assets</v-list-item-subtitle>
                </v-col>
                <v-col cols="4">
-                 <v-list-item-subtitle class="text-center">Available for you</v-list-item-subtitle>
+                 <v-list-item-subtitle class="text-center">
+                   Available on your account
+                 </v-list-item-subtitle>
                </v-col>
                <v-col cols="4">
                  <v-list-item-subtitle class="text-center">APR%</v-list-item-subtitle>

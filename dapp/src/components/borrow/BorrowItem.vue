@@ -59,11 +59,11 @@ export default {
       flag: false,
       market: null,
       token: null,
-      tokenBalance: null,
       tokenName: null,
       tokenSymbol: null,
       liquidity: null,
       marketPrice: null,
+      marketCash: null,
       maxBorrowAllowed: null,
     };
   },
@@ -75,19 +75,17 @@ export default {
   methods: {
     reset() {
       this.flag = false;
-      this.getBalance();
+      this.getMaxBorrowAllowed();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
-        });
-    },
     getMaxBorrowAllowed() {
-      this.controller.getLiquidity(this.account)
+      this.market.eventualCash
+        .then((balance) => {
+          this.marketCash = balance;
+          return this.controller.getLiquidity(this.account);
+        })
         .then((liquidity) => {
           this.liquidity = Number(liquidity);
           return this.controller.getPrice(this.marketAddress);
@@ -95,6 +93,8 @@ export default {
         .then((price) => {
           this.marketPrice = Number(price);
           this.maxBorrowAllowed = Math.floor(this.liquidity / (this.marketPrice * 2));
+          this.maxBorrowAllowed = this.maxBorrowAllowed >= this.marketCash
+            ? this.marketCash : this.maxBorrowAllowed;
         });
     },
   },
@@ -113,7 +113,6 @@ export default {
       .then(([tokenName, tokenSymbol]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
-        this.getBalance();
       });
     this.getMaxBorrowAllowed();
   },
