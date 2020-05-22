@@ -11,7 +11,7 @@ module.exports = {
       .setupMetamask(passphrase, password)
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Localhost 8545']")
-      .pause(50000)
+      .pause(5000)
       .end()
   },
 };
