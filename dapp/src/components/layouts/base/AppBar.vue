@@ -10,7 +10,7 @@
     <v-btn icon v-if="isLogged">
       <v-icon>mdi-link</v-icon>
     </v-btn>
-    <v-btn icon @click="connect" v-else>
+    <v-btn icon id="connectButton" @click="connect" v-else>
       <v-icon>mdi-link-off</v-icon>
     </v-btn>
   </v-app-bar>
