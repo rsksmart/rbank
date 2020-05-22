@@ -1,15 +1,15 @@
 {
   "contractName": "SafeMath",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Math operations with safety checks that throw on error\",\"methods\":{},\"title\":\"SafeMath\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/test/SafeMath.sol\":\"SafeMath\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/test/SafeMath.sol\":{\"keccak256\":\"0xa83f091bb99c1f412f78ceb5ca5a23f8adc2fdf0f20d730ac5de3ed99609d08a\",\"urls\":[\"bzz-raw://3d8d04982ebb23c75e529ae3fab2c0e53d7ffccf6b90308219f232f578bbc9b5\",\"dweb:/ipfs/QmeZ8TeKWfYHgZ1H5d5uWzjwVwFsC4E2sbBDxy96XWabJr\"]}},\"version\":1}",
-  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820bc17a6be0be2d75154b3abbb56bdfd9e8dd9733eb249ebf474ee94dce493ddc164736f6c63430005100032",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820bc17a6be0be2d75154b3abbb56bdfd9e8dd9733eb249ebf474ee94dce493ddc164736f6c63430005100032",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Math operations with safety checks that throw on error\",\"methods\":{},\"title\":\"SafeMath\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/annipi/IOVLABS/rbank/contracts/test/SafeMath.sol\":\"SafeMath\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/annipi/IOVLABS/rbank/contracts/test/SafeMath.sol\":{\"keccak256\":\"0xa83f091bb99c1f412f78ceb5ca5a23f8adc2fdf0f20d730ac5de3ed99609d08a\",\"urls\":[\"bzz-raw://3d8d04982ebb23c75e529ae3fab2c0e53d7ffccf6b90308219f232f578bbc9b5\",\"dweb:/ipfs/QmeZ8TeKWfYHgZ1H5d5uWzjwVwFsC4E2sbBDxy96XWabJr\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820dccb63201d635e9b66f4df65578af5ecc91a20a844891d8521f9be3e39da3dc264736f6c63430005100032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820dccb63201d635e9b66f4df65578af5ecc91a20a844891d8521f9be3e39da3dc264736f6c63430005100032",
   "sourceMap": "117:1336:9:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
   "deployedSourceMap": "117:1336:9:-;;;;;;;;",
   "source": "pragma solidity ^0.5.12;\n\n\n/**\n * @title SafeMath\n * @dev Math operations with safety checks that throw on error\n */\nlibrary SafeMath {\n\n    /**\n    * @dev Multiplies two numbers, throws on overflow.\n    */\n    function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n        // Gas optimization: this is cheaper than asserting 'a' not being zero, but the\n        // benefit is lost if 'b' is also tested.\n        // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522\n        if (a == 0) {\n            return 0;\n        }\n\n        c = a * b;\n        assert(c / a == b);\n        return c;\n    }\n\n    /**\n    * @dev Integer division of two numbers, truncating the quotient.\n    */\n    function div(uint256 a, uint256 b) internal pure returns (uint256) {\n        // assert(b > 0); // Solidity automatically throws when dividing by 0\n        // uint256 c = a / b;\n        // assert(a == b * c + a % b); // There is no case in which this doesn't hold\n        return a / b;\n    }\n\n    /**\n    * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).\n    */\n    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n        assert(b <= a);\n        return a - b;\n    }\n\n    /**\n    * @dev Adds two numbers, throws on overflow.\n    */\n    function add(uint256 a, uint256 b) internal pure returns (uint256 c) {\n        c = a + b;\n        assert(c >= a);\n        return c;\n    }\n}",
-  "sourcePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/SafeMath.sol",
+  "sourcePath": "/home/annipi/IOVLABS/rbank/contracts/test/SafeMath.sol",
   "ast": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/SafeMath.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/test/SafeMath.sol",
     "exportedSymbols": {
       "SafeMath": [
         1665
@@ -1175,7 +1175,7 @@
     "src": "0:1453:9"
   },
   "legacyAST": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/SafeMath.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/test/SafeMath.sol",
     "exportedSymbols": {
       "SafeMath": [
         1665
@@ -2345,8 +2345,8 @@
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-04-24T00:29:57.419Z",
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-04-27T17:02:50.544Z",
   "devdoc": {
     "details": "Math operations with safety checks that throw on error",
     "methods": {},

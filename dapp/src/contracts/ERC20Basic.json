@@ -89,15 +89,15 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Simpler version of ERC20 interface See https://github.com/ethereum/EIPs/issues/179\",\"methods\":{},\"title\":\"ERC20Basic\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/test/ERC20Basic.sol\":\"ERC20Basic\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/test/ERC20Basic.sol\":{\"keccak256\":\"0x608e6105b904166b430c78d9753cf47fda95c16a77cf32766b7788517fa30b83\",\"urls\":[\"bzz-raw://312dd66988716a0fa6d93869bea9a309c565050a181667af846ce62fb1528c14\",\"dweb:/ipfs/QmejTneFNrzGshLhJpHE2dTJVhGWvFkwgi1eHP2CAj6uqE\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Simpler version of ERC20 interface See https://github.com/ethereum/EIPs/issues/179\",\"methods\":{},\"title\":\"ERC20Basic\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/annipi/IOVLABS/rbank/contracts/test/ERC20Basic.sol\":\"ERC20Basic\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/annipi/IOVLABS/rbank/contracts/test/ERC20Basic.sol\":{\"keccak256\":\"0x608e6105b904166b430c78d9753cf47fda95c16a77cf32766b7788517fa30b83\",\"urls\":[\"bzz-raw://312dd66988716a0fa6d93869bea9a309c565050a181667af846ce62fb1528c14\",\"dweb:/ipfs/QmejTneFNrzGshLhJpHE2dTJVhGWvFkwgi1eHP2CAj6uqE\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity ^0.5.12;\n\n\n/**\n * @title ERC20Basic\n * @dev Simpler version of ERC20 interface\n * See https://github.com/ethereum/EIPs/issues/179\n */\ncontract ERC20Basic {\n    function totalSupply() public view returns (uint256);\n    function balanceOf(address who) public view returns (uint256);\n    function transfer(address to, uint256 value) public returns (bool);\n    event Transfer(address indexed from, address indexed to, uint256 value);\n}",
-  "sourcePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/ERC20Basic.sol",
+  "sourcePath": "/home/annipi/IOVLABS/rbank/contracts/test/ERC20Basic.sol",
   "ast": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/ERC20Basic.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/test/ERC20Basic.sol",
     "exportedSymbols": {
       "ERC20Basic": [
         1498
@@ -480,7 +480,7 @@
     "src": "0:447:7"
   },
   "legacyAST": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/test/ERC20Basic.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/test/ERC20Basic.sol",
     "exportedSymbols": {
       "ERC20Basic": [
         1498
@@ -867,8 +867,8 @@
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-04-24T00:29:57.417Z",
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-04-27T17:02:50.542Z",
   "devdoc": {
     "details": "Simpler version of ERC20 interface See https://github.com/ethereum/EIPs/issues/179",
     "methods": {},

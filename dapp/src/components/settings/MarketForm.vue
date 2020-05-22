@@ -100,9 +100,6 @@ export default {
             this.$emit('marketCreated');
           });
       }
-      setTimeout(() => {
-        this.reset();
-      }, 3000);
     },
     isValidForm() {
       this.validForm = typeof this.rules.requiredAddress() !== 'string'

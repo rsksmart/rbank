@@ -101,15 +101,15 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"borrowBy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"supplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"updatedBorrowBy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"updatedSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/MarketInterface.sol\":\"MarketInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/mesi/Projects/IOVLabs/rbank/contracts/MarketInterface.sol\":{\"keccak256\":\"0xf6fc1fe86a63f58e28ffb5aabeb6667e0e9760d661cdcd311f6e00cc574ff729\",\"urls\":[\"bzz-raw://23c7e79d932a76e041f69eb6b0c3ec03ee754092a44553f755074296e681ceb9\",\"dweb:/ipfs/Qmdnqv8UgeoYetaNdFcfaX6gdHpkZtCJRqQBa4fXduZmt4\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"borrowBy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"supplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"updatedBorrowBy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"updatedSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/annipi/IOVLABS/rbank/contracts/MarketInterface.sol\":\"MarketInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/annipi/IOVLABS/rbank/contracts/MarketInterface.sol\":{\"keccak256\":\"0xf6fc1fe86a63f58e28ffb5aabeb6667e0e9760d661cdcd311f6e00cc574ff729\",\"urls\":[\"bzz-raw://23c7e79d932a76e041f69eb6b0c3ec03ee754092a44553f755074296e681ceb9\",\"dweb:/ipfs/Qmdnqv8UgeoYetaNdFcfaX6gdHpkZtCJRqQBa4fXduZmt4\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity >=0.5.0 <0.6.0;\n\ninterface MarketInterface {\n    function token() external view returns (address);\n    function supplyOf(address account) external view returns (uint);\n    function borrowBy(address account) external view returns (uint);\n    function updatedSupplyOf(address account) external view returns (uint);\n    function updatedBorrowBy(address account) external view returns (uint);\n}\n\n",
-  "sourcePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/MarketInterface.sol",
+  "sourcePath": "/home/annipi/IOVLABS/rbank/contracts/MarketInterface.sol",
   "ast": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/MarketInterface.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/MarketInterface.sol",
     "exportedSymbols": {
       "MarketInterface": [
         1283
@@ -536,7 +536,7 @@
     "src": "0:408:2"
   },
   "legacyAST": {
-    "absolutePath": "/home/mesi/Projects/IOVLabs/rbank/contracts/MarketInterface.sol",
+    "absolutePath": "/home/annipi/IOVLABS/rbank/contracts/MarketInterface.sol",
     "exportedSymbols": {
       "MarketInterface": [
         1283
@@ -967,8 +967,8 @@
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-04-24T00:29:57.411Z",
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-04-27T17:02:50.539Z",
   "devdoc": {
     "methods": {}
   },

@@ -1,0 +1,44 @@
+<template>
+   <div>
+     <v-container fluid class="d-flex justify-center">
+       <v-card width="80%" elevation="0">
+         <v-list>
+           <v-list-item>
+             <v-row>
+               <v-col cols="4">
+                 <v-list-item-subtitle class="text-center">Assets</v-list-item-subtitle>
+               </v-col>
+               <v-col cols="4">
+                 <v-list-item-subtitle class="text-center">
+                   Available on your account
+                 </v-list-item-subtitle>
+               </v-col>
+               <v-col cols="4">
+                 <v-list-item-subtitle class="text-center">APR%</v-list-item-subtitle>
+               </v-col>
+             </v-row>
+           </v-list-item>
+           <supply-item v-for="(market, idx) in marketAddresses"
+                        :key="`market-item-${idx}`" :marketAddress="market"/>
+         </v-list>
+       </v-card>
+     </v-container>
+   </div>
+</template>
+
+<script>
+import SupplyItem from '@/components/supply/SupplyItem.vue';
+
+export default {
+  name: 'SupplyList',
+  props: {
+    marketAddresses: {
+      type: Array,
+      required: true,
+    },
+  },
+  components: {
+    SupplyItem,
+  },
+};
+</script>

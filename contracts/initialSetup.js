@@ -39,31 +39,31 @@ initialize = (callback) =>{
   console.log('Rbank initialization...\n');
   let controller = new web3.eth.Contract(Controller.abi, controllerAddress);
   // set collateralFactor and liquidationFactor
-  const collateralFactor = 200000;
-  const liquidationFactor = 100000;
+  const collateralFactor = 1000000;
+  const liquidationFactor = 500000;
   const m = {
     tk1: {
-      initialSupply: 20000,
-      name: 'Ronald Coin',
+      initialSupply: 1000000000,
+      name: 'Token 1',
       decimalDigits: 0,
-      symbol: 'RDC'
+      symbol: 'TK1'
     },
     tk2: {
-      initialSupply: 30000,
-      name: 'Anni Coin',
+      initialSupply: 1000000000,
+      name: 'Token 2',
       decimalDigits: 0,
-      symbol: 'ANC'
+      symbol: 'TK2'
     },
     tk3: {
-      initialSupply: 20000,
-      name: 'Mesi Coin',
+      initialSupply: 1000000000,
+      name: 'Token 3',
       decimalDigits: 0,
-      symbol: 'MSC'
+      symbol: 'TK3'
     },
   };
-  const aliceTokens = 5000;
-  const bobTokens = 2000;
-  const charlieTokens = 1000;
+  const aliceTokens = 1000000;
+  const bobTokens = 1000000;
+  const charlieTokens = 1000000;
   getAccount()
     .then(({rBank}) => {
       controller.methods.setCollateralFactor(collateralFactor)

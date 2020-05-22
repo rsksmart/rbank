@@ -10,6 +10,8 @@
               <v-list-item-subtitle class="text-center">Borrows</v-list-item-subtitle>
               <v-list-item-subtitle class="text-center">Supplies</v-list-item-subtitle>
               <v-list-item-subtitle class="text-center">Price</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Current Cash</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-center">Base borrow rate</v-list-item-subtitle>
             </v-list-item>
             <market-list-item v-for="(marketAddress, idx) in marketAddresses"
               :key="`market-list-item-${idx}`" :marketAddress="marketAddress"/>
