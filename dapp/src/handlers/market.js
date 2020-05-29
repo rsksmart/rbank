@@ -121,6 +121,19 @@ export default class Market {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  getBorrowEvents() {
+    return new Promise((resolve, reject) => {
+      this.instance.getPastEvents('Borrow',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   setController(account, controllerAddress) {
     return new Promise((resolve, reject) => {
       send(this.instance.methods.setController(controllerAddress), account)
