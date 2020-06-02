@@ -4,28 +4,25 @@
       <v-card width="80%" elevation="3">
         <v-card-title> Market {{token}}</v-card-title>
         <v-list>
-          <!--          <v-list-item>-->
-          <!--            <v-row>-->
-          <!--              <v-col cols="3">-->
-          <!--                <v-list-item-subtitle class="text-center">Assets
-          </v-list-item-subtitle>-->
-          <!--              </v-col>-->
-          <!--              <v-col cols="6">-->
-          <!--                <v-list-item-subtitle class="text-center">Addresses
-          </v-list-item-subtitle>-->
-          <!--              </v-col>-->
-          <!--              <v-col cols="3">-->
-          <!--                <v-list-item-subtitle class="text-center">Quantity
-          </v-list-item-subtitle>-->
-          <!--              </v-col>-->
-          <!--            </v-row>-->
-          <!--          </v-list-item>-->
-          <!--          <liquidated-item v-for="(liquidated, idx) in liquidatedList"-->
-          <!--                       :key="`liquidated-item-${idx}`" :liquidated="liquidated"/>-->
-          <v-list-item v-for="(bEvent, idx) in unhealthyAccounts"
-                     :key="`liquidated-item-${idx}`">
-            {{bEvent}}
+          <v-list-item>
+            <v-row>
+              <v-col cols="6">
+                <v-list-item-subtitle class="text-center">Address
+                </v-list-item-subtitle>
+              </v-col>
+              <v-col cols="3">
+                <v-list-item-subtitle class="text-center">Debt
+                </v-list-item-subtitle>
+              </v-col>
+              <v-col cols="3">
+                <v-list-item-subtitle class="text-center">price
+                </v-list-item-subtitle>
+              </v-col>
+            </v-row>
           </v-list-item>
+          <liquidated-item v-for="(account, idx) in unhealthyAccounts"
+                           :key="`liquidated-item-${account}-${idx}`"
+                           :account="account"/>
         </v-list>
       </v-card>
     </v-container>
