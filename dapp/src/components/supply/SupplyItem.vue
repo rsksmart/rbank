@@ -25,7 +25,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                ... %
+                {{ apr.toFixed(2) }} %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -41,6 +41,7 @@
 <script>
 import SupplyForm from '@/components/market/SupplyForm.vue';
 import { mapState } from 'vuex';
+import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 import Token from '@/handlers/token';
 
@@ -55,11 +56,13 @@ export default {
   data() {
     return {
       flag: false,
+      controller: null,
       market: null,
       token: null,
       tokenBalance: null,
       tokenName: null,
       tokenSymbol: null,
+      apr: 0,
     };
   },
   computed: {
@@ -71,6 +74,7 @@ export default {
     reset() {
       this.flag = false;
       this.getBalance();
+      this.getBorrowRate();
     },
     enableForm() {
       this.flag = !this.flag;
@@ -81,11 +85,18 @@ export default {
           this.tokenBalance = Number(balance);
         });
     },
+    getBorrowRate() {
+      this.market.getBorrowRate()
+        .then((borrowRate) => {
+          this.apr = (Number(borrowRate) * 100) / this.controller.FACTOR;
+        });
+    },
   },
   components: {
     SupplyForm,
   },
   created() {
+    this.controller = new Controller();
     this.market = new Market(this.marketAddress);
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
@@ -97,6 +108,7 @@ export default {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
         this.getBalance();
+        this.getBorrowRate();
       });
   },
 };

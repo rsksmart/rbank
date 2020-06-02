@@ -16,7 +16,7 @@
             ></v-text-field>
             <v-text-field
               v-model="marketBaseBorrowRate"
-              label="Market Base Borrow Rate"
+              label="Market Base Borrow Rate %"
               :rules="[rules.requiredRate]"
               type="number"
               required
@@ -85,10 +85,11 @@ export default {
     async createMarket() {
       await this.getMarketByToken();
       if (!this.flag && (this.tokenAddress !== this.emptyAddress)) {
+        const collateral = (this.marketBaseBorrowRate * this.controller.FACTOR) / 100;
         Market.deploy(
           this.account,
           this.tokenAddress,
-          this.marketBaseBorrowRate,
+          collateral,
         )
           .then((marketAddress) => {
             const market = new Market(marketAddress);

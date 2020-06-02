@@ -92,7 +92,8 @@ export default {
         })
         .then((price) => {
           this.marketPrice = Number(price);
-          this.maxBorrowAllowed = Math.floor(this.liquidity / (this.marketPrice * 2));
+          this.maxBorrowAllowed = this.marketPrice > 0
+            ? Math.floor(this.liquidity / (this.marketPrice * 2)) : 0;
           this.maxBorrowAllowed = this.maxBorrowAllowed >= this.marketCash
             ? this.marketCash : this.maxBorrowAllowed;
         });

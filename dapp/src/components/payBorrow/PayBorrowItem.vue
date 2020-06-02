@@ -34,7 +34,7 @@
     </v-card>
     <template v-if="flag">
       <pay-borrow-form @formSucceed="reset" :marketAddress="marketAddress"
-                       :maxAmountAllowed="updatedBorrowBy"/>
+                       :maxAmountAllowed="maxPayBorrowAllowed"/>
     </template>
   </div>
 </template>
@@ -61,6 +61,8 @@ export default {
       updatedBorrowBy: null,
       tokenName: null,
       tokenSymbol: null,
+      tokenAccountBalance: null,
+      maxPayBorrowAllowed: null,
     };
   },
   computed: {
@@ -82,6 +84,10 @@ export default {
           this.updatedBorrowBy = Number(borrowBy);
         });
     },
+    getMaxPayBorrowAllowed() {
+      this.maxPayBorrowAllowed = this.updatedBorrowBy > this.tokenAccountBalance
+        ? this.tokenAccountBalance : this.updatedBorrowBy;
+    },
   },
   components: {
     PayBorrowForm,
@@ -91,13 +97,19 @@ export default {
     this.market.eventualTokenAddress
       .then((tokenAddress) => {
         this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
+        return [
+          this.token.eventualName,
+          this.token.eventualSymbol,
+          this.token.balanceOf(this.account),
+        ];
       })
       .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
+      .then(([tokenName, tokenSymbol, balanceOfAccount]) => {
         this.tokenName = tokenName;
         this.tokenSymbol = tokenSymbol;
+        this.tokenAccountBalance = balanceOfAccount;
         this.getUpdatedBorrowBy();
+        this.getMaxPayBorrowAllowed();
       });
   },
 };
