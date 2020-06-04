@@ -4,8 +4,11 @@ export const ControllerAddress = '0xCfEB869F69431e42cdB54A4F4f105C19C080A601';
 
 // eslint-disable-next-line import/no-mutable-exports
 export let web3;
+// eslint-disable-next-line import/no-mutable-exports
+export let web3WS;
 if (window.web3) {
   web3 = new Web3(window.web3.currentProvider);
+  web3WS = new Web3('ws://127.0.0.1:8545');
 }
 
 /**
