@@ -22,7 +22,7 @@
           </v-list-item>
           <liquidated-item v-for="(account, idx) in unhealthyAccounts"
                            :key="`liquidated-item-${account}-${idx}`"
-                           :account="account"/>
+                           :account="account" :marketAddress="market"/>
         </v-list>
       </v-card>
     </v-container>

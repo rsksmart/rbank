@@ -14,14 +14,14 @@
             <v-col cols="3" class="d-flex justify-center">
               <v-list-item-content>
                 <v-list-item-title class="text-center">
-                  15
+                  {{debt}}
                 </v-list-item-title>
               </v-list-item-content>
             </v-col>
             <v-col cols="3" class="d-flex justify-center">
               <v-list-item-content>
                 <v-list-item-title class="text-center">
-                  10
+                  {{price}}
                 </v-list-item-title>
               </v-list-item-content>
             </v-col>
@@ -88,6 +88,10 @@ export default {
       type: String,
       required: true,
     },
+    marketAddress: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -95,6 +99,8 @@ export default {
       flag: false,
       show: false,
       collaterals: [],
+      debt: null,
+      price: null,
     };
   },
   methods: {
@@ -113,6 +119,12 @@ export default {
         .then((symbolPromises) => Promise.all(symbolPromises))
         // eslint-disable-next-line no-return-assign
         .then((symbols) => symbols.forEach((symbol, idx) => this.collaterals[idx].symbol = symbol));
+    },
+    getPrice() {
+      const market = new Market(this.marketAddress);
+      market.getUpdatedBorrowBy(this.account)
+        // eslint-disable-next-line no-return-assign,no-multi-assign
+        .then((debt) => this.debt = this.price = debt);
     },
     getCollateral() {
       this.controller.eventualMarketAddresses
@@ -133,6 +145,7 @@ export default {
   created() {
     this.controller = new Controller();
     this.getCollateral();
+    this.getPrice();
   },
 };
 </script>
