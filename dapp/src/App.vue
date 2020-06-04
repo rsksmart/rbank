@@ -6,7 +6,7 @@
 
 <script>
 import BaseLayout from '@/components/layouts/base/Index.vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import * as constants from '@/store/constants';
 
 export default {
@@ -20,6 +20,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
     currentComponent() {
       return `${this.layout.toLowerCase()}-layout`;
     },
@@ -27,6 +30,7 @@ export default {
   methods: {
     ...mapActions({
       loadControllerAtSession: constants.SESSION_INIT_CONTROLLER,
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
     }),
   },
   components: {
@@ -34,6 +38,7 @@ export default {
   },
   created() {
     this.loadControllerAtSession();
+    this.getMarkets();
   },
 };
 </script>
