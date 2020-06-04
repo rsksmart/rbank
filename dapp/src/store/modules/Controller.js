@@ -9,6 +9,7 @@ const state = {
 
 const actions = {
   [constants.CONTROLLER_GET_MARKETS]: ({ commit, dispatch }) => {
+    console.log('Calling getMarkets');
     const controller = new Controller();
     controller.eventualMarketAddresses
       .then((marketAddresses) => {

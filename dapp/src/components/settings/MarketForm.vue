@@ -43,7 +43,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 
@@ -71,6 +72,9 @@ export default {
     }),
   },
   methods: {
+    ...mapActions({
+      loadMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
     async getMarketByToken() {
       this.flag = false;
       await this.controller.getMarketByToken(this.tokenAddress)
@@ -97,6 +101,7 @@ export default {
             return this.controller.addMarket(this.account, marketAddress);
           })
           .then(() => {
+            this.loadMarkets();
             this.reset();
             this.$emit('marketCreated');
           });
