@@ -8,9 +8,8 @@
 import BaseLayout from '@/components/layouts/base/Index.vue';
 import { mapActions, mapState } from 'vuex';
 import * as constants from '@/store/constants';
-import { web3WS } from '@/handlers';
 import Controller from '@/handlers/controller';
-import MarketContract from '@/contracts/Market.json';
+import MarketEvents from '@/handlers/MarketEvents';
 
 export default {
   name: 'App',
@@ -21,8 +20,6 @@ export default {
         'Base',
       ],
       controller: null,
-      blockSubscription: null,
-      supplySubscription: null,
       marketInstances: [],
     };
   },
@@ -39,34 +36,37 @@ export default {
       loadControllerAtSession: constants.SESSION_INIT_CONTROLLER,
       getMarkets: constants.CONTROLLER_GET_MARKETS,
     }),
+    handleErrorEvent(error) {
+      if (error) {
+        console.error(`Event error: ${error}`);
+      }
+    },
     instantiateMarkets() {
       this.controller.eventualMarketAddresses
         .then((marketAddresses) => {
           // eslint-disable-next-line max-len
-          this.marketInstances = marketAddresses.map((marketAddr) => new web3WS.eth.Contract(MarketContract.abi, marketAddr));
+          this.marketInstances = marketAddresses.map((marketAddr) => new MarketEvents(marketAddr));
           this.createSubscription();
         });
     },
     createSubscription() {
-      this.blockSubscription = web3WS.eth.subscribe(
-        'newBlockHeaders',
-        // eslint-disable-next-line no-unused-vars
-        (error, block) => {
-          if (!error) {
-            // console.log(`New Block: number ${block.number} - Hash ${block.hash}`);
-            return;
-          }
-          console.error(error);
-        },
-      );
       this.marketInstances.forEach((market, idx) => {
-        market.events.Supply({
-          fromBlock: 0,
-        }, (error, event) => {
-          if (error) {
-            console.error(error);
-          }
-          console.log(`Supply: ${JSON.stringify(event.returnValues)} Market ${idx}`);
+        console.log(market);
+        market.subscribeSupply((err, event) => {
+          this.handleErrorEvent(err);
+          console.log(`Supply: ${JSON.stringify(event.returnValues)} Market: ${idx}`);
+        });
+        market.subscribeBorrow((err, event) => {
+          this.handleErrorEvent(err);
+          console.log(`Borrow: ${JSON.stringify(event.returnValues)} Market: ${idx}`);
+        });
+        market.subscribePayBorrow((err, event) => {
+          this.handleErrorEvent(err);
+          console.log(`PayBorrow: ${JSON.stringify(event.returnValues)} Market: ${idx}`);
+        });
+        market.subscribeRedeem((err, event) => {
+          this.handleErrorEvent(err);
+          console.log(`Redeem: ${JSON.stringify(event.returnValues)} Market: ${idx}`);
         });
       });
     },

@@ -62,7 +62,7 @@ export default {
       tokenName: null,
       tokenSymbol: null,
       tokenAccountBalance: null,
-      maxPayBorrowAllowed: null,
+      maxPayBorrowAllowed: 0,
     };
   },
   computed: {
