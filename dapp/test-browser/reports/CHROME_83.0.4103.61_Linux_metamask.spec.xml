@@ -5,9 +5,9 @@
 
   <testsuite name="metamask.spec"
     errors="0" failures="0" hostname="" id="" package="metamask.spec" skipped="0"
-    tests="1" time="21.28" timestamp="">
+    tests="1" time="21.69" timestamp="">
   
-    <testcase name="MetaMask ganache-cli connection on Google chrome" classname="metamask.spec" time="21.28" assertions="6">
+    <testcase name="MetaMask ganache-cli connection on Google chrome" classname="metamask.spec" time="21.69" assertions="6">
 
     
 

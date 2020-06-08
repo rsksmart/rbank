@@ -6,7 +6,8 @@ export default class Controller {
   constructor() {
     this.address = ControllerAddress;
     this.instance = new web3.eth.Contract(ControllerContract.abi, ControllerAddress);
-    this.MANTISSA = 1000000;
+    this.MANTISSA = 1e6;
+    this.FACTOR = 1e16;
   }
 
   get eventualCollateralFactor() {

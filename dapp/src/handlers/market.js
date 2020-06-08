@@ -1,8 +1,10 @@
+import Controller from '@/handlers/controller';
 import MarketContract from '@/contracts/Market.json';
 import { send, web3 } from '@/handlers';
 
 export default class Market {
   constructor(marketAddress) {
+    this.controller = new Controller();
     this.address = marketAddress;
     this.instance = new web3.eth.Contract(MarketContract.abi, marketAddress);
   }
@@ -76,9 +78,27 @@ export default class Market {
     });
   }
 
-  getPrice(marketAddress) {
+  getUpdatedTotalBorrows() {
     return new Promise((resolve, reject) => {
-      this.instance.methods.prices(marketAddress)
+      this.instance.methods.getUpdatedTotalBorrows()
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getUpdatedTotalSupply() {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.getUpdatedTotalSupply()
+        .call()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getBorrowRate() {
+    return new Promise((resolve, reject) => {
+      this.instance.methods.borrowRatePerBlock()
         .call()
         .then(resolve)
         .catch(reject);
