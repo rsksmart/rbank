@@ -22,7 +22,7 @@
       {{ cash }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ baseBorrowRate }}
+      {{ apr.toFixed(2) }} %
     </v-list-item-title>
   </v-list-item>
 </template>
@@ -51,6 +51,7 @@ export default {
       price: null,
       cash: null,
       baseBorrowRate: null,
+      apr: 0,
     };
   },
   methods: {
@@ -59,6 +60,11 @@ export default {
         name: 'Market',
         params: { id: marketAddress },
       });
+    },
+  },
+  watch: {
+    baseBorrowRate() {
+      this.apr = (this.baseBorrowRate * 100) / this.controller.FACTOR;
     },
   },
   created() {
@@ -83,11 +89,13 @@ export default {
         this.tokenSymbol = tokenSymbol;
       });
     this.market.eventualCash
-      // eslint-disable-next-line no-return-assign
-      .then((cash) => this.cash = cash);
+      .then((cash) => {
+        this.cash = cash;
+      });
     this.market.eventualBaseBorrowRate
-      // eslint-disable-next-line no-return-assign
-      .then((rate) => this.baseBorrowRate = rate);
+      .then((rate) => {
+        this.baseBorrowRate = rate;
+      });
     this.controller.getPrice(this.marketAddress)
       .then((price) => {
         this.price = price;

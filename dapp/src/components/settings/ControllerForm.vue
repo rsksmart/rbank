@@ -64,23 +64,27 @@ export default {
   },
   methods: {
     setCollateralFactor() {
+      const collateral = this.collateralFactor * this.controller.MANTISSA;
+      console.log(collateral);
       this.controller
-        .setCollateralFactor(this.account, this.collateralFactor);
+        .setCollateralFactor(this.account, collateral);
     },
     setLiquidationFactor() {
+      const liquidation = this.liquidationFactor * this.controller.MANTISSA;
+      console.log(liquidation);
       this.controller
-        .setLiquidationFactor(this.account, this.liquidationFactor);
+        .setLiquidationFactor(this.account, liquidation);
     },
   },
   created() {
     this.controller = new Controller();
     this.controller.eventualCollateralFactor
       .then((collateralFactor) => {
-        this.collateralFactor = collateralFactor;
+        this.collateralFactor = collateralFactor / this.controller.MANTISSA;
       });
     this.controller.eventualLiquidationFactor
       .then((liquidationFactor) => {
-        this.liquidationFactor = liquidationFactor;
+        this.liquidationFactor = liquidationFactor / this.controller.MANTISSA;
       });
   },
 };

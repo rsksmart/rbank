@@ -89,6 +89,7 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
       isOwner: (state) => state.Session.isOwner,
+      markets: (state) => state.Controller.markets,
     }),
     pageHeight() {
       return document.body.scrollHeight;
@@ -136,7 +137,7 @@ export default {
     loadMarketBaseBorrowRate() {
       this.market.eventualBaseBorrowRate
         .then((baseBorrowRate) => {
-          this.baseBorrowRate = baseBorrowRate;
+          this.baseBorrowRate = ((baseBorrowRate * 100) / this.controller.FACTOR).toFixed(2);
         });
     },
   },

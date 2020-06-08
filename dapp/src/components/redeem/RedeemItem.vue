@@ -87,11 +87,8 @@ export default {
         })
         .then((balanceOfMarket) => {
           this.balanceOfMarket = Number(balanceOfMarket);
-          if (this.balanceOfMarket >= this.userSupply) {
-            this.maxRedeemAmount = this.userSupply;
-          } else {
-            this.maxRedeemAmount = this.balanceOfMarket;
-          }
+          this.maxRedeemAmount = this.balanceOfMarket > this.userSupply
+            ? this.userSupply : this.balanceOfMarket;
         });
     },
   },

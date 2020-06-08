@@ -16,7 +16,7 @@
             ></v-text-field>
             <v-text-field
               v-model="marketBaseBorrowRate"
-              label="Market Base Borrow Rate"
+              label="Market Base Borrow Rate %"
               :rules="[rules.requiredRate]"
               type="number"
               required
@@ -43,7 +43,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
 
@@ -71,6 +72,9 @@ export default {
     }),
   },
   methods: {
+    ...mapActions({
+      loadMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
     async getMarketByToken() {
       this.flag = false;
       await this.controller.getMarketByToken(this.tokenAddress)
@@ -85,10 +89,11 @@ export default {
     async createMarket() {
       await this.getMarketByToken();
       if (!this.flag && (this.tokenAddress !== this.emptyAddress)) {
+        const collateral = (this.marketBaseBorrowRate * this.controller.FACTOR) / 100;
         Market.deploy(
           this.account,
           this.tokenAddress,
-          this.marketBaseBorrowRate,
+          collateral,
         )
           .then((marketAddress) => {
             const market = new Market(marketAddress);
@@ -96,6 +101,7 @@ export default {
             return this.controller.addMarket(this.account, marketAddress);
           })
           .then(() => {
+            this.loadMarkets();
             this.reset();
             this.$emit('marketCreated');
           });

@@ -39,7 +39,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="headline">
-              Health Factor: {{factor}} %
+              Health Factor: {{factor.toFixed(2)}} %
             </v-list-item-title>
             <v-list-item-subtitle>
               Account in risk when health factor is bigger than 50%
