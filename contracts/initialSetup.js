@@ -1,3 +1,4 @@
+const fs = require('fs');
 const FaucetToken = require('../build/contracts/FaucetToken.json');
 const Controller = require('../build/contracts/Controller.json');
 
@@ -18,7 +19,10 @@ deployToken = (initialSupply, name, decimalDigits, symbol) => {
   return new Promise((resolve, reject) => {
     let otk = null;
     let token1 = new web3.eth.Contract(FaucetToken.abi);
-    let deploy = token1.deploy({data: FaucetToken.bytecode, arguments: [initialSupply, name,decimalDigits,symbol]});
+    let deploy = token1.deploy({
+      data: FaucetToken.bytecode,
+      arguments: [initialSupply, name,decimalDigits,symbol]
+    });
     getAccount()
       .then(({otk1}) =>{
         otk = otk1;
@@ -35,8 +39,9 @@ deployToken = (initialSupply, name, decimalDigits, symbol) => {
   });
 };
 
-initialize = (callback) =>{
+initialize = (callback) => {
   console.log('Rbank initialization...\n');
+  let tokenAddresses = [];
   let controller = new web3.eth.Contract(Controller.abi, controllerAddress);
   // set collateralFactor and liquidationFactor
   const collateralFactor = 1000000;
@@ -80,6 +85,7 @@ initialize = (callback) =>{
     .then(({alice, bob, charlie}) => {
       deployToken(m.tk1.initialSupply, m.tk1.name, m.tk1.decimalDigits, m.tk1.symbol)
         .then((token) => {
+          tokenAddresses.push(token._address);
           token.methods.allocateTo(alice, aliceTokens)
             .estimateGas({from: alice})
             .then(gas => token.methods.allocateTo(alice, aliceTokens).send({from: alice, gas}))
@@ -88,6 +94,7 @@ initialize = (callback) =>{
       // deploy Token 2 and allocate to bob
       deployToken(m.tk2.initialSupply, m.tk2.name, m.tk2.decimalDigits, m.tk2.symbol)
         .then((token) => {
+          tokenAddresses.push(token._address);
           token.methods.allocateTo(bob, bobTokens)
             .estimateGas({from: alice})
             .then(gas => token.methods.allocateTo(bob, bobTokens).send({from: bob, gas}))
@@ -95,6 +102,12 @@ initialize = (callback) =>{
         });
       deployToken(m.tk3.initialSupply, m.tk3.name, m.tk3.decimalDigits, m.tk3.symbol)
         .then((token) => {
+          tokenAddresses.push(token._address);
+          const tokens = { tokenAddresses: tokenAddresses };
+          fs.writeFile('tokenAddresses.json', JSON.stringify(tokens), (error) => {
+            if(error) throw error;
+          });
+          console.log('File containing token addresses has been wrote successfully');
           token.methods.allocateTo(charlie, charlieTokens)
             .estimateGas({from: charlie})
             .then(gas => {
