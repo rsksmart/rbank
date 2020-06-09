@@ -22,7 +22,7 @@
           </v-list-item>
           <liquidated-item v-for="(account, idx) in unhealthyAccounts"
                            :key="`liquidated-item-${account}-${idx}`"
-                           :account="account" :marketAddress="market"/>
+                           :account="account" :marketAddress="marketAddress"/>
         </v-list>
       </v-card>
     </v-container>
@@ -37,7 +37,7 @@ import Token from '@/handlers/token';
 export default {
   name: 'LiquidatedList',
   props: {
-    market: {
+    marketAddress: {
       type: String,
       required: true,
     },
@@ -51,15 +51,13 @@ export default {
     };
   },
   components: {
-    // eslint-disable-next-line vue/no-unused-components
     LiquidatedItem,
   },
   methods: {
     getSymbol() {
       this.marketContract.eventualTokenAddress
         .then((tokenAddress) => new Token(tokenAddress).eventualSymbol)
-        // eslint-disable-next-line no-return-assign
-        .then((symbol) => this.token = symbol);
+        .then((symbol) => { this.token = symbol; });
     },
     getBorrowEvents() {
       this.marketContract.getBorrowEvents()
@@ -70,12 +68,12 @@ export default {
     },
     getUnhealthyAccounts() {
       this.unhealthyAccounts = this.borrowEvents.map((e) => e.returnValues.user);
-      // eslint-disable-next-line max-len
-      this.unhealthyAccounts = this.unhealthyAccounts.filter((account, index) => this.unhealthyAccounts.indexOf(account) === index);
+      this.unhealthyAccounts = this.unhealthyAccounts
+        .filter((account, index) => this.unhealthyAccounts.indexOf(account) === index);
     },
   },
   created() {
-    this.marketContract = new Market(this.market);
+    this.marketContract = new Market(this.marketAddress);
     this.getSymbol();
     this.getBorrowEvents();
   },

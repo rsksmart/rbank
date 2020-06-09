@@ -39,10 +39,17 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="6" class="py-0 my-0">
+          <v-col cols="3" class="py-0 my-0">
             <v-list-item-content>
-              <v-list-item-subtitle class="text-center">
+              <v-list-item-subtitle class="text-right">
                 Amount
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-col>
+          <v-col cols="2" class="py-0 my-0">
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-right">
+                Max Allowed
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-col>
@@ -55,11 +62,18 @@
                              :key="`collateral-${account}-${idx}`">
                   <div class="col-12">
                     <v-row>
-                      <v-col cols="5" class="font-weight-bold">
+                      <v-col cols="5"
+                             class="font-weight-bold justify-center align-middle">
                         {{token.symbol}}
                       </v-col>
-                      <v-col cols="7">
-                        {{token.amount}}
+                      <v-col cols="3">
+                        <v-text-field
+                          v-model="token.amount"
+                          type="number"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="4">
+                        {{token.maxAllowed}}
                       </v-col>
                     </v-row>
                   </div>
@@ -67,8 +81,13 @@
               </v-list>
             </v-list-item-content>
           </v-col>
-          <v-col cols="6" class="d-flex justify-center">
-            <v-btn>Buy</v-btn>
+          <v-col>
+            <v-row  class="d-flex justify-center mb-0">
+              Total {{total}}
+            </v-row>
+            <v-row class="d-flex justify-center">
+              <v-btn>Buy</v-btn>
+            </v-row>
           </v-col>
         </v-row>
       </div>
@@ -101,6 +120,7 @@ export default {
       collaterals: [],
       debt: null,
       price: null,
+      total: 0,
     };
   },
   methods: {
@@ -136,7 +156,8 @@ export default {
         .then((supplyPromises) => Promise.all(supplyPromises))
         .then((supplies) => {
           this.collaterals = supplies.map((sup) => ({
-            amount: sup,
+            maxAllowed: sup,
+            amount: 0,
           }));
         })
         .then(() => this.getSymbols());

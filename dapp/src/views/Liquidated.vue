@@ -1,7 +1,7 @@
 <template>
   <div class="Liquidated">
     <liquidated-list v-for="(market, idx) in marketAddresses"
-                     :key="`market-item-${market}-${idx}`" :market="market"/>
+                     :key="`market-item-${market}-${idx}`" :marketAddress="market"/>
   </div>
 </template>
 
