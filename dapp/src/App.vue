@@ -51,7 +51,6 @@ export default {
     },
     createSubscription() {
       this.marketInstances.forEach((market, idx) => {
-        console.log(market);
         market.subscribeSupply((err, event) => {
           this.handleErrorEvent(err);
           console.log(`Supply: ${JSON.stringify(event.returnValues)} Market: ${idx}`);

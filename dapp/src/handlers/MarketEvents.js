@@ -17,25 +17,25 @@ export default class MarketEvents {
 
   subscribeSupply(callback) {
     return this.instance.events.Supply({
-      fromBlock: 0,
+      fromBlock: 'latest',
     }, callback);
   }
 
   subscribeBorrow(callback) {
     return this.instance.events.Borrow({
-      fromBlock: 0,
+      fromBlock: 'latest',
     }, callback);
   }
 
   subscribePayBorrow(callback) {
     return this.instance.events.PayBorrow({
-      fromBlock: 0,
+      fromBlock: 'latest',
     }, callback);
   }
 
   subscribeRedeem(callback) {
     return this.instance.events.Redeem({
-      fromBlock: 0,
+      fromBlock: 'latest',
     }, callback);
   }
 }

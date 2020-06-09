@@ -141,6 +141,54 @@ export default class Market {
     });
   }
 
+  getBorrowEvents() {
+    return new Promise((resolve, reject) => {
+      this.instance.getPastEvents('Borrow',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getSupplyEvents() {
+    return new Promise((resolve, reject) => {
+      this.instance.getPastEvents('Supply',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getPayBorrowEvents() {
+    return new Promise((resolve, reject) => {
+      this.instance.getPastEvents('PayBorrow',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  getRedeemEvents() {
+    return new Promise((resolve, reject) => {
+      this.instance.getPastEvents('Redeem',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   setController(account, controllerAddress) {
     return new Promise((resolve, reject) => {
       send(this.instance.methods.setController(controllerAddress), account)
