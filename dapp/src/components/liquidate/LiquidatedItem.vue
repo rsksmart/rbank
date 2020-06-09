@@ -1,96 +1,68 @@
 <template>
   <div class="LiquidatedItem">
-    <v-card class="mt-5 ma-3" outlined :elevation="4">
+    <v-card class="ma-3" outlined :elevation="4">
       <v-list-item @click="toggleShow()">
-        <div class="col-12 d-flex">
-          <v-row>
-            <v-col cols="6" class="d-flex justify-center">
-              <v-list-item-content>
-                <v-list-item-title class="text-center">
-                  {{account}}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-            <v-col cols="3" class="d-flex justify-center">
-              <v-list-item-content>
-                <v-list-item-title class="text-center">
-                  {{debt}}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-            <v-col cols="3" class="d-flex justify-center">
-              <v-list-item-content>
-                <v-list-item-title class="text-center">
-                  {{price}}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </div>
+        <v-row>
+          <v-col cols="6" class="text-center">
+            {{account}}
+          </v-col>
+          <v-col cols="3" class="text-center">
+            {{debt}}
+          </v-col>
+          <v-col cols="3" class="text-center">
+            {{price | formatPrice}}
+          </v-col>
+        </v-row>
       </v-list-item>
-      <div class="col-12 py-0 my-0" v-show="show">
+      <template v-if="show">
+        <v-divider/>
         <v-row>
-          <v-col cols="12" class="py-0 my-0">
-            <v-list-item-content>
-              <v-list-item-title class="text-center font-weight-bold">
-                Collateral
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="3" class="py-0 my-0">
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-right">
+          <v-col cols="9">
+            <v-row>
+              <v-col class="text-center font-weight-bold">
+                Asset
+              </v-col>
+              <v-col cols="2" class="text-center font-weight-bold">
                 Amount
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-col>
-          <v-col cols="2" class="py-0 my-0">
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-right">
+              </v-col>
+              <v-col class="text-center font-weight-bold">
                 Max Allowed
-              </v-list-item-subtitle>
-            </v-list-item-content>
+              </v-col>
+            </v-row>
+            <div v-for="(token, idx) in collaterals"
+                         :key="`collateral-${account}-${idx}`">
+              <v-list-item v-if="token.symbol !== tokenSymbol">
+                <v-row>
+                    <v-col class="font-weight-bold text-center">
+                      {{token.symbol}}
+                    </v-col>
+                    <v-col cols="2" class="pa-0">
+                      <v-text-field class="pa-0"
+                                    v-model="token.amount"
+                                    type="number">
+                      </v-text-field>
+                    </v-col>
+                    <v-col class="text-center">
+                      {{token.maxAllowed}}
+                    </v-col>
+                  </v-row>
+              </v-list-item>
+            </div>
+          </v-col>
+          <v-col class="d-flex align-center">
+            <v-card flat>
+              <v-row>
+                <h2 class="text-center">
+                  Total: {{total}}
+                </h2>
+              </v-row>
+              <v-row class="d-flex justify-center">
+                <v-btn>Buy</v-btn>
+              </v-row>
+            </v-card>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="6" class="d-flex justify-center py-0 my-0">
-            <v-list-item-content>
-              <v-list>
-                <v-list-item v-for="(token, idx) in collaterals"
-                             :key="`collateral-${account}-${idx}`">
-                  <div class="col-12">
-                    <v-row>
-                      <v-col cols="5"
-                             class="font-weight-bold justify-center align-middle">
-                        {{token.symbol}}
-                      </v-col>
-                      <v-col cols="3">
-                        <v-text-field
-                          v-model="token.amount"
-                          type="number"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="4">
-                        {{token.maxAllowed}}
-                      </v-col>
-                    </v-row>
-                  </div>
-                </v-list-item>
-              </v-list>
-            </v-list-item-content>
-          </v-col>
-          <v-col>
-            <v-row  class="d-flex justify-center mb-0">
-              Total {{total}}
-            </v-row>
-            <v-row class="d-flex justify-center">
-              <v-btn>Buy</v-btn>
-            </v-row>
-          </v-col>
-        </v-row>
-      </div>
+      </template>
     </v-card>
   </div>
 </template>
@@ -108,6 +80,10 @@ export default {
       required: true,
     },
     marketAddress: {
+      type: String,
+      required: true,
+    },
+    tokenSymbol: {
       type: String,
       required: true,
     },
@@ -137,14 +113,22 @@ export default {
       Promise.all(tokens)
         .then((tokensAddr) => tokensAddr.map((tokenAddr) => new Token(tokenAddr).eventualSymbol))
         .then((symbolPromises) => Promise.all(symbolPromises))
-        // eslint-disable-next-line no-return-assign
-        .then((symbols) => symbols.forEach((symbol, idx) => this.collaterals[idx].symbol = symbol));
+        .then((symbols) => {
+          symbols.forEach((symbol, idx) => {
+            this.collaterals[idx].symbol = symbol;
+          });
+        });
     },
-    getPrice() {
+    getDebt() {
       const market = new Market(this.marketAddress);
       market.getUpdatedBorrowBy(this.account)
-        // eslint-disable-next-line no-return-assign,no-multi-assign
-        .then((debt) => this.debt = this.price = debt);
+        .then((debt) => {
+          this.debt = Number(debt);
+          return this.controller.getPrice(this.marketAddress);
+        })
+        .then((price) => {
+          this.price = this.debt * price;
+        });
     },
     getCollateral() {
       this.controller.eventualMarketAddresses
@@ -166,7 +150,7 @@ export default {
   created() {
     this.controller = new Controller();
     this.getCollateral();
-    this.getPrice();
+    this.getDebt();
   },
 };
 </script>

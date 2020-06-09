@@ -1,28 +1,24 @@
 <template>
-  <div class="RedeemList">
+  <div class="RedeemList" v-if="unhealthyAccounts.length > 0">
     <v-container fluid class="d-flex justify-center">
       <v-card width="80%" elevation="3">
-        <v-card-title> Market {{token}}</v-card-title>
-        <v-list>
-          <v-list-item>
-            <v-row>
-              <v-col cols="6">
-                <v-list-item-subtitle class="text-center">Address
-                </v-list-item-subtitle>
-              </v-col>
-              <v-col cols="3">
-                <v-list-item-subtitle class="text-center">Debt
-                </v-list-item-subtitle>
-              </v-col>
-              <v-col cols="3">
-                <v-list-item-subtitle class="text-center">price
-                </v-list-item-subtitle>
-              </v-col>
-            </v-row>
-          </v-list-item>
+        <h2 class="px-2"> Market {{token}}</h2>
+          <v-row>
+            <v-col cols="6" class="pa-0 text-center">
+              Address
+            </v-col>
+            <v-col cols="3" class="pa-0 text-center">
+              Debt
+            </v-col>
+            <v-col cols="3" class="pa-0 text-center">
+              Price
+            </v-col>
+          </v-row>
+        <v-list class="pa-0">
           <liquidated-item v-for="(account, idx) in unhealthyAccounts"
                            :key="`liquidated-item-${account}-${idx}`"
-                           :account="account" :marketAddress="marketAddress"/>
+                           :account="account" :marketAddress="marketAddress"
+                           :tokenSymbol="token"/>
         </v-list>
       </v-card>
     </v-container>

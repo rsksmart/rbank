@@ -141,7 +141,6 @@ export default class Market {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getBorrowEvents() {
     return new Promise((resolve, reject) => {
       this.instance.getPastEvents('Borrow',
