@@ -3,6 +3,7 @@ node_modules
 dapp/dist/
 dist
 /build
+/contracts/tokenAddresses.json
 
 # local env files
 .env.local

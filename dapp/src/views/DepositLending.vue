@@ -87,7 +87,7 @@ export default {
       borrowed: null,
       liquidity: null,
       marketAddresses: null,
-      factor: null,
+      factor: 0,
       barColor: null,
     };
   },
