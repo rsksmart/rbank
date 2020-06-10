@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>Supply to market {{market.address}} of token {{market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -31,26 +31,24 @@
 
 <script>
 import { mapState } from 'vuex';
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 
 export default {
   name: 'SupplyForm',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       maxAmount: false,
-      market: null,
-      token: null,
+      // market: null,
+      // token: null,
       amount: null,
-      tokenName: null,
-      tokenSymbol: null,
-      tokenBalance: null,
+      // tokenName: null,
+      // tokenSymbol: null,
+      // tokenBalance: null,
       validForm: false,
       rules: {
         required: () => !!this.amount || 'Required.',
@@ -72,12 +70,12 @@ export default {
           this.$emit('formSucceed');
         });
     },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
-        });
-    },
+  //   getBalance() {
+  //     this.token.balanceOf(this.account)
+  //       .then((balance) => {
+  //         this.tokenBalance = Number(balance);
+  //       });
+  //   },
   },
   watch: {
     amount() {
@@ -85,26 +83,22 @@ export default {
         && typeof this.rules.required() !== 'string';
     },
     maxAmount() {
-      if (this.maxAmount) {
-        this.amount = this.tokenBalance;
-      } else {
-        this.amount = null;
-      }
+      this.amount = this.maxAmount ? this.market.token.balance : null;
     },
   },
-  created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.getBalance();
-      });
-  },
+  // created() {
+  //   this.market = new Market(this.marketAddress);
+  //   this.market.eventualTokenAddress
+  //     .then((tokenAddress) => {
+  //       this.token = new Token(tokenAddress);
+  //       return [this.token.eventualName, this.token.eventualSymbol];
+  //     })
+  //     .then((tokenPromises) => Promise.all(tokenPromises))
+  //     .then(([tokenName, tokenSymbol]) => {
+  //       this.tokenName = tokenName;
+  //       this.tokenSymbol = tokenSymbol;
+  //       this.getBalance();
+  //     });
+  // },
 };
 </script>

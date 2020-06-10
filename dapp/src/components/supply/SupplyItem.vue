@@ -11,21 +11,21 @@
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ tokenSymbol }}
+                {{ market.token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ tokenBalance }}
+                {{ balance }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ apr.toFixed(2) }} %
+                {{ apr }} %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,83 +33,55 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <supply-form @formSucceed="reset" :marketAddress="marketAddress"/>
+      <supply-form @formSucceed="reset" :market="market"/>
     </template>
   </div>
 </template>
 
 <script>
 import SupplyForm from '@/components/market/SupplyForm.vue';
-import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
+import { mapActions, mapState } from 'vuex';
+import * as constants from '@/store/constants';
 
 export default {
   name: 'SupplyItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       flag: false,
-      controller: null,
-      market: null,
-      token: null,
-      tokenBalance: null,
-      tokenName: null,
-      tokenSymbol: null,
-      apr: 0,
     };
   },
   computed: {
     ...mapState({
-      account: (state) => state.Session.account,
+      mantissa: (state) => state.Controller.mantissa,
+      factor: (state) => state.Controller.factor,
     }),
+    apr() {
+      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+    },
+    balance() {
+      return (this.market.token.balance / this.mantissa).toFixed(5);
+    },
   },
   methods: {
+    ...mapActions({
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
     reset() {
       this.flag = false;
-      this.getBalance();
-      this.getBorrowRate();
+      this.getMarkets();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
-        });
-    },
-    getBorrowRate() {
-      this.market.getBorrowRate()
-        .then((borrowRate) => {
-          this.apr = (Number(borrowRate) * 100) / this.controller.FACTOR;
-        });
-    },
   },
   components: {
     SupplyForm,
-  },
-  created() {
-    this.controller = new Controller();
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.getBalance();
-        this.getBorrowRate();
-      });
   },
 };
 </script>
