@@ -20,7 +20,6 @@ const actions = {
             address: null,
             name: null,
             symbol: null,
-            balance: null,
           },
           borrowRate: null,
           price: null,
@@ -37,7 +36,7 @@ const actions = {
         dispatch(constants.CONTROLLER_GET_MARKETS_TOTAL_SUPPLIES, { marketAddresses });
       });
   },
-  [constants.CONTROLLER_GET_MARKETS_TOKENS]: ({ commit, rootState }, { marketAddresses }) => {
+  [constants.CONTROLLER_GET_MARKETS_TOKENS]: ({ commit }, { marketAddresses }) => {
     const marketIntances = marketAddresses.map((marketAddress) => new Market(marketAddress));
     marketIntances.forEach((marketInstance, idx) => {
       marketInstance.eventualTokenAddress
@@ -47,14 +46,12 @@ const actions = {
           return [
             token.eventualName,
             token.eventualSymbol,
-            token.balanceOf(rootState.Session.account),
           ];
         })
         .then((tokenPromises) => Promise.all(tokenPromises))
-        .then(([tokenName, tokenSymbol, tokenBalance]) => {
+        .then(([tokenName, tokenSymbol]) => {
           commit(constants.CONTROLLER_SET_MARKET_TOKEN_NAME, { marketIndex: idx, tokenName });
           commit(constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL, { marketIndex: idx, tokenSymbol });
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_BALANCE, { marketIndex: idx, tokenBalance });
         });
     });
   },
@@ -136,10 +133,6 @@ const mutations = {
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL]: (state, { marketIndex, tokenSymbol }) => {
     state.markets[marketIndex].token.symbol = tokenSymbol;
-  },
-  // eslint-disable-next-line no-shadow
-  [constants.CONTROLLER_SET_MARKET_TOKEN_BALANCE]: (state, { marketIndex, tokenBalance }) => {
-    state.markets[marketIndex].token.balance = Number(tokenBalance);
   },
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_CASH]: (state, { marketIndex, marketCash }) => {

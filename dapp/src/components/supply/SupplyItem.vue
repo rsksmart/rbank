@@ -33,15 +33,15 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <supply-form @formSucceed="reset" :market="market"/>
+      <supply-form @formSucceed="reset" :data="formObject"/>
     </template>
   </div>
 </template>
 
 <script>
 import SupplyForm from '@/components/market/SupplyForm.vue';
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
+import Token from '@/handlers/token';
 
 export default {
   name: 'SupplyItem',
@@ -54,27 +54,39 @@ export default {
   data() {
     return {
       flag: false,
+      tokenBalance: 0,
     };
   },
   computed: {
     ...mapState({
       mantissa: (state) => state.Controller.mantissa,
       factor: (state) => state.Controller.factor,
+      account: (state) => state.Session.account,
     }),
     apr() {
       return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
     },
     balance() {
-      return (this.market.token.balance / this.mantissa).toFixed(5);
+      return (this.tokenBalance / this.mantissa).toFixed(5);
+    },
+    formObject() {
+      return {
+        market: this.market,
+        accountBalance: this.balance,
+      };
     },
   },
   methods: {
-    ...mapActions({
-      getMarkets: constants.CONTROLLER_GET_MARKETS,
-    }),
+    accountTokenBalance() {
+      const token = new Token(this.market.token.address);
+      token.balanceOf(this.account)
+        .then((balance) => {
+          this.tokenBalance = Number(balance);
+        });
+    },
     reset() {
       this.flag = false;
-      this.getMarkets();
+      this.accountTokenBalance();
     },
     enableForm() {
       this.flag = !this.flag;
@@ -82,6 +94,9 @@ export default {
   },
   components: {
     SupplyForm,
+  },
+  mounted() {
+    this.accountTokenBalance();
   },
 };
 </script>

@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{market.address}} of token {{market.token.symbol}}</h2>
+          <h2>Supply to market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -31,11 +31,13 @@
 
 <script>
 import { mapState } from 'vuex';
+import Token from '@/handlers/token';
+import Market from '@/handlers/market';
 
 export default {
   name: 'SupplyForm',
   props: {
-    market: {
+    data: {
       type: Object,
       required: true,
     },
@@ -43,39 +45,31 @@ export default {
   data() {
     return {
       maxAmount: false,
-      // market: null,
-      // token: null,
       amount: null,
-      // tokenName: null,
-      // tokenSymbol: null,
-      // tokenBalance: null,
       validForm: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        minBalance: () => this.tokenBalance >= this.amount || 'Not enough funds',
+        minBalance: () => this.data.accountBalance >= this.amount || 'Not enough funds',
       },
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      isOwner: (state) => state.Session.isOwner,
+      mantissa: (state) => state.Controller.mantissa,
     }),
   },
   methods: {
     supply() {
-      this.token.approve(this.account, this.marketAddress, this.amount)
-        .then(() => this.market.supply(this.account, this.amount))
+      const contractAmount = this.amount * this.mantissa;
+      const market = new Market(this.data.market.address);
+      const token = new Token(this.data.market.token.address);
+      token.approve(this.account, this.data.market.address, contractAmount)
+        .then(() => market.supply(this.account, contractAmount))
         .then(() => {
           this.$emit('formSucceed');
         });
     },
-  //   getBalance() {
-  //     this.token.balanceOf(this.account)
-  //       .then((balance) => {
-  //         this.tokenBalance = Number(balance);
-  //       });
-  //   },
   },
   watch: {
     amount() {
@@ -83,22 +77,8 @@ export default {
         && typeof this.rules.required() !== 'string';
     },
     maxAmount() {
-      this.amount = this.maxAmount ? this.market.token.balance : null;
+      this.amount = this.maxAmount ? this.data.accountBalance : null;
     },
   },
-  // created() {
-  //   this.market = new Market(this.marketAddress);
-  //   this.market.eventualTokenAddress
-  //     .then((tokenAddress) => {
-  //       this.token = new Token(tokenAddress);
-  //       return [this.token.eventualName, this.token.eventualSymbol];
-  //     })
-  //     .then((tokenPromises) => Promise.all(tokenPromises))
-  //     .then(([tokenName, tokenSymbol]) => {
-  //       this.tokenName = tokenName;
-  //       this.tokenSymbol = tokenSymbol;
-  //       this.getBalance();
-  //     });
-  // },
 };
 </script>
