@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 import Token from '@/handlers/token';
 import Market from '@/handlers/market';
 
@@ -60,6 +61,9 @@ export default {
     }),
   },
   methods: {
+    ...mapActions({
+      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
+    }),
     supply() {
       const contractAmount = this.amount * this.mantissa;
       const market = new Market(this.data.market.address);
@@ -67,6 +71,7 @@ export default {
       token.approve(this.account, this.data.market.address, contractAmount)
         .then(() => market.supply(this.account, contractAmount))
         .then(() => {
+          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
         });
     },

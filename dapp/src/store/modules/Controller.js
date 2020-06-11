@@ -14,7 +14,8 @@ const actions = {
     const controller = new Controller();
     controller.eventualMarketAddresses
       .then((marketAddresses) => {
-        const markets = marketAddresses.map((marketAddress) => ({
+        const markets = marketAddresses.map((marketAddress, idx) => ({
+          id: idx,
           address: marketAddress,
           token: {
             address: null,
@@ -108,11 +109,47 @@ const actions = {
         });
       });
   },
-  [constants.CONTROLLER_MARKET_UPDATE_BORROW_RATE]: (
-    { commit },
-    { marketIndex, marketBorrowRate },
-  ) => {
-    commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+  [constants.CONTROLLER_MARKET_UPDATE_BORROW_RATE]:
+    ({ commit }, { marketIndex, marketBorrowRate }) => {
+      commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+    },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_CASH]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.eventualCash
+      .then((marketCash) => {
+        commit(constants.CONTROLLER_SET_MARKET_CASH, { marketIndex, marketCash });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_BORROW_RATE]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getBorrowRate()
+      .then((marketBorrowRate) => {
+        commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_TOTAL_BORROWS]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getUpdatedTotalBorrows()
+      .then((marketBorrows) => {
+        commit(constants.CONTROLLER_SET_MARKET_TOTAL_BORROWS, { marketIndex, marketBorrows });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_TOTAL_SUPPLIES]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getUpdatedTotalSupply()
+      .then((marketSupplies) => {
+        commit(constants.CONTROLLER_SET_MARKET_TOTAL_SUPPLIES, { marketIndex, marketSupplies });
+      });
+  },
+  [constants.CONTROLLER_MARKET_UPDATE]: ({ dispatch }, marketIndex) => {
+    dispatch(constants.CONTROLLER_MARKET_GET_CASH, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_BORROW_RATE, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_TOTAL_BORROWS, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_TOTAL_SUPPLIES, { marketIndex });
   },
 };
 
