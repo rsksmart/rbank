@@ -47,10 +47,9 @@ export default {
     return {
       maxAmount: false,
       amount: null,
-      validForm: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        minBalance: () => this.data.accountBalance >= this.amount || 'Not enough funds',
+        minBalance: () => this.balanceAsDouble >= this.amount || 'Not enough funds',
       },
     };
   },
@@ -59,17 +58,26 @@ export default {
       account: (state) => state.Session.account,
       mantissa: (state) => state.Controller.mantissa,
     }),
+    contractAmount() {
+      return this.amount * this.mantissa;
+    },
+    balanceAsDouble() {
+      return this.data.accountBalance / this.mantissa;
+    },
+    validForm() {
+      return typeof this.rules.minBalance() !== 'string'
+        && typeof this.rules.required() !== 'string';
+    },
   },
   methods: {
     ...mapActions({
       updateMarket: constants.CONTROLLER_MARKET_UPDATE,
     }),
     supply() {
-      const contractAmount = this.amount * this.mantissa;
       const market = new Market(this.data.market.address);
       const token = new Token(this.data.market.token.address);
-      token.approve(this.account, this.data.market.address, contractAmount)
-        .then(() => market.supply(this.account, contractAmount))
+      token.approve(this.account, this.data.market.address, this.contractAmount)
+        .then(() => market.supply(this.account, this.contractAmount))
         .then(() => {
           this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
@@ -78,11 +86,12 @@ export default {
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.minBalance() !== 'string'
-        && typeof this.rules.required() !== 'string';
+      if (this.maxAmount && this.amount !== this.balanceAsDouble) this.maxAmount = false;
+      if (this.amount === this.balanceAsDouble) this.maxAmount = true;
     },
     maxAmount() {
-      this.amount = this.maxAmount ? this.data.accountBalance : null;
+      if (this.maxAmount) this.amount = this.balanceAsDouble;
+      if (!this.maxAmount && this.amount === this.balanceAsDouble) this.amount = null;
     },
   },
 };

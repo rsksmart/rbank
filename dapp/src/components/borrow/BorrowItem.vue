@@ -11,7 +11,7 @@
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ tokenSymbol }}
+                {{ market.token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -25,7 +25,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                ... %
+                {{ apr }} %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,8 +33,7 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <borrow-form @formSucceed="reset" :marketAddress="marketAddress"
-                    :maxAmountAllowed="maxBorrowAllowed"/>
+      <borrow-form @formSucceed="reset" :data="formObject"/>
     </template>
   </div>
 </template>
@@ -43,59 +42,57 @@
 import BorrowForm from '@/components/market/BorrowForm.vue';
 import { mapState } from 'vuex';
 import Controller from '@/handlers/controller';
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 
 export default {
   name: 'BorrowItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       flag: false,
-      market: null,
-      token: null,
-      tokenName: null,
-      tokenSymbol: null,
       liquidity: null,
-      marketPrice: null,
-      marketCash: null,
-      maxBorrowAllowed: null,
     };
   },
   computed: {
     ...mapState({
+      mantissa: (state) => state.Controller.mantissa,
+      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
+    apr() {
+      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+    },
+    formObject() {
+      return {
+        market: this.market,
+        max: Number(this.maxBorrowAllowed),
+        liquidity: this.liquidity,
+      };
+    },
+    maxBorrowAllowed() {
+      let allowed = this.market.price > 0
+        ? Math.floor(this.liquidity / (this.market.price * 2)) : 0;
+      allowed = allowed >= this.market.cash ? this.market.cash : allowed;
+      return (allowed / this.mantissa).toFixed(5);
+    },
   },
   methods: {
     reset() {
       this.flag = false;
-      this.getMaxBorrowAllowed();
+      this.getAccountLiquidity();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getMaxBorrowAllowed() {
-      this.market.eventualCash
-        .then((balance) => {
-          this.marketCash = balance;
-          return this.controller.getLiquidity(this.account);
-        })
+    getAccountLiquidity() {
+      const controller = new Controller();
+      controller.getLiquidity(this.account)
         .then((liquidity) => {
           this.liquidity = Number(liquidity);
-          return this.controller.getPrice(this.marketAddress);
-        })
-        .then((price) => {
-          this.marketPrice = Number(price);
-          this.maxBorrowAllowed = this.marketPrice > 0
-            ? Math.floor(this.liquidity / (this.marketPrice * 2)) : 0;
-          this.maxBorrowAllowed = this.maxBorrowAllowed >= this.marketCash
-            ? this.marketCash : this.maxBorrowAllowed;
         });
     },
   },
@@ -103,19 +100,7 @@ export default {
     BorrowForm,
   },
   created() {
-    this.controller = new Controller();
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-      });
-    this.getMaxBorrowAllowed();
+    this.getAccountLiquidity();
   },
 };
 </script>

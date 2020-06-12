@@ -1,35 +1,26 @@
 <template>
   <div>
-    <borrow-list :marketAddresses="marketAddresses"/>
+    <borrow-list/>
   </div>
 </template>
 
 <script>
 import BorrowList from '@/components/borrow/BorrowList.vue';
-import Controller from '@/handlers/controller';
+import { mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 
 export default {
   name: 'Borrow',
-  data() {
-    return {
-      controller: null,
-      marketAddresses: [],
-    };
-  },
   components: {
     BorrowList,
   },
   methods: {
-    loadMarkets() {
-      this.controller.eventualMarketAddresses
-        .then((marketAddresses) => {
-          this.marketAddresses = marketAddresses;
-        });
-    },
+    ...mapActions({
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
   },
   created() {
-    this.controller = new Controller();
-    this.loadMarkets();
+    this.getMarkets();
   },
 };
 </script>

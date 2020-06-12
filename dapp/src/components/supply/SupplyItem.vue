@@ -72,7 +72,7 @@ export default {
     formObject() {
       return {
         market: this.market,
-        accountBalance: this.balance,
+        accountBalance: Number(this.balance) * this.mantissa,
       };
     },
   },
