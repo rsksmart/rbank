@@ -16,7 +16,7 @@
             </v-text-field>
           </v-col>
           <v-col cols="2">
-            <v-switch color="success" v-model="maxAmount" label="Máximo"/>
+            <v-switch color="success" v-model="maxAmount" label="Max"/>
           </v-col>
         </v-row>
       </v-container>
