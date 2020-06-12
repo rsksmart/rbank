@@ -77,19 +77,20 @@ export default {
     },
   },
   methods: {
-    accountTokenBalance() {
-      const token = new Token(this.market.token.address);
-      token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
-        });
-    },
     reset() {
       this.flag = false;
       this.accountTokenBalance();
     },
     enableForm() {
       this.flag = !this.flag;
+    },
+    async accountTokenBalance() {
+      const token = new Token(this.market.token.address);
+      await token.balanceOf(this.account)
+        .then((balance) => {
+          this.tokenBalance = Number(balance);
+          return this.tokenBalance;
+        });
     },
   },
   components: {

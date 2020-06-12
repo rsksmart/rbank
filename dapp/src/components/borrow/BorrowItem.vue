@@ -69,7 +69,7 @@ export default {
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxBorrowAllowed),
+        max: Number(this.maxBorrowAllowed) * this.mantissa,
         liquidity: this.liquidity,
       };
     },
