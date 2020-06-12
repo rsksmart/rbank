@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Borrow from market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>Borrow from market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,90 +30,67 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
-import Controller from '@/handlers/controller';
 
 export default {
   name: 'BorrowForm',
   props: {
-    marketAddress: {
-      type: String,
-      required: true,
-    },
-    maxAmountAllowed: {
-      type: Number,
+    data: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
-      controller: null,
-      market: null,
-      marketPrice: null,
       amount: null,
-      tokenName: null,
-      tokenSymbol: null,
-      liquidity: null,
-      validForm: false,
       maxAmount: false,
       rules: {
         required: () => (!!this.amount || 'Required.'),
-        liquidity: () => (this.liquidity >= this.marketPrice * 2 * this.amount || 'not enough liquidity'),
+        liquidity: () => (this.data.liquidity
+          >= (this.data.market.price * 2 * this.contractAmount) || 'not enough liquidity'),
       },
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
+      mantissa: (state) => state.Controller.mantissa,
     }),
+    maxAsDouble() {
+      return this.data.max / this.mantissa;
+    },
+    validForm() {
+      return typeof this.rules.liquidity() !== 'string'
+        && typeof this.rules.required() !== 'string';
+    },
+    contractAmount() {
+      return this.amount * this.mantissa;
+    },
   },
   methods: {
+    ...mapActions({
+      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
+    }),
     borrow() {
-      this.market.borrow(this.account, this.amount)
+      const market = new Market(this.data.market.address);
+      market.borrow(this.account, this.contractAmount)
         .then(() => {
+          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
-        });
-    },
-    getLiquidity() {
-      this.controller.getLiquidity(this.account)
-        .then((liquidity) => {
-          this.liquidity = Number(liquidity);
         });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.liquidity() !== 'string'
-        && typeof this.rules.required() !== 'string';
+      if (this.maxAmount && this.amount !== this.maxAsDouble) this.maxAmount = false;
+      if (this.amount === this.maxAsDouble) this.maxAmount = true;
     },
     maxAmount() {
-      if (this.maxAmount) {
-        this.amount = this.maxAmountAllowed;
-      } else {
-        this.amount = null;
-      }
+      if (this.maxAmount) this.amount = this.maxAsDouble;
+      if (!this.maxAmount && this.amount === this.maxAsDouble) this.amount = null;
     },
-  },
-  created() {
-    this.market = new Market(this.marketAddress);
-    this.controller = new Controller();
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-      });
-    this.getLiquidity();
-    this.controller.getPrice(this.marketAddress)
-      .then((price) => {
-        this.marketPrice = Number(price);
-      });
   },
 };
 </script>

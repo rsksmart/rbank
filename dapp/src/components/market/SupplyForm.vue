@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>Supply to market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,81 +30,69 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Market from '@/handlers/market';
+import { mapState, mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 import Token from '@/handlers/token';
+import Market from '@/handlers/market';
 
 export default {
   name: 'SupplyForm',
   props: {
-    marketAddress: {
-      type: String,
+    data: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       maxAmount: false,
-      market: null,
-      token: null,
       amount: null,
-      tokenName: null,
-      tokenSymbol: null,
-      tokenBalance: null,
-      validForm: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        minBalance: () => this.tokenBalance >= this.amount || 'Not enough funds',
+        minBalance: () => this.balanceAsDouble >= this.amount || 'Not enough funds',
       },
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      isOwner: (state) => state.Session.isOwner,
+      mantissa: (state) => state.Controller.mantissa,
     }),
+    contractAmount() {
+      return this.amount * this.mantissa;
+    },
+    balanceAsDouble() {
+      return this.data.accountBalance / this.mantissa;
+    },
+    validForm() {
+      return typeof this.rules.minBalance() !== 'string'
+        && typeof this.rules.required() !== 'string';
+    },
   },
   methods: {
+    ...mapActions({
+      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
+    }),
     supply() {
-      this.token.approve(this.account, this.marketAddress, this.amount)
-        .then(() => this.market.supply(this.account, this.amount))
+      const market = new Market(this.data.market.address);
+      const token = new Token(this.data.market.token.address);
+      token.approve(this.account, this.data.market.address, this.contractAmount)
+        .then(() => market.supply(this.account, this.contractAmount))
         .then(() => {
+          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
-        });
-    },
-    getBalance() {
-      this.token.balanceOf(this.account)
-        .then((balance) => {
-          this.tokenBalance = Number(balance);
         });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.minBalance() !== 'string'
-        && typeof this.rules.required() !== 'string';
+      if (this.maxAmount && this.amount !== this.balanceAsDouble) this.maxAmount = false;
+      if (this.amount === this.balanceAsDouble) this.maxAmount = true;
     },
     maxAmount() {
-      if (this.maxAmount) {
-        this.amount = this.tokenBalance;
-      } else {
-        this.amount = null;
-      }
+      if (this.maxAmount) this.amount = this.balanceAsDouble;
+      if (!this.maxAmount && this.amount === this.balanceAsDouble) this.amount = null;
     },
-  },
-  created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.getBalance();
-      });
   },
 };
 </script>
