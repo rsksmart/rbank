@@ -16,8 +16,8 @@
               </v-col>
             </v-row>
           </v-list-item>
-          <redeem-item v-for="(market, idx) in marketAddresses"
-                       :key="`market-item-${idx}`" :marketAddress="market"/>
+          <redeem-item v-for="(market, idx) in markets"
+                       :key="`market-item-${idx}`" :market="market"/>
         </v-list>
       </v-card>
     </v-container>
@@ -26,14 +26,14 @@
 
 <script>
 import RedeemItem from '@/components/redeem/RedeemItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'RedeemList',
-  props: {
-    marketAddresses: {
-      type: Array,
-      required: true,
-    },
+  computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
   },
   components: {
     RedeemItem,

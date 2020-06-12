@@ -11,7 +11,7 @@
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ tokenSymbol }}
+                {{ market.token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -25,7 +25,7 @@
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                ... %
+                {{ apr }} %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,8 +33,7 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <redeem-form @formSucceed="reset" :marketAddress="marketAddress"
-                   :maxAmountAllowed="maxRedeemAmount"/>
+      <redeem-form @formSucceed="reset" :data="formObject"/>
     </template>
   </div>
 </template>
@@ -42,53 +41,58 @@
 <script>
 import { mapState } from 'vuex';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 import RedeemForm from '@/components/market/RedeemForm.vue';
 
 export default {
   name: 'RedeemItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       flag: false,
-      market: null,
-      token: null,
-      tokenBalance: null,
-      tokenName: null,
-      tokenSymbol: null,
       userSupply: null,
-      balanceOfMarket: null,
-      maxRedeemAmount: null,
     };
   },
   computed: {
     ...mapState({
+      mantissa: (state) => state.Controller.mantissa,
+      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
+    maxRedeemAmount() {
+      const allowed = this.market.cash > this.userSupply
+        ? this.userSupply : this.market.cash;
+      return (allowed / this.mantissa).toFixed(5);
+    },
+    apr() {
+      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+    },
+    formObject() {
+      return {
+        market: this.market,
+        max: Number(this.maxRedeemAmount) * this.mantissa,
+        userSupply: this.userSupply,
+      };
+    },
   },
   methods: {
     reset() {
       this.flag = false;
-      this.getMaxRedeemAmount();
+      this.getUserSupply();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getMaxRedeemAmount() {
-      this.market.getUpdatedSupplyOf(this.account)
+    async getUserSupply() {
+      const market = new Market(this.market.address);
+      await market.getUpdatedSupplyOf(this.account)
         .then((supply) => {
           this.userSupply = Number(supply);
-          return this.token.balanceOf(this.marketAddress);
-        })
-        .then((balanceOfMarket) => {
-          this.balanceOfMarket = Number(balanceOfMarket);
-          this.maxRedeemAmount = this.balanceOfMarket > this.userSupply
-            ? this.userSupply : this.balanceOfMarket;
+          return this.userSupply;
         });
     },
   },
@@ -96,18 +100,7 @@ export default {
     RedeemForm,
   },
   created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [this.token.eventualName, this.token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.getMaxRedeemAmount();
-      });
+    this.getUserSupply();
   },
 };
 </script>

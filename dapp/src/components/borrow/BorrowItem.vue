@@ -88,11 +88,12 @@ export default {
     enableForm() {
       this.flag = !this.flag;
     },
-    getAccountLiquidity() {
+    async getAccountLiquidity() {
       const controller = new Controller();
-      controller.getLiquidity(this.account)
+      await controller.getLiquidity(this.account)
         .then((liquidity) => {
           this.liquidity = Number(liquidity);
+          return this.liquidity;
         });
     },
   },

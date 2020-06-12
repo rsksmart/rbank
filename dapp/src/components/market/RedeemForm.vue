@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Redeem from market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>Redeem from market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,81 +30,70 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
+import * as constants from '@/store/constants';
 
 export default {
   name: 'RedeemForm',
   props: {
-    marketAddress: {
-      type: String,
-      required: true,
-    },
-    maxAmountAllowed: {
-      type: Number,
+    data: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
-      market: null,
       amount: null,
-      tokenName: null,
-      tokenSymbol: null,
-      validForm: false,
-      userSupply: null,
-      balanceOfMarket: null,
       maxAmount: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        marketSupply: () => this.balanceOfMarket >= this.amount || 'Market does not have enough funds',
-        userSupply: () => this.userSupply >= this.amount || 'You do not have enough funds on this market',
+        marketSupply: () => this.data.market.cash >= this.contractAmount
+          || 'Market does not have enough funds',
+        userSupply: () => this.data.userSupply >= this.contractAmount
+          || 'You do not have enough funds on this market',
       },
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
+      mantissa: (state) => state.Controller.mantissa,
     }),
+    maxAsDouble() {
+      return this.data.max / this.mantissa;
+    },
+    validForm() {
+      return typeof this.rules.required() !== 'string'
+        && typeof this.rules.marketSupply() !== 'string'
+        && typeof this.rules.userSupply() !== 'string';
+    },
+    contractAmount() {
+      return this.amount * this.mantissa;
+    },
   },
   methods: {
+    ...mapActions({
+      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
+    }),
     redeem() {
-      this.market.redeem(this.account, this.amount)
-        .then(() => this.$emit('formSucceed'));
+      const market = new Market(this.data.market.address);
+      market.redeem(this.account, this.contractAmount)
+        .then(() => {
+          this.updateMarket(this.data.market.id);
+          this.$emit('formSucceed');
+        });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.required() !== 'string'
-        && typeof this.rules.marketSupply() !== 'string'
-        && typeof this.rules.userSupply() !== 'string';
+      if (this.maxAmount && this.amount !== this.maxAsDouble) this.maxAmount = false;
+      if (this.amount === this.maxAsDouble) this.maxAmount = true;
     },
     maxAmount() {
-      if (this.maxAmount) {
-        this.amount = this.maxAmountAllowed;
-      } else {
-        this.amount = null;
-      }
+      if (this.maxAmount) this.amount = this.maxAsDouble;
+      if (!this.maxAmount && this.amount === this.maxAsDouble) this.amount = null;
     },
-  },
-  created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol, token.balanceOf(this.marketAddress)];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol, balanceOfMarket]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.balanceOfMarket = Number(balanceOfMarket);
-      });
-    this.market.getUpdatedSupplyOf(this.account)
-      .then((supply) => {
-        this.userSupply = Number(supply);
-      });
   },
 };
 </script>
