@@ -3,7 +3,7 @@
     <v-list-item three-line>
       <v-list-item-content>
         <v-list-item-title class="headline mb-1">
-          {{ tokenName }} ({{ tokenSymbol }})
+          {{ market.token.name }} ({{ market.token.symbol }})
         </v-list-item-title>
         <v-list-item-subtitle>
           {{ marketSupplyOf }}
@@ -21,27 +21,19 @@
 
 <script>
 import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 
 export default {
   name: 'MarketBalanceItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
-      controller: null,
-      market: null,
-      tokenName: null,
-      tokenSymbol: null,
-      price: null,
       marketSupplyOf: null,
-      marketCash: null,
       btc: 'https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png',
     };
   },
@@ -50,29 +42,15 @@ export default {
       account: (state) => state.Session.account,
     }),
     updatedSupplyCash() {
-      return this.price * this.marketSupplyOf;
+      return this.market.price * Number(this.marketSupplyOf);
     },
   },
   created() {
-    this.controller = new Controller();
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-      });
-    this.controller.getPrice(this.marketAddress)
-      .then((price) => {
-        this.price = Number(price);
-      });
-    this.market.getUpdatedSupplyOf(this.account)
+    const market = new Market(this.market.address);
+    market.getUpdatedSupplyOf(this.account)
       .then((supplyOf) => {
-        this.marketSupplyOf = Number(supplyOf);
+        this.marketSupplyOf = (Number(supplyOf) / (10 ** this.market.token.decimals))
+          .toFixed(this.market.token.decimals);
       });
   },
 };

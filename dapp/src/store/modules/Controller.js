@@ -5,6 +5,8 @@ import Token from '@/handlers/token';
 
 const state = {
   markets: [],
+  factor: 1e16,
+  mantissa: 1e6,
 };
 
 const actions = {
@@ -12,12 +14,14 @@ const actions = {
     const controller = new Controller();
     controller.eventualMarketAddresses
       .then((marketAddresses) => {
-        const markets = marketAddresses.map((marketAddress) => ({
+        const markets = marketAddresses.map((marketAddress, idx) => ({
+          id: idx,
           address: marketAddress,
           token: {
             address: null,
             name: null,
             symbol: null,
+            decimals: null,
           },
           borrowRate: null,
           price: null,
@@ -36,17 +40,22 @@ const actions = {
   },
   [constants.CONTROLLER_GET_MARKETS_TOKENS]: ({ commit }, { marketAddresses }) => {
     const marketIntances = marketAddresses.map((marketAddress) => new Market(marketAddress));
-    marketIntances.forEach((marketInstance, idx) => {
+    marketIntances.forEach((marketInstance, marketIndex) => {
       marketInstance.eventualTokenAddress
         .then((tokenAddress) => {
           const token = new Token(tokenAddress);
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_ADDRESS, { marketIndex: idx, tokenAddress });
-          return [token.eventualName, token.eventualSymbol];
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_ADDRESS, { marketIndex, tokenAddress });
+          return [
+            token.eventualName,
+            token.eventualSymbol,
+            token.eventualDecimals,
+          ];
         })
         .then((tokenPromises) => Promise.all(tokenPromises))
-        .then(([tokenName, tokenSymbol]) => {
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_NAME, { marketIndex: idx, tokenName });
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL, { marketIndex: idx, tokenSymbol });
+        .then(([tokenName, tokenSymbol, tokenDecimals]) => {
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_NAME, { marketIndex, tokenName });
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL, { marketIndex, tokenSymbol });
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_DECIMALS, { marketIndex, tokenDecimals });
         });
     });
   },
@@ -103,11 +112,47 @@ const actions = {
         });
       });
   },
-  [constants.CONTROLLER_MARKET_UPDATE_BORROW_RATE]: (
-    { commit },
-    { marketIndex, marketBorrowRate },
-  ) => {
-    commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+  [constants.CONTROLLER_MARKET_UPDATE_BORROW_RATE]:
+    ({ commit }, { marketIndex, marketBorrowRate }) => {
+      commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+    },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_CASH]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.eventualCash
+      .then((marketCash) => {
+        commit(constants.CONTROLLER_SET_MARKET_CASH, { marketIndex, marketCash });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_BORROW_RATE]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getBorrowRate()
+      .then((marketBorrowRate) => {
+        commit(constants.CONTROLLER_SET_MARKET_BORROW_RATE, { marketIndex, marketBorrowRate });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_TOTAL_BORROWS]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getUpdatedTotalBorrows()
+      .then((marketBorrows) => {
+        commit(constants.CONTROLLER_SET_MARKET_TOTAL_BORROWS, { marketIndex, marketBorrows });
+      });
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_MARKET_GET_TOTAL_SUPPLIES]: ({ commit, state }, { marketIndex }) => {
+    const market = new Market(state.markets[marketIndex].address);
+    market.getUpdatedTotalSupply()
+      .then((marketSupplies) => {
+        commit(constants.CONTROLLER_SET_MARKET_TOTAL_SUPPLIES, { marketIndex, marketSupplies });
+      });
+  },
+  [constants.CONTROLLER_MARKET_UPDATE]: ({ dispatch }, marketIndex) => {
+    dispatch(constants.CONTROLLER_MARKET_GET_CASH, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_BORROW_RATE, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_TOTAL_BORROWS, { marketIndex });
+    dispatch(constants.CONTROLLER_MARKET_GET_TOTAL_SUPPLIES, { marketIndex });
   },
 };
 
@@ -128,6 +173,10 @@ const mutations = {
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL]: (state, { marketIndex, tokenSymbol }) => {
     state.markets[marketIndex].token.symbol = tokenSymbol;
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_SET_MARKET_TOKEN_DECIMALS]: (state, { marketIndex, tokenDecimals }) => {
+    state.markets[marketIndex].token.decimals = Number(tokenDecimals);
   },
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_CASH]: (state, { marketIndex, marketCash }) => {

@@ -11,21 +11,21 @@
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ tokenSymbol }}
+                {{ market.token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                {{ updatedBorrowBy }}
+                {{ maxPayBorrowAllowed }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
           <v-col cols="4">
             <v-list-item-content>
               <v-list-item-title class="text-center">
-                ... %
+                {{ apr }} %
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -33,8 +33,7 @@
       </v-list-item>
     </v-card>
     <template v-if="flag">
-      <pay-borrow-form @formSucceed="reset" :marketAddress="marketAddress"
-                       :maxAmountAllowed="maxPayBorrowAllowed"/>
+      <pay-borrow-form @formSucceed="reset" :data="formObject"/>
     </template>
   </div>
 </template>
@@ -48,73 +47,73 @@ import PayBorrowForm from '@/components/market/PayBorrowForm.vue';
 export default {
   name: 'PayBorrowItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
       flag: false,
-      market: null,
-      token: null,
-      updatedBorrowBy: null,
-      tokenName: null,
-      tokenSymbol: null,
+      borrowedByAccount: null,
       tokenAccountBalance: null,
-      maxPayBorrowAllowed: 0,
     };
   },
   computed: {
     ...mapState({
+      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
+    apr() {
+      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+    },
+    formObject() {
+      return {
+        market: this.market,
+        max: Number(this.maxPayBorrowAllowed) * (10 ** this.market.token.decimals),
+        tokenAccountBalance: this.tokenAccountBalance,
+        borrowedByAccount: this.borrowedByAccount,
+      };
+    },
+    maxPayBorrowAllowed() {
+      const allowed = this.borrowedByAccount > this.tokenAccountBalance
+        ? this.tokenAccountBalance : this.borrowedByAccount;
+      return (allowed / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
+    },
   },
   methods: {
     reset() {
       this.flag = false;
-      this.getUpdatedBorrowBy();
+      this.accountTokenBalance();
+      this.accountBorrows();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getUpdatedBorrowBy() {
-      this.market.getUpdatedBorrowBy(this.account)
+    async accountBorrows() {
+      const market = new Market(this.market.address);
+      return market.getUpdatedBorrowBy(this.account)
         .then((borrowBy) => {
-          this.updatedBorrowBy = Number(borrowBy);
+          this.borrowedByAccount = Number(borrowBy);
+          return this.borrowedByAccount;
         });
     },
-    getMaxPayBorrowAllowed() {
-      this.maxPayBorrowAllowed = this.updatedBorrowBy > this.tokenAccountBalance
-        ? this.tokenAccountBalance : this.updatedBorrowBy;
+    async accountTokenBalance() {
+      const token = new Token(this.market.token.address);
+      await token.balanceOf(this.account)
+        .then((balance) => {
+          this.tokenAccountBalance = Number(balance);
+          return this.tokenAccountBalance;
+        });
     },
   },
   components: {
     PayBorrowForm,
   },
   created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [
-          this.token.eventualName,
-          this.token.eventualSymbol,
-          this.token.balanceOf(this.account),
-        ];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol, balanceOfAccount]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.tokenAccountBalance = balanceOfAccount;
-        this.getUpdatedBorrowBy();
-        this.getMaxPayBorrowAllowed();
-      });
+    this.accountTokenBalance();
+    this.accountBorrows();
   },
 };
 </script>
-
-<style scoped>
-
-</style>

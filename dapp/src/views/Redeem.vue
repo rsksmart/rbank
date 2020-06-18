@@ -1,39 +1,26 @@
 <template>
   <div>
-    <redeem-list :marketAddresses="marketAddresses"/>
+    <redeem-list/>
   </div>
 </template>
 
 <script>
 import RedeemList from '@/components/redeem/RedeemList.vue';
-import Controller from '@/handlers/controller';
+import { mapActions } from 'vuex';
+import * as constants from '@/store/constants';
 
 export default {
   name: 'Redeem',
-  data() {
-    return {
-      controller: null,
-      marketAddresses: [],
-    };
-  },
   components: {
     RedeemList,
   },
   methods: {
-    loadMarkets() {
-      this.controller.eventualMarketAddresses
-        .then((marketAddresses) => {
-          this.marketAddresses = marketAddresses;
-        });
-    },
+    ...mapActions({
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
   },
   created() {
-    this.controller = new Controller();
-    this.loadMarkets();
+    this.getMarkets();
   },
 };
 </script>
-
-<style scoped>
-
-</style>

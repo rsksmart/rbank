@@ -16,8 +16,8 @@
               </v-col>
             </v-row>
           </v-list-item>
-          <borrow-item v-for="(market, idx) in marketAddresses"
-                       :key="`market-item-${idx}`" :marketAddress="market"/>
+          <borrow-item v-for="(market, idx) in markets"
+                       :key="`market-item-${idx}`" :market="market"/>
         </v-list>
       </v-card>
     </v-container>
@@ -26,21 +26,17 @@
 
 <script>
 import BorrowItem from '@/components/borrow/BorrowItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'BorrowList',
-  props: {
-    marketAddresses: {
-      type: Array,
-      required: true,
-    },
+  computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
   },
   components: {
     BorrowItem,
   },
 };
 </script>
-
-<style scoped>
-
-</style>

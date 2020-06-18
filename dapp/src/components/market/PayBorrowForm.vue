@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>PayBorrow of market {{marketAddress}} of token {{tokenSymbol}}</h2>
+          <h2>PayBorrow of market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -35,40 +35,30 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Market from '@/handlers/market';
+import { mapActions, mapState } from 'vuex';
+import * as constants from '@/store/constants';
 import Token from '@/handlers/token';
+import Market from '@/handlers/market';
 
 export default {
   name: 'PayBorrowForm',
   props: {
-    marketAddress: {
-      type: String,
-      required: true,
-    },
-    maxAmountAllowed: {
-      type: Number,
+    data: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
-      market: null,
       amount: null,
-      token: null,
-      tokenName: null,
-      tokenSymbol: null,
-      borrowByUser: null,
-      balanceOfUser: null,
-      validForm: false,
       maxAmount: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        debtExists: () => (this.borrowByUser > 0 && !!this.amount)
+        debtExists: () => (this.data.borrowedByAccount > 0 && !!this.contractAmount)
           || 'You do not have a debt on this market.',
-        hasEnoughTokens: () => this.balanceOfUser >= this.amount
-          || `You do not have enough ${this.tokenSymbol}s`,
-        notBiggerThanDebt: () => this.borrowByUser >= this.amount
+        hasEnoughTokens: () => this.data.tokenAccountBalance >= this.contractAmount
+          || `You do not have enough ${this.data.market.token.symbol}s`,
+        notBiggerThanDebt: () => this.data.borrowedByAccount >= this.contractAmount
           || 'You do not owe that much.',
       },
     };
@@ -77,52 +67,43 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    maxAsDouble() {
+      return this.data.max / (10 ** this.data.market.token.decimals);
+    },
+    validForm() {
+      return typeof this.rules.required() !== 'string'
+        && typeof this.rules.debtExists() !== 'string'
+        && typeof this.rules.hasEnoughTokens() !== 'string'
+        && typeof this.rules.notBiggerThanDebt() !== 'string';
+    },
+    contractAmount() {
+      return this.amount * (10 ** this.data.market.token.decimals);
+    },
   },
   methods: {
+    ...mapActions({
+      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
+    }),
     payBorrow() {
-      this.token.approve(this.account, this.marketAddress, this.amount)
-        .then(() => this.market.payBorrow(this.account, this.amount))
+      const token = new Token(this.data.market.token.address);
+      token.approve(this.account, this.data.market.address, this.contractAmount)
+        .then(() => new Market(this.data.market.address)
+          .payBorrow(this.account, this.contractAmount))
         .then(() => {
+          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
         });
     },
   },
   watch: {
     amount() {
-      this.validForm = typeof this.rules.required() !== 'string'
-        && typeof this.rules.debtExists() !== 'string'
-        && typeof this.rules.hasEnoughTokens() !== 'string'
-        && typeof this.rules.notBiggerThanDebt() !== 'string';
+      if (this.maxAmount && this.amount !== this.maxAsDouble) this.maxAmount = false;
+      if (this.amount === this.maxAsDouble) this.maxAmount = true;
     },
     maxAmount() {
-      if (this.maxAmount) {
-        this.amount = this.maxAmountAllowed;
-      } else {
-        this.amount = null;
-      }
+      if (this.maxAmount) this.amount = this.maxAsDouble;
+      if (!this.maxAmount && this.amount === this.maxAsDouble) this.amount = null;
     },
-  },
-  created() {
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [
-          this.token.eventualName,
-          this.token.eventualSymbol,
-          this.token.balanceOf(this.account),
-        ];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol, balanceOfUser]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.balanceOfUser = Number(balanceOfUser);
-      });
-    this.market.getUpdatedBorrowBy(this.account)
-      .then((borrowByUser) => {
-        this.borrowByUser = Number(borrowByUser);
-      });
   },
 };
 </script>
