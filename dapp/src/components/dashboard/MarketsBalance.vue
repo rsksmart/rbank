@@ -5,8 +5,8 @@
     </div>
     <v-container fluid>
       <v-row>
-        <v-col v-for="marketAddress in marketAddresses" :key="marketAddress" cols="4">
-          <market-balance-item :marketAddress="marketAddress"/>
+        <v-col v-for="market in markets" :key="market.address" cols="4">
+          <market-balance-item :market="market"/>
         </v-col>
       </v-row>
     </v-container>
@@ -15,14 +15,14 @@
 
 <script>
 import MarketBalanceItem from '@/components/dashboard/MarketBalanceItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MarketsBalance',
-  props: {
-    marketAddresses: {
-      type: Array,
-      default: () => ([]),
-    },
+  computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
   },
   components: {
     MarketBalanceItem,

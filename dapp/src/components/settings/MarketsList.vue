@@ -13,8 +13,8 @@
               <v-list-item-subtitle class="text-center">Current Cash</v-list-item-subtitle>
               <v-list-item-subtitle class="text-center">Base borrow rate</v-list-item-subtitle>
             </v-list-item>
-            <market-list-item v-for="(marketAddress, idx) in marketAddresses"
-              :key="`market-list-item-${idx}`" :marketAddress="marketAddress"/>
+            <market-list-item v-for="(market, idx) in markets"
+              :key="`market-list-item-${idx}`" :market="market"/>
           </v-list>
         </v-card>
       </div>
@@ -23,14 +23,14 @@
 
 <script>
 import MarketListItem from '@/components/settings/MarketListItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MarketsList',
-  props: {
-    marketAddresses: {
-      type: Array,
-      default: () => ([]),
-    },
+  computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
   },
   components: {
     MarketListItem,

@@ -39,7 +39,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="headline">
-              Health Factor: {{factor.toFixed(2)}} %
+              Health Factor: {{ factor }} %
             </v-list-item-title>
             <v-list-item-subtitle>
               Account in risk when health factor is bigger than 50%
@@ -68,12 +68,13 @@
         </div>
       </v-card>
     </div>
-    <market-detail-list :marketAddresses="marketAddresses"/>
+    <market-detail-list/>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
+import * as constants from '@/store/constants';
 import Controller from '@/handlers/controller';
 import MarketDetailList from '@/components/lending/MarketDetailList.vue';
 
@@ -87,14 +88,14 @@ export default {
       borrowed: null,
       liquidity: null,
       marketAddresses: null,
-      factor: 0,
       barColor: null,
     };
   },
   methods: {
+    ...mapActions({
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
     calculateHealth() {
-      this.factor = (this.borrowed === 0 || this.supplied === 0)
-        ? 0 : (this.borrowed / this.supplied) * 100;
       this.barColor = (this.factor <= 50) ? 'light-green darken-4' : 'red';
     },
   },
@@ -102,6 +103,10 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    factor() {
+      return ((this.borrowed === 0 || this.supplied === 0)
+        ? 0 : (this.borrowed / this.supplied) * 100).toFixed(2);
+    },
   },
   components: {
     MarketDetailList,
@@ -122,10 +127,7 @@ export default {
       .then((liquidity) => {
         this.liquidity = Number(liquidity);
       });
-    this.controller.eventualMarketAddresses
-      .then((marketAddresses) => {
-        this.marketAddresses = marketAddresses;
-      });
+    this.getMarkets();
   },
 };
 </script>
