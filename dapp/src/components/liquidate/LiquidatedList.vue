@@ -28,6 +28,7 @@
 <script>
 import LiquidatedItem from '@/components/liquidate/LiquidatedItem.vue';
 import Market from '@/handlers/market';
+import Controller from '@/handlers/controller';
 import Token from '@/handlers/token';
 
 export default {
@@ -50,6 +51,19 @@ export default {
     LiquidatedItem,
   },
   methods: {
+    getHealth(account) {
+      return new Promise((resolve, reject) => {
+        this.controller.getAccountValues(account)
+          .then(({ supplyValue, borrowValue }) => {
+            const supplied = Number(supplyValue);
+            const borrowed = Number(borrowValue);
+            const factor = (borrowed === 0 || supplied === 0)
+              ? 0 : (borrowed / supplied) * 100;
+            resolve(factor);
+          })
+          .catch(reject);
+      });
+    },
     getSymbol() {
       this.marketContract.eventualTokenAddress
         .then((tokenAddress) => new Token(tokenAddress).eventualSymbol)
@@ -65,10 +79,12 @@ export default {
     getUnhealthyAccounts() {
       this.unhealthyAccounts = this.borrowEvents.map((e) => e.returnValues.user);
       this.unhealthyAccounts = this.unhealthyAccounts
-        .filter((account, index) => this.unhealthyAccounts.indexOf(account) === index);
+        .filter((account, index) => this.unhealthyAccounts.indexOf(account) === index)
+        .filter((account) => this.getHealth(account) >= 50);
     },
   },
   created() {
+    this.controller = new Controller();
     this.marketContract = new Market(this.marketAddress);
     this.getSymbol();
     this.getBorrowEvents();

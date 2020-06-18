@@ -53,7 +53,7 @@
             <v-card flat>
               <v-row>
                 <h2 class="text-center">
-                  Total: {{total}}
+                  Total: {{totalAmount}} {{currentMarket.token.symbol}}
                 </h2>
               </v-row>
               <v-row class="d-flex justify-center">
@@ -68,9 +68,8 @@
 </template>
 
 <script>
-import Controller from '@/handlers/controller';
+import { mapState } from 'vuex';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 
 export default {
   name: 'LiquidatedItem',
@@ -91,64 +90,60 @@ export default {
   data() {
     return {
       controller: null,
-      flag: false,
       show: false,
       collaterals: [],
       debt: null,
       price: null,
       total: 0,
+      currentMarket: null,
     };
+  },
+  computed: {
+    ...mapState({
+      markets: (state) => state.Controller.markets,
+    }),
+    totalAmount() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.total = 0;
+      this.collaterals
+        .forEach((token) => { this.total += (token.price * token.amount); });
+      return this.total / this.currentMarket.price;
+    },
   },
   methods: {
     buyLiquidation(accountAddress) {
-      this.flag = !this.flag;
-      console.log(`Liquidated of account ${accountAddress}`);
+      console.log(`Liquidated ${this.total} debt of account ${accountAddress}`);
     },
     toggleShow() {
       this.show = !this.show;
-    },
-    getSymbols() {
-      const tokens = this.marketAddresses
-        .map((market) => new Market(market).eventualTokenAddress);
-      Promise.all(tokens)
-        .then((tokensAddr) => tokensAddr.map((tokenAddr) => new Token(tokenAddr).eventualSymbol))
-        .then((symbolPromises) => Promise.all(symbolPromises))
-        .then((symbols) => {
-          symbols.forEach((symbol, idx) => {
-            this.collaterals[idx].symbol = symbol;
-          });
-        });
     },
     getDebt() {
       const market = new Market(this.marketAddress);
       market.getUpdatedBorrowBy(this.account)
         .then((debt) => {
           this.debt = Number(debt);
-          return this.controller.getPrice(this.marketAddress);
         })
-        .then((price) => {
-          this.price = this.debt * price;
+        .then(() => {
+          this.price = this.debt * this.currentMarket.price;
         });
     },
     getCollateral() {
-      this.controller.eventualMarketAddresses
-        .then((marketAddresses) => {
-          this.marketAddresses = marketAddresses;
-          return marketAddresses
-            .map((market) => new Market(market).getUpdatedSupplyOf(this.account));
-        })
-        .then((supplyPromises) => Promise.all(supplyPromises))
+      const marketSupplies = this.markets.map((market) => market.address)
+        .map((market) => new Market(market).getUpdatedSupplyOf(this.account));
+      Promise.all(marketSupplies)
         .then((supplies) => {
-          this.collaterals = supplies.map((sup) => ({
+          this.collaterals = supplies.map((sup, idx) => ({
             maxAllowed: sup,
             amount: 0,
+            price: this.markets[idx].price,
+            symbol: this.markets[idx].token.symbol,
           }));
-        })
-        .then(() => this.getSymbols());
+        });
     },
   },
   created() {
-    this.controller = new Controller();
+    [this.currentMarket] = this.markets
+      .filter((mkt) => mkt.address === this.marketAddress);
     this.getCollateral();
     this.getDebt();
   },
