@@ -15,10 +15,14 @@ import MarketsList from '@/components/settings/MarketsList.vue';
 
 export default {
   name: 'Settings',
+  data() {
+    return {
+      marketAddresses: [],
+    };
+  },
   computed: {
     ...mapState({
       isOwner: (state) => state.Session.isOwner,
-      marketAddresses: (state) => state.Controller.markets.map((mkt) => mkt.address),
     }),
     pageHeight() {
       return document.body.scrollHeight;
@@ -33,6 +37,15 @@ export default {
     marketAddresses() {
       this.$vuetify.goTo(this.pageHeight);
     },
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((markets) => {
+        this.marketAddresses = markets.map((market) => market.address);
+      })
+      .catch(() => {
+        this.marketAddresses = [];
+      });
   },
   components: {
     ControllerForm,
