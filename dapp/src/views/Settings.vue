@@ -58,8 +58,5 @@ export default {
     MarketForm,
     MarketsList,
   },
-  created() {
-    this.getMarkets();
-  },
 };
 </script>
