@@ -1,6 +1,5 @@
 import MarketContract from '@/contracts/Market.json';
-// eslint-disable-next-line no-unused-vars
-import { send, web3WS } from '@/handlers';
+import { web3WS } from '@/handlers';
 
 export default class MarketEvents {
   constructor(marketAddress) {

@@ -56,13 +56,12 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      mantissa: (state) => state.Controller.mantissa,
     }),
     contractAmount() {
-      return this.amount * this.mantissa;
+      return this.amount * (10 ** this.data.market.token.decimals);
     },
     balanceAsDouble() {
-      return this.data.accountBalance / this.mantissa;
+      return this.data.accountBalance / (10 ** this.data.market.token.decimals);
     },
     validForm() {
       return typeof this.rules.minBalance() !== 'string'

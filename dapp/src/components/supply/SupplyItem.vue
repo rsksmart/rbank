@@ -67,12 +67,13 @@ export default {
       return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
     },
     balance() {
-      return (this.tokenBalance / this.mantissa).toFixed(5);
+      return (this.tokenBalance / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
     },
     formObject() {
       return {
         market: this.market,
-        accountBalance: Number(this.balance) * this.mantissa,
+        accountBalance: Number(this.tokenBalance),
       };
     },
   },
