@@ -56,13 +56,13 @@ initialize = (callback) => {
     tk2: {
       initialSupply: 1000000000,
       name: 'Token 2',
-      decimalDigits: 0,
+      decimalDigits: 2,
       symbol: 'TK2'
     },
     tk3: {
       initialSupply: 1000000000,
       name: 'Token 3',
-      decimalDigits: 0,
+      decimalDigits: 5,
       symbol: 'TK3'
     },
   };

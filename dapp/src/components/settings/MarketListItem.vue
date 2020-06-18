@@ -1,58 +1,58 @@
 <template>
-  <v-list-item @click="setMarket(marketAddress)">
+  <v-list-item @click="setMarket(market.address)">
     <v-list-item-title class="text-left">
       <v-list-item-action>
         <v-icon>local_convenience_store</v-icon>
       </v-list-item-action>
-      {{ tokenSymbol }}
+      {{ market.token.symbol }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ tokenName }}
+      {{ market.token.name }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ marketTotalBorrows }}
+      {{ borrows }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ marketTotalSupply }}
+      {{ supplies }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ price }}
+      {{ market.price }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ cash }}
+      {{ market.cash | formatPrice }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ apr.toFixed(2) }} %
+      {{ apr }} %
     </v-list-item-title>
   </v-list-item>
 </template>
 
 <script>
-import Controller from '@/handlers/controller';
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MarketListItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
-  data() {
-    return {
-      controller: null,
-      market: null,
-      marketTotalSupply: null,
-      marketTotalBorrows: null,
-      tokenName: null,
-      tokenSymbol: null,
-      price: null,
-      cash: null,
-      baseBorrowRate: null,
-      apr: 0,
-    };
+  computed: {
+    ...mapState({
+      factor: (state) => state.Controller.factor,
+    }),
+    apr() {
+      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+    },
+    borrows() {
+      return (this.market.borrowed / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
+    },
+    supplies() {
+      return (this.market.supplied / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
+    },
   },
   methods: {
     setMarket(marketAddress) {
@@ -61,45 +61,6 @@ export default {
         params: { id: marketAddress },
       });
     },
-  },
-  watch: {
-    baseBorrowRate() {
-      this.apr = (this.baseBorrowRate * 100) / this.controller.FACTOR;
-    },
-  },
-  created() {
-    this.controller = new Controller();
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTotalSupply
-      .then((totalSupply) => {
-        this.marketTotalSupply = totalSupply;
-      });
-    this.market.eventualTotalBorrows
-      .then((totalBorrows) => {
-        this.marketTotalBorrows = totalBorrows;
-      });
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-      });
-    this.market.eventualCash
-      .then((cash) => {
-        this.cash = cash;
-      });
-    this.market.eventualBaseBorrowRate
-      .then((rate) => {
-        this.baseBorrowRate = rate;
-      });
-    this.controller.getPrice(this.marketAddress)
-      .then((price) => {
-        this.price = price;
-      });
   },
 };
 </script>

@@ -59,14 +59,14 @@ export default {
   },
   computed: {
     ...mapState({
-      mantissa: (state) => state.Controller.mantissa,
       factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
     maxRedeemAmount() {
       const allowed = this.market.cash > this.userSupply
         ? this.userSupply : this.market.cash;
-      return (allowed / this.mantissa).toFixed(5);
+      return (allowed / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
     },
     apr() {
       return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
@@ -74,7 +74,7 @@ export default {
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxRedeemAmount) * this.mantissa,
+        max: Number(this.maxRedeemAmount) * (10 ** this.market.token.decimals),
         userSupply: this.userSupply,
       };
     },

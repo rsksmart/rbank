@@ -6,10 +6,10 @@
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="headline mb-1 text-right">
-          {{ tokenName }}
+          {{ market.token.name }}
         </v-list-item-title>
         <v-list-item-subtitle class="headline mb-1 text-right">
-          {{tokensPrice | formatPrice}}
+          {{ tokenPrice | formatPrice}}
         </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -17,10 +17,10 @@
     <v-list class="transparent">
       <v-list-item>
         <v-list-item-title>
-          {{ tokenSymbol }}
+          {{ market.token.symbol }}
         </v-list-item-title>
         <v-list-item-subtitle class="text-right">
-          {{marketSupplyOf}}
+          {{ marketSupplyOf }}
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
@@ -53,59 +53,34 @@
 
 <script>
 import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
 import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 
 export default {
   name: 'MarketDetail',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
-      controller: null,
-      market: null,
-      tokenName: null,
-      tokenSymbol: null,
       marketSupplyOf: null,
-      tokensPrice: null,
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-  },
-  methods: {
-    tokensByPrice() {
-      this.tokensPrice = this.price * this.marketSupplyOf;
+    tokenPrice() {
+      return this.market.price * (Number(this.marketSupplyOf) / (10 ** this.market.token.decimals));
     },
   },
   created() {
-    this.controller = new Controller();
-    this.market = new Market(this.marketAddress);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        const token = new Token(tokenAddress);
-        return [token.eventualName, token.eventualSymbol];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-      });
-    this.controller.getPrice(this.marketAddress)
-      .then((price) => {
-        this.price = Number(price);
-        return this.market.getUpdatedSupplyOf(this.account);
-      })
+    const marketInstance = new Market(this.market.address);
+    marketInstance.getUpdatedSupplyOf(this.account)
       .then((supplyOf) => {
-        this.marketSupplyOf = Number(supplyOf);
-        this.tokensByPrice();
+        this.marketSupplyOf = Number(supplyOf) / (10 ** this.market.token.decimals);
       });
   },
 };

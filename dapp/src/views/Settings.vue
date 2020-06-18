@@ -3,12 +3,13 @@
     <h1>Settings</h1>
     <controller-form/>
     <market-form/>
-    <markets-list :marketAddresses="marketAddresses"/>
+    <markets-list/>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
+import * as constants from '@/store/constants';
 import ControllerForm from '@/components/settings/ControllerForm.vue';
 import MarketForm from '@/components/settings/MarketForm.vue';
 import MarketsList from '@/components/settings/MarketsList.vue';
@@ -18,11 +19,15 @@ export default {
   computed: {
     ...mapState({
       isOwner: (state) => state.Session.isOwner,
-      marketAddresses: (state) => state.Controller.markets.map((mkt) => mkt.address),
     }),
     pageHeight() {
       return document.body.scrollHeight;
     },
+  },
+  methods: {
+    ...mapActions({
+      getMarkets: constants.CONTROLLER_GET_MARKETS,
+    }),
   },
   watch: {
     isOwner(val) {
@@ -30,7 +35,7 @@ export default {
         this.$router.push({ name: 'Home' });
       }
     },
-    marketAddresses() {
+    markets() {
       this.$vuetify.goTo(this.pageHeight);
     },
   },
@@ -38,6 +43,9 @@ export default {
     ControllerForm,
     MarketForm,
     MarketsList,
+  },
+  created() {
+    this.getMarkets();
   },
 };
 </script>

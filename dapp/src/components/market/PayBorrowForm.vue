@@ -66,10 +66,9 @@ export default {
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
-      mantissa: (state) => state.Controller.mantissa,
     }),
     maxAsDouble() {
-      return this.data.max / this.mantissa;
+      return this.data.max / (10 ** this.data.market.token.decimals);
     },
     validForm() {
       return typeof this.rules.required() !== 'string'
@@ -78,7 +77,7 @@ export default {
         && typeof this.rules.notBiggerThanDebt() !== 'string';
     },
     contractAmount() {
-      return this.amount * this.mantissa;
+      return this.amount * (10 ** this.data.market.token.decimals);
     },
   },
   methods: {

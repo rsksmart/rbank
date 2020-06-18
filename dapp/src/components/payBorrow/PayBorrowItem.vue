@@ -61,7 +61,6 @@ export default {
   },
   computed: {
     ...mapState({
-      mantissa: (state) => state.Controller.mantissa,
       factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
@@ -71,7 +70,7 @@ export default {
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxPayBorrowAllowed) * this.mantissa,
+        max: Number(this.maxPayBorrowAllowed) * (10 ** this.market.token.decimals),
         tokenAccountBalance: this.tokenAccountBalance,
         borrowedByAccount: this.borrowedByAccount,
       };
@@ -79,7 +78,8 @@ export default {
     maxPayBorrowAllowed() {
       const allowed = this.borrowedByAccount > this.tokenAccountBalance
         ? this.tokenAccountBalance : this.borrowedByAccount;
-      return (allowed / this.mantissa).toFixed(5);
+      return (allowed / (10 ** this.market.token.decimals))
+        .toFixed(this.market.token.decimals);
     },
   },
   methods: {

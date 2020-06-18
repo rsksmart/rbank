@@ -21,6 +21,7 @@ const actions = {
             address: null,
             name: null,
             symbol: null,
+            decimals: null,
           },
           borrowRate: null,
           price: null,
@@ -39,20 +40,22 @@ const actions = {
   },
   [constants.CONTROLLER_GET_MARKETS_TOKENS]: ({ commit }, { marketAddresses }) => {
     const marketIntances = marketAddresses.map((marketAddress) => new Market(marketAddress));
-    marketIntances.forEach((marketInstance, idx) => {
+    marketIntances.forEach((marketInstance, marketIndex) => {
       marketInstance.eventualTokenAddress
         .then((tokenAddress) => {
           const token = new Token(tokenAddress);
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_ADDRESS, { marketIndex: idx, tokenAddress });
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_ADDRESS, { marketIndex, tokenAddress });
           return [
             token.eventualName,
             token.eventualSymbol,
+            token.eventualDecimals,
           ];
         })
         .then((tokenPromises) => Promise.all(tokenPromises))
-        .then(([tokenName, tokenSymbol]) => {
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_NAME, { marketIndex: idx, tokenName });
-          commit(constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL, { marketIndex: idx, tokenSymbol });
+        .then(([tokenName, tokenSymbol, tokenDecimals]) => {
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_NAME, { marketIndex, tokenName });
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL, { marketIndex, tokenSymbol });
+          commit(constants.CONTROLLER_SET_MARKET_TOKEN_DECIMALS, { marketIndex, tokenDecimals });
         });
     });
   },
@@ -170,6 +173,10 @@ const mutations = {
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_TOKEN_SYMBOL]: (state, { marketIndex, tokenSymbol }) => {
     state.markets[marketIndex].token.symbol = tokenSymbol;
+  },
+  // eslint-disable-next-line no-shadow
+  [constants.CONTROLLER_SET_MARKET_TOKEN_DECIMALS]: (state, { marketIndex, tokenDecimals }) => {
+    state.markets[marketIndex].token.decimals = Number(tokenDecimals);
   },
   // eslint-disable-next-line no-shadow
   [constants.CONTROLLER_SET_MARKET_CASH]: (state, { marketIndex, marketCash }) => {
