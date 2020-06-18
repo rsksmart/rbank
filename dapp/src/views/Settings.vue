@@ -8,8 +8,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
 import ControllerForm from '@/components/settings/ControllerForm.vue';
 import MarketForm from '@/components/settings/MarketForm.vue';
 import MarketsList from '@/components/settings/MarketsList.vue';
@@ -29,11 +28,6 @@ export default {
       return document.body.scrollHeight;
     },
   },
-  methods: {
-    ...mapActions({
-      getMarkets: constants.CONTROLLER_GET_MARKETS,
-    }),
-  },
   watch: {
     isOwner(val) {
       if (!val) {
@@ -43,15 +37,6 @@ export default {
     markets() {
       this.$vuetify.goTo(this.pageHeight);
     },
-  },
-  created() {
-    this.$rbank.eventualMarkets
-      .then((markets) => {
-        this.marketAddresses = markets.map((market) => market.address);
-      })
-      .catch(() => {
-        this.marketAddresses = [];
-      });
   },
   components: {
     ControllerForm,

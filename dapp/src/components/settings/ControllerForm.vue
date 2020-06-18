@@ -45,9 +45,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
-
 export default {
   name: 'ControllerForm',
   data() {
@@ -57,34 +54,26 @@ export default {
       liquidationFactor: null,
     };
   },
-  computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
-  },
   methods: {
     setCollateralFactor() {
-      const collateral = this.collateralFactor * this.controller.MANTISSA;
+      const collateral = this.collateralFactor * 1e6;
       console.log(collateral);
-      this.controller
-        .setCollateralFactor(this.account, collateral);
+      this.$rbank.controller.setCollateralFactor(collateral);
     },
     setLiquidationFactor() {
-      const liquidation = this.liquidationFactor * this.controller.MANTISSA;
+      const liquidation = this.liquidationFactor * 1e6;
       console.log(liquidation);
-      this.controller
-        .setLiquidationFactor(this.account, liquidation);
+      this.$rbank.controller.setLiquidationFactor(liquidation);
     },
   },
   created() {
-    this.controller = new Controller();
-    this.controller.eventualCollateralFactor
+    this.$rbank.controller.eventualCollateralFactor
       .then((collateralFactor) => {
-        this.collateralFactor = collateralFactor / this.controller.MANTISSA;
+        this.collateralFactor = collateralFactor / 1e6;
       });
-    this.controller.eventualLiquidationFactor
+    this.$rbank.controller.eventualLiquidationFactor
       .then((liquidationFactor) => {
-        this.liquidationFactor = liquidationFactor / this.controller.MANTISSA;
+        this.liquidationFactor = liquidationFactor / 1e6;
       });
   },
 };

@@ -3,34 +3,39 @@
     <h2 class="d-flex justify-center text-center">Current Markets</h2>
     <div class="d-flex justify-center">
       <v-card width="70%">
-          <v-list>
-            <v-list-item>
-              <v-list-item-subtitle class="text-center">Symbol</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Asset</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Borrows</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Supplies</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Price</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Current Cash</v-list-item-subtitle>
-              <v-list-item-subtitle class="text-center">Base borrow rate</v-list-item-subtitle>
-            </v-list-item>
-            <market-list-item v-for="(market, idx) in markets"
-              :key="`market-list-item-${idx}`" :market="market"/>
-          </v-list>
-        </v-card>
-      </div>
+        <v-list>
+          <v-list-item>
+            <v-list-item-subtitle class="text-center">Symbol</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Asset</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Borrows</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Supplies</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Price</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Current Cash</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-center">Base borrow rate</v-list-item-subtitle>
+          </v-list-item>
+          <market-list-item v-for="(market, idx) in markets"
+                            :key="`market-list-item-${idx}`" :marketAddress="market"/>
+        </v-list>
+      </v-card>
+    </div>
   </div>
 </template>
 
 <script>
 import MarketListItem from '@/components/settings/MarketListItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'MarketsList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts.map((mkt) => mkt.address);
+      });
   },
   components: {
     MarketListItem,

@@ -4,10 +4,10 @@
       <v-list-item-action>
         <v-icon>local_convenience_store</v-icon>
       </v-list-item-action>
-      {{ market.token.symbol }}
+      {{ token.symbol }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.token.name }}
+      {{ token.name }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ borrows }}
@@ -33,10 +33,20 @@ import { mapState } from 'vuex';
 export default {
   name: 'MarketListItem',
   props: {
-    market: {
-      type: Object,
+    marketAddress: {
+      type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      market: new this.$rbank.Market(this.marketAddress),
+      token: {
+        name: '',
+        symbol: '',
+        decimals: 0,
+      },
+    };
   },
   computed: {
     ...mapState({
@@ -53,6 +63,16 @@ export default {
       return (this.market.supplied / (10 ** this.market.token.decimals))
         .toFixed(this.market.token.decimals);
     },
+  },
+  created() {
+    this.market.token
+      .then((tok) => [tok.eventualName, tok.eventualSymbol, tok.eventualDecimals])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+      });
   },
   methods: {
     setMarket(marketAddress) {

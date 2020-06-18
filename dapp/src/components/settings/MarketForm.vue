@@ -43,16 +43,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import * as constants from '@/store/constants';
-import Controller from '@/handlers/controller';
-import Market from '@/handlers/market';
-
 export default {
   name: 'MarketForm',
   data() {
     return {
-      controller: null,
       tokenAddress: null,
       marketBaseBorrowRate: null,
       validForm: false,
@@ -66,46 +60,28 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
-  },
   methods: {
-    ...mapActions({
-      loadMarkets: constants.CONTROLLER_GET_MARKETS,
-    }),
-    async getMarketByToken() {
+    createMarket() {
       this.flag = false;
-      await this.controller.getMarketByToken(this.tokenAddress)
-        .then((mktAddress) => {
-          if (mktAddress !== this.emptyAddress) {
-            this.error = `There is already a market ${mktAddress} for the token address entered`;
-            this.flag = true;
-          }
+      this.$rbank.eventualMarket(this.tokenAddress)
+        .then((market) => {
+          this.error = `There is already a market ${market.address} for the token address entered`;
+          this.flag = true;
+        })
+        .catch(() => {
+          this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate)
+            .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
+            .then((market) => {
+              market.setControllerAddress(this.$rbank.controller.address);
+              return market.address;
+            })
+            .then((createdMarketAddress) => {
+              this.$rbank.controller.addMarket(createdMarketAddress);
+              this.reset();
+              this.$emit('marketCreated');
+            })
+            .catch(console.error);
         });
-      return this.flag;
-    },
-    async createMarket() {
-      await this.getMarketByToken();
-      if (!this.flag && (this.tokenAddress !== this.emptyAddress)) {
-        const collateral = (this.marketBaseBorrowRate * this.controller.FACTOR) / 100;
-        Market.deploy(
-          this.account,
-          this.tokenAddress,
-          collateral,
-        )
-          .then((marketAddress) => {
-            const market = new Market(marketAddress);
-            market.setController(this.account, this.controller.address);
-            return this.controller.addMarket(this.account, marketAddress);
-          })
-          .then(() => {
-            this.loadMarkets();
-            this.reset();
-            this.$emit('marketCreated');
-          });
-      }
     },
     isValidForm() {
       this.validForm = typeof this.rules.requiredAddress() !== 'string'
@@ -124,9 +100,6 @@ export default {
     marketBaseBorrowRate() {
       this.isValidForm();
     },
-  },
-  created() {
-    this.controller = new Controller();
   },
 };
 </script>
