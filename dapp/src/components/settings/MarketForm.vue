@@ -69,7 +69,8 @@ export default {
           this.flag = true;
         })
         .catch(() => {
-          this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate)
+          const baseBorrowRate = (this.marketBaseBorrowRate * 1e4);
+          this.$rbank.Market.create(this.tokenAddress, baseBorrowRate)
             .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
             .then((market) => {
               market.setControllerAddress(this.$rbank.controller.address);

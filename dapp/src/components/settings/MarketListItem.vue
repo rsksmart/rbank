@@ -16,10 +16,10 @@
       {{ supplies }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.price }}
+      {{ price }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.cash | formatPrice }}
+      {{ cash | formatPrice }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ apr }} %
@@ -46,6 +46,9 @@ export default {
         symbol: '',
         decimals: 0,
       },
+      price: 0,
+      cash: 0,
+      borrowRate: 0,
     };
   },
   computed: {
@@ -53,7 +56,7 @@ export default {
       factor: (state) => state.Controller.factor,
     }),
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return (this.borrowRate / 1e4).toFixed(2);
     },
     borrows() {
       return (this.market.borrowed / (10 ** this.market.token.decimals))
@@ -72,6 +75,18 @@ export default {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
+      });
+    this.$rbank.controller.eventualMarketPrice(this.marketAddress)
+      .then((marketPrice) => {
+        this.price = marketPrice;
+      });
+    this.market.eventualBalance
+      .then((balance) => {
+        this.cash = balance;
+      });
+    this.market.eventualBaseBorrowRate
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
       });
   },
   methods: {

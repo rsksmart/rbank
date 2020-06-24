@@ -27,9 +27,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
-
 export default {
   name: 'Price',
   data() {
@@ -49,21 +46,13 @@ export default {
   },
   methods: {
     setPrice() {
-      this.controller.setPrice(this.account, this.marketAddress, this.marketPrice)
+      this.$rbank.controller.setMarketPrice(this.marketAddress, this.marketPrice)
         .then(() => {
           this.$router.push({
             name: 'Settings',
           });
         });
     },
-  },
-  computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
-  },
-  created() {
-    this.controller = new Controller();
   },
 };
 </script>
