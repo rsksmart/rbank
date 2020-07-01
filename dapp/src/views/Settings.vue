@@ -2,8 +2,8 @@
   <div class="settings">
     <h1>Settings</h1>
     <controller-form/>
-    <market-form/>
-    <markets-list/>
+    <market-form @marketCreated="getMarkets"/>
+    <markets-list :marketAddresses="marketAddresses"/>
   </div>
 </template>
 
@@ -28,13 +28,21 @@ export default {
       return document.body.scrollHeight;
     },
   },
+  methods: {
+    getMarkets() {
+      this.$rbank.eventualMarkets
+        .then((mkts) => {
+          this.marketAddresses = mkts.map((mkt) => mkt.address);
+        });
+    },
+  },
   watch: {
     isOwner(val) {
       if (!val) {
         this.$router.push({ name: 'Home' });
       }
     },
-    markets() {
+    marketAddresses() {
       this.$vuetify.goTo(this.pageHeight);
     },
   },
@@ -42,6 +50,9 @@ export default {
     ControllerForm,
     MarketForm,
     MarketsList,
+  },
+  created() {
+    this.getMarkets();
   },
 };
 </script>

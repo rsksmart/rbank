@@ -56,24 +56,20 @@ export default {
   },
   methods: {
     setCollateralFactor() {
-      const collateral = this.collateralFactor * 1e6;
-      console.log(collateral);
-      this.$rbank.controller.setCollateralFactor(collateral);
+      this.$rbank.controller.setCollateralFactor(this.collateralFactor);
     },
     setLiquidationFactor() {
-      const liquidation = this.liquidationFactor * 1e6;
-      console.log(liquidation);
-      this.$rbank.controller.setLiquidationFactor(liquidation);
+      this.$rbank.controller.setLiquidationFactor(this.liquidationFactor);
     },
   },
   created() {
     this.$rbank.controller.eventualCollateralFactor
       .then((collateralFactor) => {
-        this.collateralFactor = collateralFactor / 1e6;
+        this.collateralFactor = collateralFactor;
       });
     this.$rbank.controller.eventualLiquidationFactor
       .then((liquidationFactor) => {
-        this.liquidationFactor = liquidationFactor / 1e6;
+        this.liquidationFactor = liquidationFactor;
       });
   },
 };

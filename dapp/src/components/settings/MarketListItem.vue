@@ -16,7 +16,7 @@
       {{ supplies }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ price }}
+      {{ price | formatPrice }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ cash | formatPrice }}
@@ -49,6 +49,8 @@ export default {
       price: 0,
       cash: 0,
       borrowRate: 0,
+      totalSupply: 0,
+      totalBorrows: 0,
     };
   },
   computed: {
@@ -56,15 +58,15 @@ export default {
       factor: (state) => state.Controller.factor,
     }),
     apr() {
-      return (this.borrowRate / 1e4).toFixed(2);
+      return this.borrowRate.toFixed(3);
     },
     borrows() {
-      return (this.market.borrowed / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (this.totalBorrows / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
     supplies() {
-      return (this.market.supplied / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (this.totalSupply / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
   },
   created() {
@@ -80,13 +82,26 @@ export default {
       .then((marketPrice) => {
         this.price = marketPrice;
       });
-    this.market.eventualBalance
-      .then((balance) => {
-        this.cash = balance;
+    this.market.eventualCash
+      .then((cash) => {
+        this.cash = cash;
       });
-    this.market.eventualBaseBorrowRate
+    this.market.eventualBorrowRate
       .then((borrowRate) => {
+        console.log(`-------------- Market ${this.token.symbol} --------------`);
+        console.log(`token decimals: ${this.token.decimals}`);
+        console.log(`borrow rate: ${borrowRate}`);
         this.borrowRate = borrowRate;
+      });
+    this.market.eventualUpdatedTotalSupply
+      .then((updatedTotalSupply) => {
+        console.log(`total supply: ${updatedTotalSupply}`);
+        this.totalSupply = updatedTotalSupply;
+      });
+    this.market.eventualUpdatedTotalBorrows
+      .then((updatedTotalBorrows) => {
+        console.log(`total borrows: ${updatedTotalBorrows}`);
+        this.totalBorrows = updatedTotalBorrows;
       });
   },
   methods: {

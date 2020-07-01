@@ -27,16 +27,8 @@
           </v-form>
         </v-col>
       </v-row>
-      <v-snackbar
-        v-model="flag"
-        :timeout=3000>
+      <v-snackbar v-model="showSnackbar" color="error" elevation="24" :multi-line="true">
         {{ error }}
-        <v-btn
-          color="red"
-          text
-          @click="reset">
-          Close
-        </v-btn>
       </v-snackbar>
     </v-container>
   </div>
@@ -51,8 +43,7 @@ export default {
       marketBaseBorrowRate: null,
       validForm: false,
       error: null,
-      flag: false,
-      emptyAddress: '0x0000000000000000000000000000000000000000',
+      showSnackbar: false,
       rules: {
         requiredAddress: () => !!this.tokenAddress || 'Required.',
         requiredRate: () => !!this.marketBaseBorrowRate || 'Required.',
@@ -62,26 +53,28 @@ export default {
   },
   methods: {
     createMarket() {
-      this.flag = false;
-      this.$rbank.eventualMarket(this.tokenAddress)
-        .then((market) => {
-          this.error = `There is already a market ${market.address} for the token address entered`;
-          this.flag = true;
-        })
-        .catch(() => {
-          const baseBorrowRate = (this.marketBaseBorrowRate * 1e4);
-          this.$rbank.Market.create(this.tokenAddress, baseBorrowRate)
-            .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
-            .then((market) => {
-              market.setControllerAddress(this.$rbank.controller.address);
-              return market.address;
-            })
-            .then((createdMarketAddress) => {
-              this.$rbank.controller.addMarket(createdMarketAddress);
-              this.reset();
-              this.$emit('marketCreated');
-            })
-            .catch(console.error);
+      return this.$rbank.marketExistsByToken(this.tokenAddress)
+        .then((marketExists) => {
+          if (!marketExists) {
+            this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate)
+              .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
+              .then((market) => {
+                market.setControllerAddress(this.$rbank.controller.address);
+                return market.address;
+              })
+              .then((createdMarketAddress) => this.$rbank.controller
+                .addMarket(createdMarketAddress))
+              .then(() => {
+                this.reset();
+                console.log('marketCreated event emitted');
+                this.$emit('marketCreated');
+              })
+              .catch(console.error);
+          } else {
+            this.error = 'There is already a market for the token address entered!';
+            this.showSnackbar = true;
+            setTimeout(() => this.reset(), 3000);
+          }
         });
     },
     isValidForm() {
@@ -91,7 +84,7 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
-      this.flag = false;
+      this.showSnackbar = false;
     },
   },
   watch: {
