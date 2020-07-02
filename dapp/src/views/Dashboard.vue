@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <markets-list :marketAddresses="marketAddresses"/>
-    <v-divider class="ma-5"></v-divider>
+    <v-divider class="ma-5"/>
     <markets-balance :marketAddresses="marketAddresses"/>
   </div>
 </template>
@@ -21,9 +21,9 @@ export default {
   },
   methods: {
     loadMarkets() {
-      this.controller.eventualMarketAddresses
-        .then((marketAddresses) => {
-          this.marketAddresses = marketAddresses;
+      this.$rbank.eventualMarkets
+        .then((mkts) => {
+          this.marketAddresses = mkts.map((mkt) => mkt.address);
         });
     },
   },

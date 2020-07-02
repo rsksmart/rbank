@@ -19,7 +19,7 @@
       {{ price | formatPrice }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ cash | formatPrice }}
+      {{ marketCash }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ apr }} %
@@ -68,6 +68,10 @@ export default {
       return (this.totalSupply / (10 ** this.token.decimals))
         .toFixed(this.token.decimals);
     },
+    marketCash() {
+      return (this.cash / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
+    },
   },
   created() {
     this.market.token
@@ -88,19 +92,14 @@ export default {
       });
     this.market.eventualBorrowRate
       .then((borrowRate) => {
-        console.log(`-------------- Market ${this.token.symbol} --------------`);
-        console.log(`token decimals: ${this.token.decimals}`);
-        console.log(`borrow rate: ${borrowRate}`);
         this.borrowRate = borrowRate;
       });
     this.market.eventualUpdatedTotalSupply
       .then((updatedTotalSupply) => {
-        console.log(`total supply: ${updatedTotalSupply}`);
         this.totalSupply = updatedTotalSupply;
       });
     this.market.eventualUpdatedTotalBorrows
       .then((updatedTotalBorrows) => {
-        console.log(`total borrows: ${updatedTotalBorrows}`);
         this.totalBorrows = updatedTotalBorrows;
       });
   },
