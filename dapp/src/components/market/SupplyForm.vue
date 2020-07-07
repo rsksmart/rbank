@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
+          <h2>Supply to market {{data.marketAddress}} of token {{data.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,10 +30,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import * as constants from '@/store/constants';
-import Token from '@/handlers/token';
-import Market from '@/handlers/market';
+import { mapState } from 'vuex';
 
 export default {
   name: 'SupplyForm',
@@ -45,6 +42,7 @@ export default {
   },
   data() {
     return {
+      market: new this.$rbank.Market(this.data.marketAddress),
       maxAmount: false,
       amount: null,
       rules: {
@@ -58,10 +56,10 @@ export default {
       account: (state) => state.Session.account,
     }),
     contractAmount() {
-      return this.amount * (10 ** this.data.market.token.decimals);
+      return this.amount * (10 ** this.data.token.decimals);
     },
     balanceAsDouble() {
-      return this.data.accountBalance / (10 ** this.data.market.token.decimals);
+      return this.data.accountBalance / (10 ** this.data.token.decimals);
     },
     validForm() {
       return typeof this.rules.minBalance() !== 'string'
@@ -69,18 +67,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
-    }),
     supply() {
-      const market = new Market(this.data.market.address);
-      const token = new Token(this.data.market.token.address);
-      token.approve(this.account, this.data.market.address, this.contractAmount)
-        .then(() => market.supply(this.account, this.contractAmount))
-        .then(() => {
-          this.updateMarket(this.data.market.id);
-          this.$emit('formSucceed');
-        });
+      this.market.supply(this.contractAmount, this.account)
+        .then(() => this.$emit('formSucceed'));
     },
   },
   watch: {

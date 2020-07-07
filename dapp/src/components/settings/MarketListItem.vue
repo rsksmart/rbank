@@ -81,24 +81,24 @@ export default {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
-      });
-    this.$rbank.controller.eventualMarketPrice(this.marketAddress)
+        return this.$rbank.controller.eventualMarketPrice(this.marketAddress);
+      })
       .then((marketPrice) => {
         this.price = marketPrice;
-      });
-    this.market.eventualCash
+        return this.market.eventualCash;
+      })
       .then((cash) => {
         this.cash = cash;
-      });
-    this.market.eventualBorrowRate
+        return this.market.eventualBorrowRate;
+      })
       .then((borrowRate) => {
         this.borrowRate = borrowRate;
-      });
-    this.market.eventualUpdatedTotalSupply
+        return this.market.eventualUpdatedTotalSupply;
+      })
       .then((updatedTotalSupply) => {
         this.totalSupply = updatedTotalSupply;
-      });
-    this.market.eventualUpdatedTotalBorrows
+        return this.market.eventualUpdatedTotalBorrows;
+      })
       .then((updatedTotalBorrows) => {
         this.totalBorrows = updatedTotalBorrows;
       });

@@ -18,8 +18,8 @@
                </v-col>
              </v-row>
            </v-list-item>
-           <supply-item v-for="(market, idx) in markets"
-                        :key="`market-item-${idx}`" :market="market"/>
+           <supply-item v-for="(market, idx) in marketAddresses"
+                        :key="`market-item-${idx}`" :marketAddress="market"/>
          </v-list>
        </v-card>
      </v-container>
@@ -28,14 +28,19 @@
 
 <script>
 import SupplyItem from '@/components/supply/SupplyItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'SupplyList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      marketAddresses: [],
+    };
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.marketAddresses = mkts.map((mkt) => mkt.address);
+      });
   },
   components: {
     SupplyItem,
