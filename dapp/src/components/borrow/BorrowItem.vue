@@ -5,13 +5,13 @@
         <v-row>
           <v-col cols="2" class="d-flex justify-end">
             <v-list-item-avatar>
-              <v-img src="https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png"/>
+              <v-img :src="rif"/>
             </v-list-item-avatar>
           </v-col>
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ market.token.symbol }}
+                {{ token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -41,7 +41,7 @@
 <script>
 import BorrowForm from '@/components/market/BorrowForm.vue';
 import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
+import rifImage from '@/assets/rif.png';
 
 export default {
   name: 'BorrowItem',
@@ -55,29 +55,37 @@ export default {
     return {
       flag: false,
       liquidity: null,
+      rif: rifImage,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
+      borrowRate: 0,
+      price: 0,
+      cash: 0,
     };
   },
   computed: {
     ...mapState({
-      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return this.borrowRate.toFixed(2);
     },
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxBorrowAllowed) * (10 ** this.market.token.decimals),
+        max: Number(this.maxBorrowAllowed) * (10 ** this.token.decimals),
         liquidity: this.liquidity,
+        token: this.token,
+        price: this.price,
       };
     },
     maxBorrowAllowed() {
-      let allowed = this.market.price > 0
-        ? Math.floor(this.liquidity / (this.market.price * 2)) : 0;
-      allowed = allowed >= this.market.cash ? this.market.cash : allowed;
-      return (allowed / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      let allowed = this.price > 0 ? Math.floor(this.liquidity / (this.price * 2)) : 0;
+      allowed = allowed >= this.cash ? this.cash : allowed;
+      return (allowed / (10 ** this.token.decimals)).toFixed(this.token.decimals);
     },
   },
   methods: {
@@ -88,12 +96,10 @@ export default {
     enableForm() {
       this.flag = !this.flag;
     },
-    async getAccountLiquidity() {
-      const controller = new Controller();
-      await controller.getLiquidity(this.account)
+    getAccountLiquidity() {
+      this.$rbank.controller.getAccountLiquidity(this.account)
         .then((liquidity) => {
-          this.liquidity = Number(liquidity);
-          return this.liquidity;
+          this.liquidity = liquidity;
         });
     },
   },
@@ -101,7 +107,31 @@ export default {
     BorrowForm,
   },
   created() {
-    this.getAccountLiquidity();
+    this.market.token
+      .then((tok) => [
+        tok.eventualName,
+        tok.eventualSymbol,
+        tok.eventualDecimals,
+      ])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.$rbank.controller.eventualMarketPrice(this.market.address);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
+        return this.market.eventualCash;
+      })
+      .then((cash) => {
+        this.cash = cash;
+        return this.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        this.getAccountLiquidity();
+      });
   },
 };
 </script>

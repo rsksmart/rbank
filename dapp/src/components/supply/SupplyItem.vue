@@ -46,8 +46,8 @@ import rifImage from '@/assets/rif.png';
 export default {
   name: 'SupplyItem',
   props: {
-    marketAddress: {
-      type: String,
+    market: {
+      type: Object,
       required: true,
     },
   },
@@ -55,7 +55,6 @@ export default {
     return {
       flag: false,
       tokenBalance: 0,
-      market: new this.$rbank.Market(this.marketAddress),
       token: {
         name: null,
         symbol: null,
@@ -79,7 +78,7 @@ export default {
     formObject() {
       return {
         accountBalance: this.tokenBalance,
-        marketAddress: this.marketAddress,
+        market: this.market,
         token: this.token,
       };
     },

@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Supply to market {{data.marketAddress}} of token {{data.token.symbol}}</h2>
+          <h2>Supply to market {{data.market.address}} of token {{data.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -42,7 +42,6 @@ export default {
   },
   data() {
     return {
-      market: new this.$rbank.Market(this.data.marketAddress),
       maxAmount: false,
       amount: null,
       rules: {
@@ -68,7 +67,7 @@ export default {
   },
   methods: {
     supply() {
-      this.market.supply(this.contractAmount, this.account)
+      this.data.market.supply(this.contractAmount, this.account)
         .then(() => this.$emit('formSucceed'));
     },
   },

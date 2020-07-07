@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Borrow from market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
+          <h2>Borrow from market {{data.market.address}} of token {{data.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,9 +30,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import * as constants from '@/store/constants';
-import Market from '@/handlers/market';
+import { mapState } from 'vuex';
 
 export default {
   name: 'BorrowForm',
@@ -49,7 +47,7 @@ export default {
       rules: {
         required: () => (!!this.amount || 'Required.'),
         liquidity: () => (this.data.liquidity
-          >= (this.data.market.price * 2 * this.contractAmount) || 'not enough liquidity'),
+          >= (this.data.price * 2 * this.contractAmount) || 'not enough liquidity'),
       },
     };
   },
@@ -58,25 +56,20 @@ export default {
       account: (state) => state.Session.account,
     }),
     maxAsDouble() {
-      return this.data.max / (10 ** this.data.market.token.decimals);
+      return this.data.max / (10 ** this.data.token.decimals);
     },
     validForm() {
       return typeof this.rules.liquidity() !== 'string'
         && typeof this.rules.required() !== 'string';
     },
     contractAmount() {
-      return this.amount * (10 ** this.data.market.token.decimals);
+      return this.amount * (10 ** this.data.token.decimals);
     },
   },
   methods: {
-    ...mapActions({
-      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
-    }),
     borrow() {
-      const market = new Market(this.data.market.address);
-      market.borrow(this.account, this.contractAmount)
+      this.data.market.borrow(this.contractAmount, this.account)
         .then(() => {
-          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
         });
     },

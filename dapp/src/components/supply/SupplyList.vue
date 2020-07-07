@@ -18,8 +18,8 @@
                </v-col>
              </v-row>
            </v-list-item>
-           <supply-item v-for="(market, idx) in marketAddresses"
-                        :key="`market-item-${idx}`" :marketAddress="market"/>
+           <supply-item v-for="(market, idx) in markets"
+                        :key="`market-item-${idx}`" :market="market"/>
          </v-list>
        </v-card>
      </v-container>
@@ -33,13 +33,13 @@ export default {
   name: 'SupplyList',
   data() {
     return {
-      marketAddresses: [],
+      markets: [],
     };
   },
   created() {
     this.$rbank.eventualMarkets
       .then((mkts) => {
-        this.marketAddresses = mkts.map((mkt) => mkt.address);
+        this.markets = mkts;
       });
   },
   components: {

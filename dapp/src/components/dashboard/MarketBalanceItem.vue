@@ -70,7 +70,7 @@ export default {
       .then((marketPrice) => {
         this.price = marketPrice;
       });
-    this.market.supplyOf(this.account)
+    this.market.updatedSupplyOf(this.account)
       .then((supplyOf) => {
         this.supplyOf = supplyOf;
       });

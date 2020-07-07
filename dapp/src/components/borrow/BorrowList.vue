@@ -26,17 +26,22 @@
 
 <script>
 import BorrowItem from '@/components/borrow/BorrowItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'BorrowList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
   },
   components: {
     BorrowItem,
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts;
+      });
   },
 };
 </script>
