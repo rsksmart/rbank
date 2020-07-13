@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>PayBorrow of market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
+          <h2>PayBorrow of market {{data.market.address}} of token {{data.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -35,10 +35,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
-import Token from '@/handlers/token';
-import Market from '@/handlers/market';
+import { mapState } from 'vuex';
 
 export default {
   name: 'PayBorrowForm',
@@ -68,7 +65,7 @@ export default {
       account: (state) => state.Session.account,
     }),
     maxAsDouble() {
-      return this.data.max / (10 ** this.data.market.token.decimals);
+      return this.data.max / (10 ** this.data.token.decimals);
     },
     validForm() {
       return typeof this.rules.required() !== 'string'
@@ -77,20 +74,13 @@ export default {
         && typeof this.rules.notBiggerThanDebt() !== 'string';
     },
     contractAmount() {
-      return this.amount * (10 ** this.data.market.token.decimals);
+      return this.amount * (10 ** this.data.token.decimals);
     },
   },
   methods: {
-    ...mapActions({
-      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
-    }),
     payBorrow() {
-      const token = new Token(this.data.market.token.address);
-      token.approve(this.account, this.data.market.address, this.contractAmount)
-        .then(() => new Market(this.data.market.address)
-          .payBorrow(this.account, this.contractAmount))
+      this.data.market.payBorrow(this.contractAmount, this.account)
         .then(() => {
-          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
         });
     },

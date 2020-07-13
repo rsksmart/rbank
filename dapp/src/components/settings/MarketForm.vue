@@ -66,7 +66,6 @@ export default {
                 .addMarket(createdMarketAddress))
               .then(() => {
                 this.reset();
-                console.log('marketCreated event emitted');
                 this.$emit('marketCreated');
               })
               .catch(console.error);

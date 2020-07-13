@@ -26,17 +26,22 @@
 
 <script>
 import PayBorrowItem from '@/components/payBorrow/PayBorrowItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'PayBorrowList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
   },
   components: {
     PayBorrowItem,
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts;
+      });
   },
 };
 </script>

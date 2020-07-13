@@ -92,14 +92,21 @@ export default {
     reset() {
       this.flag = false;
       this.getAccountLiquidity();
+      this.getMarketCash();
     },
     enableForm() {
       this.flag = !this.flag;
     },
-    getAccountLiquidity() {
-      this.$rbank.controller.getAccountLiquidity(this.account)
+    async getAccountLiquidity() {
+      await this.$rbank.controller.getAccountLiquidity(this.account)
         .then((liquidity) => {
           this.liquidity = liquidity;
+        });
+    },
+    async getMarketCash() {
+      await this.market.eventualCash
+        .then((cash) => {
+          this.cash = cash;
         });
     },
   },
@@ -122,15 +129,12 @@ export default {
       })
       .then((marketPrice) => {
         this.price = marketPrice;
-        return this.market.eventualCash;
-      })
-      .then((cash) => {
-        this.cash = cash;
         return this.market.eventualBorrowRate;
       })
       .then((borrowRate) => {
         this.borrowRate = borrowRate;
         this.getAccountLiquidity();
+        this.getMarketCash();
       });
   },
 };

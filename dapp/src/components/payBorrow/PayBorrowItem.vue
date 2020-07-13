@@ -5,13 +5,13 @@
         <v-row>
           <v-col cols="2" class="d-flex justify-end">
             <v-list-item-avatar>
-              <v-img src="https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png"/>
+              <v-img :src="rif"/>
             </v-list-item-avatar>
           </v-col>
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ market.token.symbol }}
+                {{ token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -40,9 +40,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 import PayBorrowForm from '@/components/market/PayBorrowForm.vue';
+import rifImage from '@/assets/rif.png';
 
 export default {
   name: 'PayBorrowItem',
@@ -57,20 +56,27 @@ export default {
       flag: false,
       borrowedByAccount: null,
       tokenAccountBalance: null,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
+      borrowRate: 0,
+      rif: rifImage,
     };
   },
   computed: {
     ...mapState({
-      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return this.borrowRate.toFixed(2);
     },
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxPayBorrowAllowed) * (10 ** this.market.token.decimals),
+        token: this.token,
+        max: Number(this.maxPayBorrowAllowed) * (10 ** this.token.decimals),
         tokenAccountBalance: this.tokenAccountBalance,
         borrowedByAccount: this.borrowedByAccount,
       };
@@ -78,8 +84,8 @@ export default {
     maxPayBorrowAllowed() {
       const allowed = this.borrowedByAccount > this.tokenAccountBalance
         ? this.tokenAccountBalance : this.borrowedByAccount;
-      return (allowed / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (allowed / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
   },
   methods: {
@@ -92,19 +98,16 @@ export default {
       this.flag = !this.flag;
     },
     async accountBorrows() {
-      const market = new Market(this.market.address);
-      return market.getUpdatedBorrowBy(this.account)
+      await this.market.updatedBorrowBy(this.account)
         .then((borrowBy) => {
-          this.borrowedByAccount = Number(borrowBy);
-          return this.borrowedByAccount;
+          this.borrowedByAccount = borrowBy;
         });
     },
     async accountTokenBalance() {
-      const token = new Token(this.market.token.address);
-      await token.balanceOf(this.account)
+      await this.market.token
+        .then((tok) => tok.eventualBalanceOf(this.account))
         .then((balance) => {
-          this.tokenAccountBalance = Number(balance);
-          return this.tokenAccountBalance;
+          this.tokenAccountBalance = balance;
         });
     },
   },
@@ -112,8 +115,24 @@ export default {
     PayBorrowForm,
   },
   created() {
-    this.accountTokenBalance();
-    this.accountBorrows();
+    this.market.token
+      .then((tok) => [
+        tok.eventualName,
+        tok.eventualSymbol,
+        tok.eventualDecimals,
+      ])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        this.accountTokenBalance();
+        this.accountBorrows();
+      });
   },
 };
 </script>
