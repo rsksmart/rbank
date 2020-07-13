@@ -26,17 +26,22 @@
 
 <script>
 import RedeemItem from '@/components/redeem/RedeemItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'RedeemList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
   },
   components: {
     RedeemItem,
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts;
+      });
   },
 };
 </script>

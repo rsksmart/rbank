@@ -5,13 +5,13 @@
         <v-row>
           <v-col cols="2" class="d-flex justify-end">
             <v-list-item-avatar>
-              <v-img src="https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png"/>
+              <v-img :src="rif"/>
             </v-list-item-avatar>
           </v-col>
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ market.token.symbol }}
+                {{ token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -40,7 +40,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import Market from '@/handlers/market';
+import rifImage from '@/assets/rif.png';
 import RedeemForm from '@/components/market/RedeemForm.vue';
 
 export default {
@@ -54,27 +54,36 @@ export default {
   data() {
     return {
       flag: false,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
       userSupply: null,
+      borrowRate: 0,
+      cash: 0,
+      rif: rifImage,
     };
   },
   computed: {
     ...mapState({
-      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
     maxRedeemAmount() {
-      const allowed = this.market.cash > this.userSupply
-        ? this.userSupply : this.market.cash;
-      return (allowed / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      const allowed = this.cash > this.userSupply
+        ? this.userSupply : this.cash;
+      return (allowed / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return this.borrowRate.toFixed(2);
     },
     formObject() {
       return {
         market: this.market,
-        max: Number(this.maxRedeemAmount) * (10 ** this.market.token.decimals),
+        token: this.token,
+        cash: this.cash,
+        max: Number(this.maxRedeemAmount) * (10 ** this.token.decimals),
         userSupply: this.userSupply,
       };
     },
@@ -83,16 +92,21 @@ export default {
     reset() {
       this.flag = false;
       this.getUserSupply();
+      this.getMarketCash();
     },
     enableForm() {
       this.flag = !this.flag;
     },
     async getUserSupply() {
-      const market = new Market(this.market.address);
-      await market.getUpdatedSupplyOf(this.account)
+      await this.market.updatedSupplyOf(this.account)
         .then((supply) => {
-          this.userSupply = Number(supply);
-          return this.userSupply;
+          this.userSupply = supply;
+        });
+    },
+    async getMarketCash() {
+      await this.market.eventualCash
+        .then((cash) => {
+          this.cash = cash;
         });
     },
   },
@@ -100,7 +114,24 @@ export default {
     RedeemForm,
   },
   created() {
-    this.getUserSupply();
+    this.market.token
+      .then((tok) => [
+        tok.eventualName,
+        tok.eventualSymbol,
+        tok.eventualDecimals,
+      ])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        this.getUserSupply();
+        this.getMarketCash();
+      });
   },
 };
 </script>
