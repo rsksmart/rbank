@@ -39,7 +39,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="headline">
-              Health Factor: {{ factor }} %
+              Health Factor: {{ healthFactor }} %
             </v-list-item-title>
             <v-list-item-subtitle>
               Account in risk when health factor is bigger than 50%
@@ -57,7 +57,7 @@
           background-color="blue-grey lighten-5"
           :color="barColor"
           height="30" stripped
-          :value="factor">
+          :value="healthFactor">
           </v-progress-linear>
           <v-card class="d-flex justify-center mx-2" min-width="50"
             color="red lighten-1" flat tile max-height="50">
@@ -73,9 +73,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import * as constants from '@/store/constants';
-import Controller from '@/handlers/controller';
+import { mapState } from 'vuex';
 import MarketDetailList from '@/components/lending/MarketDetailList.vue';
 
 export default {
@@ -87,23 +85,19 @@ export default {
       supplied: null,
       borrowed: null,
       liquidity: null,
-      marketAddresses: null,
       barColor: null,
     };
   },
   methods: {
-    ...mapActions({
-      getMarkets: constants.CONTROLLER_GET_MARKETS,
-    }),
     calculateHealth() {
-      this.barColor = (this.factor <= 50) ? 'light-green darken-4' : 'red';
+      this.barColor = (this.healthFactor <= 50) ? 'light-green darken-4' : 'red';
     },
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    factor() {
+    healthFactor() {
       return ((this.borrowed === 0 || this.supplied === 0)
         ? 0 : (this.borrowed / this.supplied) * 100).toFixed(2);
     },
@@ -112,22 +106,17 @@ export default {
     MarketDetailList,
   },
   created() {
-    this.controller = new Controller();
-    this.controller.getAccountHealth(this.account)
-      .then((accountHealth) => {
-        this.accountHealth = Number(accountHealth);
-      });
-    this.controller.getAccountValues(this.account)
+    console.log(this.account);
+    this.$rbank.controller.getAccountValues(this.account)
       .then(({ supplyValue, borrowValue }) => {
-        this.supplied = Number(supplyValue);
-        this.borrowed = Number(borrowValue);
+        this.supplied = supplyValue;
+        this.borrowed = borrowValue;
+        return this.$rbank.controller.getAccountLiquidity(this.account);
+      })
+      .then((liquidity) => {
+        this.liquidity = liquidity;
         this.calculateHealth();
       });
-    this.controller.getLiquidity(this.account)
-      .then((liquidity) => {
-        this.liquidity = Number(liquidity);
-      });
-    this.getMarkets();
   },
 };
 </script>

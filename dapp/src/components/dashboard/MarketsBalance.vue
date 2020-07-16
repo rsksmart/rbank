@@ -5,8 +5,9 @@
     </div>
     <v-container fluid>
       <v-row>
-        <v-col v-for="market in markets" :key="market.address" cols="4">
-          <market-balance-item :market="market"/>
+        <v-col v-for="(market, idx) in marketAddresses"
+               :key="`market-balance-item-${idx}`" cols="4">
+          <market-balance-item :marketAddress="market"/>
         </v-col>
       </v-row>
     </v-container>
@@ -15,17 +16,22 @@
 
 <script>
 import MarketBalanceItem from '@/components/dashboard/MarketBalanceItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'MarketsBalance',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      marketAddresses: [],
+    };
   },
   components: {
     MarketBalanceItem,
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.marketAddresses = mkts.map((mkt) => mkt.address);
+      });
   },
 };
 </script>

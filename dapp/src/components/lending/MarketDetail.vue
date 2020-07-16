@@ -2,11 +2,11 @@
   <v-card class="mx-5" outlined>
     <v-list-item three-line>
       <v-list-item-avatar tile size="80">
-        <v-img src="https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png"></v-img>
+        <v-img :src="rif"/>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="headline mb-1 text-right">
-          {{ market.token.name }}
+          {{ token.name }}
         </v-list-item-title>
         <v-list-item-subtitle class="headline mb-1 text-right">
           {{ tokenPrice | formatPrice}}
@@ -17,7 +17,7 @@
     <v-list class="transparent">
       <v-list-item>
         <v-list-item-title>
-          {{ market.token.symbol }}
+          {{ token.symbol }}
         </v-list-item-title>
         <v-list-item-subtitle class="text-right">
           {{ marketSupplyOf }}
@@ -53,7 +53,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import Market from '@/handlers/market';
+import rifImage from '@/assets/rif.png';
 
 export default {
   name: 'MarketDetail',
@@ -66,6 +66,13 @@ export default {
   data() {
     return {
       marketSupplyOf: null,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
+      price: 0,
+      rif: rifImage,
     };
   },
   computed: {
@@ -73,14 +80,29 @@ export default {
       account: (state) => state.Session.account,
     }),
     tokenPrice() {
-      return this.market.price * (Number(this.marketSupplyOf) / (10 ** this.market.token.decimals));
+      return this.price * (this.marketSupplyOf / (10 ** this.token.decimals));
     },
   },
   created() {
-    const marketInstance = new Market(this.market.address);
-    marketInstance.getUpdatedSupplyOf(this.account)
+    this.market.token
+      .then((tok) => [
+        tok.eventualName,
+        tok.eventualSymbol,
+        tok.eventualDecimals,
+      ])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.market.updatedSupplyOf(this.account);
+      })
       .then((supplyOf) => {
-        this.marketSupplyOf = Number(supplyOf) / (10 ** this.market.token.decimals);
+        this.marketSupplyOf = supplyOf / (10 ** this.token.decimals);
+        return this.$rbank.controller.eventualMarketPrice(this.marketAddress);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
       });
   },
 };

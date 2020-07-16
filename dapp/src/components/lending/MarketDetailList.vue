@@ -12,17 +12,22 @@
 
 <script>
 import MarketDetail from '@/components/lending/MarketDetail.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'MarketDetailList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
   },
   components: {
     MarketDetail,
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts;
+      });
   },
 };
 </script>

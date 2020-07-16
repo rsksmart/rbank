@@ -28,14 +28,19 @@
 
 <script>
 import SupplyItem from '@/components/supply/SupplyItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'SupplyList',
-  computed: {
-    ...mapState({
-      markets: (state) => state.Controller.markets,
-    }),
+  data() {
+    return {
+      markets: [],
+    };
+  },
+  created() {
+    this.$rbank.eventualMarkets
+      .then((mkts) => {
+        this.markets = mkts;
+      });
   },
   components: {
     SupplyItem,

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>Market {{tokenSymbol}}</h1>
+    <h1>Market {{token.symbol}}</h1>
     <template v-if="isOwner">
-      <price :marketAddress="id" :price="Number(price)"/>
+      <price :marketAddress="id" :price="price"/>
     </template>
     <template v-else>
       <v-card max-width="80%" class="ma-5" dark>
@@ -53,10 +53,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import Controller from '@/handlers/controller';
-
-import Market from '@/handlers/market';
-import Token from '@/handlers/token';
 import Price from '@/components/market/Price.vue';
 
 export default {
@@ -70,13 +66,15 @@ export default {
   data() {
     return {
       controller: null,
-      price: null,
       market: null,
-      token: null,
+      price: 0,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
       totalSupply: null,
       totalBorrows: null,
-      tokenName: null,
-      tokenSymbol: null,
       btc: 'https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png',
       tokenBalanceOf: null,
       supplyOf: null,
@@ -145,31 +143,24 @@ export default {
     Price,
   },
   created() {
-    this.controller = new Controller();
-    this.market = new Market(this.id);
-    this.market.eventualTokenAddress
-      .then((tokenAddress) => {
-        this.token = new Token(tokenAddress);
-        return [
-          this.token.eventualName,
-          this.token.eventualSymbol,
-        ];
-      })
-      .then((tokenPromises) => Promise.all(tokenPromises))
-      .then(([tokenName, tokenSymbol]) => {
-        this.tokenName = tokenName;
-        this.tokenSymbol = tokenSymbol;
-        this.loadTokenBalanceOf();
+    this.market = new this.$rbank.Market(this.id);
+    this.market.token
+      .then((tok) => [tok.eventualName, tok.eventualSymbol, tok.eventualDecimals])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
       });
-    this.controller.getPrice(this.id)
-      .then((price) => {
-        this.price = price;
+    this.$rbank.controller.eventualMarketPrice(this.id)
+      .then((marketPrice) => {
+        this.price = marketPrice;
       });
-    this.loadMarketTotalSupply();
-    this.loadMarketTotalBorrows();
-    this.loadMarketSupplyOf();
-    this.loadMarketBorrowBy();
-    this.loadMarketBaseBorrowRate();
+    // this.loadMarketTotalSupply();
+    // this.loadMarketTotalBorrows();
+    // this.loadMarketSupplyOf();
+    // this.loadMarketBorrowBy();
+    // this.loadMarketBaseBorrowRate();
   },
 };
 </script>

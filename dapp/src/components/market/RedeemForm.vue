@@ -3,7 +3,7 @@
     <v-card-text class="pb-0">
       <v-container fluid>
         <v-row>
-          <h2>Redeem from market {{data.market.address}} of token {{data.market.token.symbol}}</h2>
+          <h2>Redeem from market {{data.market.address}} of token {{data.token.symbol}}</h2>
         </v-row>
         <v-row>
           <v-col cols="10" class="pb-0">
@@ -30,9 +30,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import Market from '@/handlers/market';
-import * as constants from '@/store/constants';
+import { mapState } from 'vuex';
 
 export default {
   name: 'RedeemForm',
@@ -48,7 +46,7 @@ export default {
       maxAmount: false,
       rules: {
         required: () => !!this.amount || 'Required.',
-        marketSupply: () => this.data.market.cash >= this.contractAmount
+        marketSupply: () => this.data.cash >= this.contractAmount
           || 'Market does not have enough funds',
         userSupply: () => this.data.userSupply >= this.contractAmount
           || 'You do not have enough funds on this market',
@@ -60,7 +58,7 @@ export default {
       account: (state) => state.Session.account,
     }),
     maxAsDouble() {
-      return this.data.max / (10 ** this.data.market.token.decimals);
+      return this.data.max / (10 ** this.data.token.decimals);
     },
     validForm() {
       return typeof this.rules.required() !== 'string'
@@ -68,18 +66,13 @@ export default {
         && typeof this.rules.userSupply() !== 'string';
     },
     contractAmount() {
-      return this.amount * (10 ** this.data.market.token.decimals);
+      return this.amount * (10 ** this.data.token.decimals);
     },
   },
   methods: {
-    ...mapActions({
-      updateMarket: constants.CONTROLLER_MARKET_UPDATE,
-    }),
     redeem() {
-      const market = new Market(this.data.market.address);
-      market.redeem(this.account, this.contractAmount)
+      this.data.market.redeem(this.contractAmount, this.account)
         .then(() => {
-          this.updateMarket(this.data.market.id);
           this.$emit('formSucceed');
         });
     },

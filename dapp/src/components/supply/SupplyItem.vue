@@ -5,13 +5,13 @@
         <v-row>
           <v-col cols="2" class="d-flex justify-end">
             <v-list-item-avatar>
-              <v-img src="https://www.coinopsy.com/media/img/quality_logo/bitcoin-btc.png"/>
+              <v-img :src="rif"/>
             </v-list-item-avatar>
           </v-col>
           <v-col cols="2">
             <v-list-item-content>
               <v-list-item-title class="text-left">
-                {{ market.token.symbol }}
+                {{ token.symbol }}
               </v-list-item-title>
             </v-list-item-content>
           </v-col>
@@ -41,7 +41,7 @@
 <script>
 import SupplyForm from '@/components/market/SupplyForm.vue';
 import { mapState } from 'vuex';
-import Token from '@/handlers/token';
+import rifImage from '@/assets/rif.png';
 
 export default {
   name: 'SupplyItem',
@@ -55,25 +55,31 @@ export default {
     return {
       flag: false,
       tokenBalance: 0,
+      token: {
+        name: null,
+        symbol: null,
+        decimals: 0,
+      },
+      borrowRate: 0,
+      rif: rifImage,
     };
   },
   computed: {
     ...mapState({
-      mantissa: (state) => state.Controller.mantissa,
-      factor: (state) => state.Controller.factor,
       account: (state) => state.Session.account,
     }),
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return this.borrowRate.toFixed(3);
     },
     balance() {
-      return (this.tokenBalance / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (this.tokenBalance / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
     formObject() {
       return {
+        accountBalance: this.tokenBalance,
         market: this.market,
-        accountBalance: Number(this.tokenBalance),
+        token: this.token,
       };
     },
   },
@@ -85,20 +91,35 @@ export default {
     enableForm() {
       this.flag = !this.flag;
     },
-    async accountTokenBalance() {
-      const token = new Token(this.market.token.address);
-      await token.balanceOf(this.account)
+    accountTokenBalance() {
+      this.market.token
+        .then((tok) => tok.eventualBalanceOf(this.account))
         .then((balance) => {
-          this.tokenBalance = Number(balance);
-          return this.tokenBalance;
+          this.tokenBalance = balance;
         });
     },
   },
   components: {
     SupplyForm,
   },
-  mounted() {
-    this.accountTokenBalance();
+  created() {
+    this.market.token
+      .then((tok) => [
+        tok.eventualName,
+        tok.eventualSymbol,
+        tok.eventualDecimals,
+      ])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        this.accountTokenBalance();
+      });
   },
 };
 </script>

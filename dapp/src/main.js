@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Web3 from 'web3';
+import Rbank from '@rsksmart/rbank.js';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
@@ -22,6 +23,9 @@ window.addEventListener('load', async () => {
     Vue.prototype.$web3 = Vue.web3 = web3;
   }
 });
+
+// eslint-disable-next-line no-multi-assign
+Vue.prototype.$rbank = Vue.rbank = new Rbank();
 
 new Vue({
   router,

@@ -4,10 +4,10 @@
       <v-list-item-action>
         <v-icon>local_convenience_store</v-icon>
       </v-list-item-action>
-      {{ market.token.symbol }}
+      {{ token.symbol }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.token.name }}
+      {{ token.name }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ borrows }}
@@ -16,10 +16,10 @@
       {{ supplies }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.price }}
+      {{ price | formatPrice }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
-      {{ market.cash | formatPrice }}
+      {{ marketCash }}
     </v-list-item-title>
     <v-list-item-title class="text-center">
       {{ apr }} %
@@ -33,26 +33,75 @@ import { mapState } from 'vuex';
 export default {
   name: 'MarketListItem',
   props: {
-    market: {
-      type: Object,
+    marketAddress: {
+      type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      market: new this.$rbank.Market(this.marketAddress),
+      token: {
+        name: '',
+        symbol: '',
+        decimals: 0,
+      },
+      price: 0,
+      cash: 0,
+      borrowRate: 0,
+      totalSupply: 0,
+      totalBorrows: 0,
+    };
   },
   computed: {
     ...mapState({
       factor: (state) => state.Controller.factor,
     }),
     apr() {
-      return ((this.market.borrowRate * 100) / this.factor).toFixed(2);
+      return this.borrowRate.toFixed(3);
     },
     borrows() {
-      return (this.market.borrowed / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (this.totalBorrows / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
     supplies() {
-      return (this.market.supplied / (10 ** this.market.token.decimals))
-        .toFixed(this.market.token.decimals);
+      return (this.totalSupply / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
+    marketCash() {
+      return (this.cash / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
+    },
+  },
+  created() {
+    this.market.token
+      .then((tok) => [tok.eventualName, tok.eventualSymbol, tok.eventualDecimals])
+      .then((results) => Promise.all(results))
+      .then(([name, symbol, decimals]) => {
+        this.token.name = name;
+        this.token.symbol = symbol;
+        this.token.decimals = decimals;
+        return this.$rbank.controller.eventualMarketPrice(this.marketAddress);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
+        return this.market.eventualCash;
+      })
+      .then((cash) => {
+        this.cash = cash;
+        return this.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        return this.market.eventualUpdatedTotalSupply;
+      })
+      .then((updatedTotalSupply) => {
+        this.totalSupply = updatedTotalSupply;
+        return this.market.eventualUpdatedTotalBorrows;
+      })
+      .then((updatedTotalBorrows) => {
+        this.totalBorrows = updatedTotalBorrows;
+      });
   },
   methods: {
     setMarket(marketAddress) {
