@@ -102,6 +102,15 @@ export default {
       .then((updatedTotalBorrows) => {
         this.totalBorrows = updatedTotalBorrows;
       });
+    const self = this;
+    this.market.events.supply()
+      .on('data', ({ returnValues: { user, amount } }) => {
+        console.log(user, amount);
+        self.market.eventualUpdatedTotalSupply
+          .then((updatedTotalSupply) => {
+            self.totalSupply = updatedTotalSupply;
+          });
+      });
   },
   methods: {
     setMarket(marketAddress) {
