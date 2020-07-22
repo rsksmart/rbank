@@ -99,7 +99,7 @@ export default {
       })
       .then((supplyOf) => {
         this.marketSupplyOf = supplyOf / (10 ** this.token.decimals);
-        return this.$rbank.controller.eventualMarketPrice(this.marketAddress);
+        return this.$rbank.controller.eventualMarketPrice(this.market.address);
       })
       .then((marketPrice) => {
         this.price = marketPrice;

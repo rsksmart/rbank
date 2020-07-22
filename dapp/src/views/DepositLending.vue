@@ -42,13 +42,12 @@
               Health Factor: {{ healthFactor }} %
             </v-list-item-title>
             <v-list-item-subtitle>
-              Account in risk when health factor is bigger than 50%
+              Account in risk when health factor is decreasing
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <div class="d-flex justify-space-around mb-4">
-          <v-card class="d-flex justify-center mx-2" min-width="50"
-            color="light-green" flat tile max-height="50">
+          <v-card class="d-flex justify-center mx-2" min-width="50" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
               0 %
             </v-card-text>
@@ -59,10 +58,9 @@
           height="30" stripped
           :value="healthFactor">
           </v-progress-linear>
-          <v-card class="d-flex justify-center mx-2" min-width="50"
-            color="red lighten-1" flat tile max-height="50">
+          <v-card class="d-flex justify-center mx-2" min-width="50" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
-              50 %
+              100 %
             </v-card-text>
           </v-card>
         </div>
@@ -80,33 +78,30 @@ export default {
   name: 'DepositLending',
   data() {
     return {
-      controller: null,
-      accountHealth: null,
-      supplied: null,
-      borrowed: null,
-      liquidity: null,
-      barColor: null,
+      accountHealth: 0,
+      supplied: 0,
+      borrowed: 0,
+      liquidity: 0,
     };
-  },
-  methods: {
-    calculateHealth() {
-      this.barColor = (this.healthFactor <= 50) ? 'light-green darken-4' : 'red';
-    },
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
     healthFactor() {
-      return ((this.borrowed === 0 || this.supplied === 0)
-        ? 0 : (this.borrowed / this.supplied) * 100).toFixed(2);
+      return this.accountHealth.toFixed(2);
+    },
+    barColor() {
+      if (this.healthFactor <= 30) return 'red darken-4';
+      if (this.healthFactor > 30 && this.healthFactor <= 50) return 'red';
+      if (this.healthFactor > 50 && this.healthFactor <= 80) return 'orange darken-1';
+      return 'light-green darken-1';
     },
   },
   components: {
     MarketDetailList,
   },
   created() {
-    console.log(this.account);
     this.$rbank.controller.getAccountValues(this.account)
       .then(({ supplyValue, borrowValue }) => {
         this.supplied = supplyValue;
@@ -115,7 +110,10 @@ export default {
       })
       .then((liquidity) => {
         this.liquidity = liquidity;
-        this.calculateHealth();
+        return this.$rbank.controller.getAccountHealth(this.account);
+      })
+      .then((accountHealth) => {
+        this.accountHealth = accountHealth * 100;
       });
   },
 };

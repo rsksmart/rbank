@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      market: new this.$rbank.Market(this.marketAddress),
+      market: null,
       token: {
         name: null,
         decimals: 0,
@@ -58,6 +58,7 @@ export default {
     },
   },
   created() {
+    this.market = new this.$rbank.Market(this.marketAddress);
     this.market.token
       .then((tok) => [tok.eventualName, tok.eventualSymbol, tok.eventualDecimals])
       .then((results) => Promise.all(results))
@@ -65,12 +66,12 @@ export default {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
-      });
-    this.$rbank.controller.eventualMarketPrice(this.marketAddress)
+        return this.$rbank.controller.eventualMarketPrice(this.marketAddress);
+      })
       .then((marketPrice) => {
         this.price = marketPrice;
-      });
-    this.market.updatedSupplyOf(this.account)
+        return this.market.updatedSupplyOf(this.account);
+      })
       .then((supplyOf) => {
         this.supplyOf = supplyOf;
       });
