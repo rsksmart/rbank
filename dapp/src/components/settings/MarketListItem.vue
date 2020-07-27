@@ -104,32 +104,28 @@ export default {
       });
     const self = this;
     this.market.events.supply()
-      .on('data', ({ returnValues: { user, amount } }) => {
-        console.log(user, amount);
+      .on('data', () => {
         self.market.eventualUpdatedTotalSupply
           .then((updatedTotalSupply) => {
             self.totalSupply = updatedTotalSupply;
           });
       });
     this.market.events.borrow()
-      .on('data', ({ returnValues: { user, amount } }) => {
-        console.log(user, amount);
+      .on('data', () => {
         self.market.eventualUpdatedTotalBorrows
           .then((UpdatedTotalBorrows) => {
             self.totalBorrows = UpdatedTotalBorrows;
           });
       });
     this.market.events.redeem()
-      .on('data', ({ returnValues: { user, amount } }) => {
-        console.log(user, amount);
+      .on('data', () => {
         self.market.eventualUpdatedTotalSupply
           .then((updatedTotalSupply) => {
             self.totalSupply = updatedTotalSupply;
           });
       });
     this.market.events.payBorrow()
-      .on('data', ({ returnValues: { user, amount } }) => {
-        console.log(user, amount);
+      .on('data', () => {
         self.market.eventualUpdatedTotalBorrows
           .then((UpdatedTotalBorrows) => {
             self.totalBorrows = UpdatedTotalBorrows;

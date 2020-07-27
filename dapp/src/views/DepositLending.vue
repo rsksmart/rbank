@@ -48,19 +48,19 @@
         </v-list-item>
         <div class="d-flex justify-space-around mb-4">
           <v-card class="d-flex justify-center mx-2" min-width="50"
-            color="light-green" flat tile max-height="50">
+                  color="light-green" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
               0 %
             </v-card-text>
           </v-card>
           <v-progress-linear
-          background-color="blue-grey lighten-5"
-          :color="barColor"
-          height="30" stripped
-          :value="healthFactor">
+            background-color="blue-grey lighten-5"
+            :color="barColor"
+            height="30" stripped
+            :value="healthFactor">
           </v-progress-linear>
           <v-card class="d-flex justify-center mx-2" min-width="50"
-            color="red lighten-1" flat tile max-height="50">
+                  color="red lighten-1" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
               50 %
             </v-card-text>
@@ -80,18 +80,10 @@ export default {
   name: 'DepositLending',
   data() {
     return {
-      controller: null,
-      accountHealth: null,
       supplied: null,
       borrowed: null,
       liquidity: null,
-      barColor: null,
     };
-  },
-  methods: {
-    calculateHealth() {
-      this.barColor = (this.healthFactor <= 50) ? 'light-green darken-4' : 'red';
-    },
   },
   computed: {
     ...mapState({
@@ -101,12 +93,19 @@ export default {
       return ((this.borrowed === 0 || this.supplied === 0)
         ? 0 : (this.borrowed / this.supplied) * 100).toFixed(2);
     },
+    barColor() {
+      switch (true) {
+        case (this.healthFactor <= 50):
+          return 'light-green darken-4';
+        default:
+          return 'red';
+      }
+    },
   },
   components: {
     MarketDetailList,
   },
   created() {
-    console.log(this.account);
     this.$rbank.controller.getAccountValues(this.account)
       .then(({ supplyValue, borrowValue }) => {
         this.supplied = supplyValue;
@@ -115,7 +114,6 @@ export default {
       })
       .then((liquidity) => {
         this.liquidity = liquidity;
-        this.calculateHealth();
       });
   },
 };
