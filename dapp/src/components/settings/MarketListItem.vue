@@ -102,6 +102,35 @@ export default {
       .then((updatedTotalBorrows) => {
         this.totalBorrows = updatedTotalBorrows;
       });
+    const self = this;
+    this.market.events.supply()
+      .on('data', () => {
+        self.market.eventualUpdatedTotalSupply
+          .then((updatedTotalSupply) => {
+            self.totalSupply = updatedTotalSupply;
+          });
+      });
+    this.market.events.borrow()
+      .on('data', () => {
+        self.market.eventualUpdatedTotalBorrows
+          .then((UpdatedTotalBorrows) => {
+            self.totalBorrows = UpdatedTotalBorrows;
+          });
+      });
+    this.market.events.redeem()
+      .on('data', () => {
+        self.market.eventualUpdatedTotalSupply
+          .then((updatedTotalSupply) => {
+            self.totalSupply = updatedTotalSupply;
+          });
+      });
+    this.market.events.payBorrow()
+      .on('data', () => {
+        self.market.eventualUpdatedTotalBorrows
+          .then((UpdatedTotalBorrows) => {
+            self.totalBorrows = UpdatedTotalBorrows;
+          });
+      });
   },
   methods: {
     setMarket(marketAddress) {

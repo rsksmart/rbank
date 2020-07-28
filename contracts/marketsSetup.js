@@ -9,7 +9,7 @@ setMarkets = (callback) => {
   const controller = new web3.eth.Contract(Controller.abi, controllerAddress);
   tokenAddresses.forEach(async(tokenAddress, idx) => {
     let m = new web3.eth.Contract(Market.abi);
-    let ms = m.deploy({data: Market.bytecode,arguments: [tokenAddress, (idx+1)*100000000000000 ]});
+    let ms = m.deploy({data: Market.bytecode,arguments: [tokenAddress, (idx+1)*100000000000000 , 1000000, 20]});
     await ms.estimateGas({from: owner})
       .then((gas) => ms.send({ from: owner, gas }))
       .then((market)=> {

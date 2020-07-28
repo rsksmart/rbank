@@ -47,18 +47,20 @@
           </v-list-item-content>
         </v-list-item>
         <div class="d-flex justify-space-around mb-4">
-          <v-card class="d-flex justify-center mx-2" min-width="50" flat tile max-height="50">
+          <v-card class="d-flex justify-center mx-2" min-width="50"
+                  color="light-green" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
               0 %
             </v-card-text>
           </v-card>
           <v-progress-linear
-          background-color="blue-grey lighten-5"
-          :color="barColor"
-          height="30" stripped
-          :value="healthFactor">
+            background-color="blue-grey lighten-5"
+            :color="barColor"
+            height="30" stripped
+            :value="healthFactor">
           </v-progress-linear>
-          <v-card class="d-flex justify-center mx-2" min-width="50" flat tile max-height="50">
+          <v-card class="d-flex justify-center mx-2" min-width="50"
+                  color="red lighten-1" flat tile max-height="50">
             <v-card-text class="d-flex justify-center pa-1">
               100 %
             </v-card-text>
@@ -92,10 +94,12 @@ export default {
       return this.accountHealth.toFixed(2);
     },
     barColor() {
-      if (this.healthFactor <= 30) return 'red darken-4';
-      if (this.healthFactor > 30 && this.healthFactor <= 50) return 'red';
-      if (this.healthFactor > 50 && this.healthFactor <= 80) return 'orange darken-1';
-      return 'light-green darken-1';
+      switch (true) {
+        case (this.healthFactor >= 50):
+          return 'light-green darken-4';
+        default:
+          return 'red';
+      }
     },
   },
   components: {
