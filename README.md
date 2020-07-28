@@ -1,4 +1,5 @@
 # rbank
+This is a demo on how to integrate the `rbank-js` library into a JS project.
 
 ## Project setup
 ```
@@ -25,7 +26,6 @@ npm run lint
 To run the Selenium tests with Nightwatch:
 
  - Run `ganache-cli`.
- - On `dapp` folder: `cd dapp`.
  - Create a `.env` file:
     - `account_passphrase=<12 words MetaMask passphrase>`
     - `account_password=<MetaMask password>`

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Web3 from 'web3';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Rbank from '@rsksmart/rbank.js';
 import App from './App.vue';
 import './registerServiceWorker';
@@ -13,16 +13,6 @@ import './sass/main.scss';
 require('./filters');
 
 Vue.config.productionTip = false;
-
-window.addEventListener('load', async () => {
-  // eslint-disable-next-line no-undef
-  if (web3 !== undefined) {
-    // eslint-disable-next-line no-undef
-    web3 = new Web3(window.web3.currentProvider);
-    // eslint-disable-next-line no-multi-assign,no-undef
-    Vue.prototype.$web3 = Vue.web3 = web3;
-  }
-});
 
 // eslint-disable-next-line no-multi-assign
 Vue.prototype.$rbank = Vue.rbank = new Rbank();

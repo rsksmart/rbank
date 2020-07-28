@@ -69,7 +69,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import Market from '@/handlers/market';
 
 export default {
   name: 'LiquidatedItem',
@@ -118,7 +117,7 @@ export default {
       this.show = !this.show;
     },
     getDebt() {
-      const market = new Market(this.marketAddress);
+      const market = new this.$rbank.Market(this.marketAddress);
       market.getUpdatedBorrowBy(this.account)
         .then((debt) => {
           this.debt = Number(debt);
@@ -129,7 +128,7 @@ export default {
     },
     getCollateral() {
       const marketSupplies = this.markets.map((market) => market.address)
-        .map((market) => new Market(market).getUpdatedSupplyOf(this.account));
+        .map((market) => new this.$rbank.Market(market).getUpdatedSupplyOf(this.account));
       Promise.all(marketSupplies)
         .then((supplies) => {
           this.collaterals = supplies.map((sup, idx) => ({

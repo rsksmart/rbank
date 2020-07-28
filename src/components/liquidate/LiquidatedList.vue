@@ -27,9 +27,6 @@
 
 <script>
 import LiquidatedItem from '@/components/liquidate/LiquidatedItem.vue';
-import Market from '@/handlers/market';
-import Controller from '@/handlers/controller';
-import Token from '@/handlers/token';
 
 export default {
   name: 'LiquidatedList',
@@ -66,7 +63,7 @@ export default {
     },
     getSymbol() {
       this.marketContract.eventualTokenAddress
-        .then((tokenAddress) => new Token(tokenAddress).eventualSymbol)
+        .then((tokenAddress) => new this.$rbank.Token(tokenAddress).eventualSymbol)
         .then((symbol) => { this.token = symbol; });
     },
     getBorrowEvents() {
@@ -84,8 +81,7 @@ export default {
     },
   },
   created() {
-    this.controller = new Controller();
-    this.marketContract = new Market(this.marketAddress);
+    this.marketContract = new this.$rbank.Market(this.marketAddress);
     this.getSymbol();
     this.getBorrowEvents();
   },

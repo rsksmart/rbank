@@ -7,7 +7,6 @@
 
 <script>
 import LiquidatedList from '@/components/liquidate/LiquidatedList.vue';
-import Controller from '@/handlers/controller';
 
 export default {
   name: 'Liquidated',
@@ -21,14 +20,13 @@ export default {
   },
   methods: {
     loadMarkets() {
-      this.controller.eventualMarketAddresses
+      this.$rbank.controller.eventualMarketAddresses
         .then((marketAddresses) => {
           this.marketAddresses = marketAddresses;
         });
     },
   },
   created() {
-    this.controller = new Controller();
     this.loadMarkets();
   },
 };

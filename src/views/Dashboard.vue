@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import Controller from '@/handlers/controller';
 import MarketsList from '@/components/settings/MarketsList.vue';
 import MarketsBalance from '@/components/dashboard/MarketsBalance.vue';
 
@@ -15,15 +14,14 @@ export default {
   name: 'Dashboard',
   data() {
     return {
-      controller: null,
       marketAddresses: [],
     };
   },
   methods: {
     loadMarkets() {
       this.$rbank.eventualMarkets
-        .then((mkts) => {
-          this.marketAddresses = mkts.map((mkt) => mkt.address);
+        .then((markets) => {
+          this.marketAddresses = markets.map((market) => market.address);
         });
     },
   },
@@ -32,7 +30,6 @@ export default {
     MarketsBalance,
   },
   created() {
-    this.controller = new Controller();
     this.loadMarkets();
   },
 };

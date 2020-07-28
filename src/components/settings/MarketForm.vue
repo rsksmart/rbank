@@ -21,6 +21,18 @@
               type="number"
               required
             ></v-text-field>
+            <v-text-field
+              v-model="blocksPerYear"
+              label="Blocks per Year"
+              type="number"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="utilizationRateFraction"
+              label="Utilization Rate Fraction"
+              type="number"
+              required
+            ></v-text-field>
             <v-btn :disabled="!validForm" color="success" @click="createMarket">
               Create Market
             </v-btn>
@@ -41,6 +53,8 @@ export default {
     return {
       tokenAddress: null,
       marketBaseBorrowRate: null,
+      blocksPerYear: 1e6,
+      utilizationRateFraction: 20,
       validForm: false,
       error: null,
       showSnackbar: false,
@@ -56,7 +70,12 @@ export default {
       return this.$rbank.marketExistsByToken(this.tokenAddress)
         .then((marketExists) => {
           if (!marketExists) {
-            this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate)
+            this.$rbank.Market.create(
+              this.tokenAddress,
+              this.marketBaseBorrowRate,
+              this.blocksPerYear,
+              this.utilizationRateFraction,
+            )
               .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
               .then((market) => {
                 market.setControllerAddress(this.$rbank.controller.address);
