@@ -84,6 +84,14 @@ export default [
     props: true,
   },
   {
+    path: '/supplyBorrow',
+    name: 'SupplyBorrow',
+    icon: '',
+    publicShow: false,
+    component: () => import(/* webpackChunkName: "market" */ '@/views/SupplyBorrow.vue'),
+    props: true,
+  },
+  {
     path: '*',
     redirect: { name: 'Home' },
   },
