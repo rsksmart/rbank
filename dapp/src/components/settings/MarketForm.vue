@@ -56,7 +56,7 @@ export default {
       return this.$rbank.marketExistsByToken(this.tokenAddress)
         .then((marketExists) => {
           if (!marketExists) {
-            this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate)
+            this.$rbank.Market.create(this.tokenAddress, this.marketBaseBorrowRate, 1e6, 20)
               .then((createdMarketAddress) => new this.$rbank.Market(createdMarketAddress))
               .then((market) => {
                 market.setControllerAddress(this.$rbank.controller.address);

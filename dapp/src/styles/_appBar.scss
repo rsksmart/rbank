@@ -1,0 +1,38 @@
+.appBar {
+  h1, h2, h3, h4, h5, h6 {
+
+  }
+  h1 {
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 36px;
+    color: #000000;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 30px;
+    text-transform: capitalize;
+    color: #008CFF;
+  }
+
+  h3 {
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    color: #008CFF;
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 18px;
+    color: #008CFF;
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}

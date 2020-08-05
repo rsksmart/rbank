@@ -1,21 +1,21 @@
 <template>
-  <v-app-bar class="ma-5" color="transparent" flat>
+  <v-app-bar class="appBar ma-5" color="transparent" flat>
     <h1 class="mx-5">RBank</h1>
     <h2>{{ title }}</h2>
     <v-spacer/>
     <div v-if="isLogged">
-      <v-btn @click="toHome" class="button" text color="transparent">
-        <h4 class="mx-5">Home</h4>
-      </v-btn>
-      <v-btn @click="toSupplyBorrow" class="button" text color="transparent">
-        <h4 class="mx-5">Supply/Borrow</h4>
-      </v-btn>
-      <v-btn class="ml-5 button" rounded outlined color="#008CFF">
+      <router-link class="mx-5" :to="{ name: 'Home' }">
+        Home
+      </router-link>
+      <router-link class="mx-5" :to="{ name: 'SupplyBorrow' }">
+        Supply/Borrow
+      </router-link>
+      <v-btn class="mx-5" rounded outlined color="#008CFF">
         {{ accountCutOff }}
       </v-btn>
     </div>
     <v-btn class="ml-5 button" rounded color="#008CFF" id="connectButton" @click="connect" v-else>
-      <div class="text">Connect wallet</div>
+      <span class="mx-5">Connect wallet</span>
     </v-btn>
   </v-app-bar>
 </template>
@@ -45,16 +45,6 @@ export default {
     ...mapActions({
       connectToWeb3: constants.SESSION_CONNECT_WEB3,
     }),
-    toHome() {
-      this.$router.push({
-        name: 'Home',
-      });
-    },
-    toSupplyBorrow() {
-      this.$router.push({
-        name: 'SupplyBorrow',
-      });
-    },
     async connect() {
       try {
         // eslint-disable-next-line no-undef

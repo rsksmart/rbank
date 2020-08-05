@@ -1,0 +1,74 @@
+.dialog {
+  p {
+    font-weight: normal;
+    font-size: 11px;
+    line-height: 13px;
+    text-align: center;
+    color: #000000;
+  }
+
+  h1 {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 30px;
+    text-align: left;
+    color: #000000;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #828282;
+  }
+
+  h3 {
+    margin-right: 15px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    text-transform: uppercase;
+    color: #000000;
+  }
+
+  div.col {
+    padding: 0 !important;
+  }
+
+  input {
+    margin-left: 20px;
+    text-align: center;
+  }
+  input::-webkit-inner-spin-button {
+    display: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .inputBox {
+    margin: 0 66px 0 66px;
+    height: 95px;
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+  .inputText {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 30px;
+    padding: 0 !important;
+    text-align: center !important;
+    color: #000000;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .successBox {
+    margin: 50px 0 50px 0;
+  }
+}
