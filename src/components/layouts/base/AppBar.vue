@@ -1,23 +1,27 @@
 <template>
-  <v-app-bar app class="">
-    <v-spacer></v-spacer>
-
-    <v-btn icon @click="toggleTheme">
-      <v-icon v-if="theme">mdi-invert-colors-off</v-icon>
-      <v-icon v-else>mdi-invert-colors</v-icon>
-    </v-btn>
-
-    <v-btn icon v-if="isLogged">
-      <v-icon>mdi-link</v-icon>
-    </v-btn>
-    <v-btn icon id="connectButton" @click="connect" v-else>
-      <v-icon>mdi-link-off</v-icon>
+  <v-app-bar class="appBar ma-5" color="transparent" flat>
+    <h1 class="mx-5">RBank</h1>
+    <h2>{{ title }}</h2>
+    <v-spacer/>
+    <div v-if="isLogged">
+      <router-link class="mx-5" :to="{ name: 'Home' }">
+        Home
+      </router-link>
+      <router-link class="mx-5" :to="{ name: 'SupplyBorrow' }">
+        Supply/Borrow
+      </router-link>
+      <v-btn class="mx-5" rounded outlined color="#008CFF">
+        {{ accountCutOff }}
+      </v-btn>
+    </div>
+    <v-btn class="ml-5 button" rounded color="#008CFF" id="connectButton" @click="connect" v-else>
+      <span class="mx-5">Connect wallet</span>
     </v-btn>
   </v-app-bar>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import * as constants from '@/store/constants';
 
 export default {
@@ -26,8 +30,15 @@ export default {
     ...mapGetters({
       isLogged: constants.SESSION_IS_LOGGED,
     }),
-    theme() {
-      return this.$vuetify.theme.dark;
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
+    title() {
+      if (this.$route.path === '/supplyBorrow') return 'Supply / Borrow';
+      return 'My Activity';
+    },
+    accountCutOff() {
+      return `${this.account.substring(0, 4)}...${this.account.substring(this.account.length - 4, this.account.length)}`;
     },
   },
   methods: {
@@ -43,13 +54,6 @@ export default {
       }
       this.connectToWeb3();
     },
-    toggleTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-    },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

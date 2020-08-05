@@ -8,7 +8,7 @@ import store from './store';
 import vuetify from './plugins/vuetify';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import '@mdi/font/css/materialdesignicons.css';
-import './sass/main.scss';
+import './styles/main.scss';
 
 require('./filters');
 
