@@ -102,6 +102,19 @@ export default {
   methods: {
     reset() {
       this.dialog = false;
+      this.market.eventualToken
+        .then((tok) => tok.eventualBalanceOf(this.account))
+        .then((balance) => {
+          this.token.balance = balance;
+          return this.$rbank.controller.eventualMarketPrice(this.market.address);
+        })
+        .then((marketPrice) => {
+          this.price = marketPrice;
+          return this.market.eventualBorrowRate;
+        })
+        .then((borrowRate) => {
+          this.borrowRate = borrowRate;
+        });
       this.$emit('dialogClosed');
     },
   },

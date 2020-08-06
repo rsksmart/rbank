@@ -35,6 +35,7 @@ export default {
     }),
     title() {
       if (this.$route.path === '/supplyBorrow') return 'Supply / Borrow';
+      if (this.$route.path === '/') return '';
       return 'My Activity';
     },
     accountCutOff() {
