@@ -5,7 +5,7 @@
         <v-progress-circular indeterminate :size="80" color="#008CFF"/>
       </v-row>
       <v-row class="my-5 d-flex justify-center">
-        <h1>Connecting to Wallet...</h1>
+        <h1>Connecting...</h1>
       </v-row>
     </div>
   </v-card>

@@ -8,7 +8,7 @@
         <div class="text-center">
           You have successfully supplied <br> this Market with
           <span class="greenish">
-                {{ data.amount }} {{ data.token.symbol }}
+                {{ data.supplied }} {{ data.token.symbol }}
               </span>
         </div>
       </v-row>
@@ -22,7 +22,7 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7">
-              <h1>{{ data.balanceAsDouble }}</h1>
+              <h1>{{ balanceAsDouble }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
               <span v-if="data.supplyBalanceInfo">(-{{ data.supplyBalanceInfo }})</span>
@@ -42,7 +42,7 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7">
-              <h1>{{ data.supplied }}</h1>
+              <h1>{{ supplied }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
               <span v-if="data.supplyBalanceInfo">(+{{ data.supplyBalanceInfo }})</span>
@@ -62,7 +62,7 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7">
-              <h1>{{ data.maxBorrowAllowed }}</h1>
+              <h1>{{ maxBorrowAllowed }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
               <span v-if="data.borrowLimitInfo">(+{{ data.borrowLimitInfo }})</span>
@@ -95,6 +95,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'SupplySuccess',
   props: {
@@ -103,7 +105,24 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      tokenBalance: 0,
+      liquidity: 0,
+      cash: 0,
+      price: 0,
+      maxAllowed: 0,
+      supplyOf: 0,
+    };
+  },
   computed: {
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
+    balanceAsDouble() {
+      return (this.tokenBalance / (10 ** this.data.token.decimals))
+        .toFixed(this.data.token.decimals);
+    },
     hashCutOff() {
       return `${this.data.hash.substring(0, 4)}...${this.data.hash
         .substring(this.data.hash.length - 4, this.data.hash.length)}`;
@@ -111,11 +130,47 @@ export default {
     rskExplorerUrl() {
       return `https://explorer.rsk.co/tx/${this.data.hash}`;
     },
+    maxBorrowAllowed() {
+      return (this.maxAllowed / (10 ** this.data.token.decimals))
+        .toFixed(this.data.token.decimals);
+    },
+    supplied() {
+      return (this.supplyOf / (10 ** this.data.token.decimals))
+        .toFixed(this.data.token.decimals);
+    },
   },
   methods: {
     closeDialog() {
       this.$emit('closeDialog');
     },
+    getMaxAllowed(liquidity, cash) {
+      const allowed = this.price > 0 ? Math.floor(liquidity / (this.price * 2)) : 0;
+      return allowed >= cash ? cash : allowed;
+    },
+  },
+  created() {
+    this.data.market.eventualToken
+      .then((tok) => tok.eventualBalanceOf(this.account))
+      .then((tokenBalance) => {
+        this.tokenBalance = tokenBalance;
+        return this.$rbank.controller.getAccountLiquidity(this.account);
+      })
+      .then((accountLiquidity) => {
+        this.liquidity = accountLiquidity;
+        return this.data.market.eventualCash;
+      })
+      .then((cash) => {
+        this.cash = cash;
+        return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
+        return this.data.market.updatedSupplyOf(this.account);
+      })
+      .then((supplyOf) => {
+        this.supplyOf = supplyOf;
+        this.maxAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+      });
   },
 };
 </script>

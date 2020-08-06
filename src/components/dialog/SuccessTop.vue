@@ -11,7 +11,7 @@
         <h2>price:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        <span>{{ data.price | formatPrice }}</span><span class="ml-2 itemInfo">usd</span>
+        <span>{{ price | formatPrice }}</span><span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
     <v-col cols="2">
@@ -19,7 +19,7 @@
         <h2>apr:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ data.apr }}%
+        {{ apr }}%
       </v-row>
     </v-col>
   </v-row>
@@ -33,6 +33,27 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      borrowRate: 0,
+      price: 0,
+    };
+  },
+  computed: {
+    apr() {
+      return this.borrowRate.toFixed(2);
+    },
+  },
+  created() {
+    this.$rbank.controller.eventualMarketPrice(this.data.market.address)
+      .then((marketPrice) => {
+        this.price = marketPrice;
+        return this.data.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+      });
   },
 };
 </script>

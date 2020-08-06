@@ -42,6 +42,7 @@
 
 <script>
 import SupplyList from '@/components/supplyBorrow/supply/SupplyList.vue';
+import BorrowList from '@/components/supplyBorrow/borrow/BorrowList.vue';
 import { mapState } from 'vuex';
 
 export default {
@@ -67,6 +68,7 @@ export default {
   },
   components: {
     SupplyList,
+    BorrowList,
   },
   created() {
     this.$rbank.controller.getAccountHealth(this.account)

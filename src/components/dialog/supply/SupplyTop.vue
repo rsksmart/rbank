@@ -11,7 +11,7 @@
         <h2>price:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        <span>{{ data.price | formatPrice }}</span><span class="ml-2 itemInfo">usd</span>
+        <span>{{ price | formatPrice }}</span><span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
     <v-col cols="3">
@@ -19,7 +19,7 @@
         <h2>in your wallet:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ data.balanceAsDouble }}<span class="ml-2 itemInfo">usd</span>
+        {{ balanceAsDouble }}<span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
     <v-col cols="2">
@@ -36,16 +36,29 @@
 <script>
 export default {
   name: 'SupplyTop',
-  data() {
-    return {
-      earnings: 0,
-    };
-  },
   props: {
     data: {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      earnings: 0,
+      price: 0,
+    };
+  },
+  computed: {
+    balanceAsDouble() {
+      return (this.data.token.balance / (10 ** this.data.token.decimals))
+        .toFixed(this.data.token.decimals);
+    },
+  },
+  created() {
+    this.$rbank.controller.eventualMarketPrice(this.data.market.address)
+      .then((marketPrice) => {
+        this.price = marketPrice;
+      });
   },
 };
 </script>
