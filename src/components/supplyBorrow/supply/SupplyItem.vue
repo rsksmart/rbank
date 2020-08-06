@@ -47,7 +47,7 @@
       </v-row>
     </v-list-item>
     <v-divider/>
-    <supply-dialog :data="dataObject" @closeDialog="dialog = false"/>
+    <supply-dialog :data="dataObject" @closeDialog="reset"/>
   </div>
 </template>
 
@@ -97,6 +97,12 @@ export default {
         token: this.token,
         market: this.market,
       };
+    },
+  },
+  methods: {
+    reset() {
+      this.dialog = false;
+      this.$emit('dialogClosed');
     },
   },
   components: {

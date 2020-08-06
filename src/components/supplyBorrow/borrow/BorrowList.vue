@@ -19,7 +19,7 @@
       </v-list-item>
       <v-divider/>
       <borrow-item v-for="(market, idx) in markets"
-                   :key="`market-${idx}`" :market="market"/>
+                   :key="`market-${idx}`" :market="market" @dialogClosed="reset"/>
     </v-list>
   </v-card>
 </template>
@@ -33,6 +33,11 @@ export default {
     return {
       markets: [],
     };
+  },
+  methods: {
+    reset() {
+      this.$emit('listChange');
+    },
   },
   components: {
     BorrowItem,
