@@ -34,7 +34,7 @@
               </v-list-item-subtitle>
             </v-col>
             <v-col cols="3" class="pa-0">
-              <v-btn class="pa-0" @click="toSupply" icon>
+              <v-btn class="pa-0" @click="dialog = !dialog" icon>
                 <svg width="11" height="32" viewBox="0 0 11 32" fill="none"
                      xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 1L9 16L1 31" stroke="#008CFF" stroke-width="2"
@@ -47,13 +47,21 @@
       </v-row>
     </v-list-item>
     <v-divider/>
-    <supply-dialog :data="dataObject"/>
+    <borrow-dialog :data="dataObject" @closeDialog="dialog = false"/>
   </div>
 </template>
 
 <script>
+import BorrowDialog from '@/components/dialog/borrow/BorrowDialog.vue';
+
 export default {
   name: 'BorrowItem',
+  props: {
+    market: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       token: {
@@ -64,13 +72,8 @@ export default {
       price: 0,
       borrowRate: 0,
       cash: 0,
+      dialog: false,
     };
-  },
-  props: {
-    market: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
     apr() {
@@ -80,6 +83,18 @@ export default {
       return (this.cash / (10 ** this.token.decimals))
         .toFixed(this.token.decimals);
     },
+    dataObject() {
+      return {
+        flag: this.dialog,
+        borrowRate: this.borrowRate,
+        price: this.price,
+        token: this.token,
+        market: this.market,
+      };
+    },
+  },
+  components: {
+    BorrowDialog,
   },
   created() {
     this.market.eventualToken

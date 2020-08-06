@@ -24,10 +24,10 @@
     </v-col>
     <v-col cols="2">
       <v-row>
-        <h2>earnings:</h2>
+        <h2>apr:</h2>
       </v-row>
-      <v-row class="item greenish d-flex justify-start">
-        {{ earnings }}<span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
+      <v-row class="item d-flex justify-start">
+        {{ apr }}%
       </v-row>
     </v-col>
   </v-row>
@@ -37,7 +37,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: 'SupplyTop',
+  name: 'BorrowTop',
   props: {
     data: {
       type: Object,
@@ -46,8 +46,9 @@ export default {
   },
   data() {
     return {
-      earnings: 0,
       price: 0,
+      tokenBalance: 0,
+      borrowRate: 0,
     };
   },
   computed: {
@@ -57,6 +58,9 @@ export default {
     balanceAsDouble() {
       return (this.tokenBalance / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
+    },
+    apr() {
+      return this.borrowRate.toFixed(2);
     },
   },
   created() {
@@ -68,6 +72,10 @@ export default {
       .then((tok) => tok.eventualBalanceOf(this.account))
       .then((tokenBalance) => {
         this.tokenBalance = tokenBalance;
+        return this.data.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
       });
   },
 };

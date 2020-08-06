@@ -57,6 +57,12 @@ import SupplyDialog from '@/components/dialog/supply/SupplyDialog.vue';
 
 export default {
   name: 'SupplyItem',
+  props: {
+    market: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       token: {
@@ -71,12 +77,6 @@ export default {
       currentComponent: 'SupplyList',
       supplyValue: 0,
     };
-  },
-  props: {
-    market: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
     ...mapState({

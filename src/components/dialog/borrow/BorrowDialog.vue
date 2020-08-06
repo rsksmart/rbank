@@ -2,17 +2,17 @@
   <v-dialog v-model="data.flag" width="50%">
     <v-card class="dialog container">
       <template v-if="!succeed">
-        <supply-top :data="marketTokenObject"/>
+        <borrow-top :data="marketTokenObject"/>
         <template v-if="!waiting">
           <v-row class="d-flex justify-center">
             <div class="toggle my-5">
-              <v-btn :class="[ currentComponent === 'SupplyInput' ? 'selected' : 'notSelected']"
-                     text @click="currentComponent = 'SupplyInput'">
-                <span>Supply</span>
+              <v-btn :class="[ currentComponent === 'BorrowInput' ? 'selected' : 'notSelected']"
+                     text @click="currentComponent = 'BorrowInput'">
+                <span>Borrow</span>
               </v-btn>
-              <v-btn :class="[ currentComponent === 'WithdrawInput' ? 'selected' : 'notSelected']"
-                     text @click="currentComponent = 'WithdrawInput'">
-                <span>Withdraw</span>
+              <v-btn :class="[ currentComponent === 'RepayInput' ? 'selected' : 'notSelected']"
+                     text @click="currentComponent = 'RepayInput'">
+                <span>Repay</span>
               </v-btn>
             </div>
           </v-row>
@@ -31,13 +31,13 @@
 </template>
 
 <script>
-import SupplyTop from '@/components/dialog/supply/SupplyTop.vue';
+import BorrowTop from '@/components/dialog/borrow/BorrowTop.vue';
 import SuccessTop from '@/components/dialog/SuccessTop.vue';
-import SupplySuccess from '@/components/dialog/supply/SupplySuccess.vue';
-import SupplyInput from '@/components/dialog/supply/SupplyInput.vue';
+import BorrowSuccess from '@/components/dialog/borrow/BorrowSuccess.vue';
+import BorrowInput from '@/components/dialog/borrow/BorrowInput.vue';
 
 export default {
-  name: 'SupplyDialog',
+  name: 'BorrowDialog',
   props: {
     data: {
       type: Object,
@@ -46,12 +46,11 @@ export default {
   },
   data() {
     return {
-      currentComponent: 'SupplyInput',
-      successComponent: 'SupplySuccess',
+      currentComponent: 'BorrowInput',
+      successComponent: 'BorrowSuccess',
       succeed: false,
       waiting: false,
-      supplyBalanceInfo: null,
-      borrowLimitInfo: null,
+      borrowBalanceInfo: null,
       hash: null,
     };
   },
@@ -66,26 +65,23 @@ export default {
       return {
         market: this.data.market,
         token: this.data.token,
-        borrowLimitInfo: this.borrowLimitInfo,
-        supplyBalanceInfo: this.supplyBalanceInfo,
+        borrowBalanceInfo: this.borrowBalanceInfo,
         hash: this.hash,
       };
     },
   },
   methods: {
     reset() {
+      this.currentComponent = 'BorrowInput';
       this.succeed = false;
       this.waiting = false;
-      this.supplyBalanceInfo = null;
-      this.borrowLimitInfo = null;
-      this.currentComponent = 'SupplyInput';
+      this.borrowBalanceInfo = null;
       this.hash = null;
     },
     actionSucceed(succeedObject) {
       this.hash = succeedObject.hash;
-      this.supplied = succeedObject.supplied;
-      this.borrowLimitInfo = succeedObject.borrowLimitInfo;
-      this.supplyBalanceInfo = succeedObject.supplyBalanceInfo;
+      this.borrowed = succeedObject.borrowed;
+      this.borrowBalanceInfo = succeedObject.borrowBalanceInfo;
       this.succeed = true;
       this.waiting = false;
     },
@@ -95,15 +91,15 @@ export default {
     },
   },
   components: {
-    SupplyTop,
+    BorrowTop,
     SuccessTop,
-    SupplySuccess,
-    SupplyInput,
+    BorrowSuccess,
+    BorrowInput,
   },
   watch: {
     currentComponent() {
       this.successComponent = this
-        .currentComponent === 'SupplyInput' ? 'SupplySuccess' : 'WithdrawSuccess';
+        .currentComponent === 'BorrowInput' ? 'BorrowSuccess' : 'RepaySuccess';
     },
   },
 };

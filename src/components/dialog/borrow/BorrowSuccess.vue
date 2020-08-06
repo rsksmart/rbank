@@ -6,10 +6,11 @@
       </v-row>
       <v-row class="my-5 d-flex justify-center">
         <div class="text-center">
-          You have successfully supplied <br> this Market with
+          You have successfully borrowed <br>
           <span class="greenish">
-                {{ supplied }} {{ data.token.symbol }}
-              </span>
+            {{ borrowed }} {{ data.token.symbol }}
+          </span>
+           from this Market.
         </div>
       </v-row>
     </div>
@@ -19,17 +20,10 @@
         <v-col cols="3" class="d-flex justify-end">
           <h3>in your wallet:</h3>
         </v-col>
-        <v-col cols="4">
-          <v-row class="ma-0 d-flex align-center">
-            <v-col cols="7">
-              <h1>{{ balanceAsDouble }}</h1>
-            </v-col>
-            <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">(-{{ data.supplyBalanceInfo }})</span>
-            </v-col>
-          </v-row>
+        <v-col cols="3">
+          <h1>{{ balanceAsDouble }}</h1>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
         </v-col>
         <v-col cols="2"/>
@@ -37,19 +31,12 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex justify-end">
-          <h3>supply balance:</h3>
+          <h3>borrow balance:</h3>
         </v-col>
-        <v-col cols="4">
-          <v-row class="ma-0 d-flex align-center">
-            <v-col cols="7">
-              <h1>{{ supplied }}</h1>
-            </v-col>
-            <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">(+{{ data.supplyBalanceInfo }})</span>
-            </v-col>
-          </v-row>
+        <v-col cols="3">
+          <h1>{{ borrowed }}</h1>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
         </v-col>
         <v-col cols="2"/>
@@ -59,17 +46,10 @@
         <v-col cols="3" class="d-flex align-end justify-end">
           <h3>borrow limit:</h3>
         </v-col>
-        <v-col cols="4">
-          <v-row class="ma-0 d-flex align-center">
-            <v-col cols="7">
-              <h1>{{ maxBorrowAllowed }}</h1>
-            </v-col>
-            <v-col cols="5" class="itemInfo">
-              <span v-if="data.borrowLimitInfo">(+{{ data.borrowLimitInfo }})</span>
-            </v-col>
-          </v-row>
+        <v-col cols="3">
+          <h1>{{ maxBorrowAllowed }}</h1>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
         </v-col>
         <v-col cols="2"/>
@@ -98,7 +78,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: 'SupplySuccess',
+  name: 'BorrowSuccess',
   props: {
     data: {
       type: Object,
@@ -112,7 +92,7 @@ export default {
       cash: 0,
       price: 0,
       maxAllowed: 0,
-      supplyOf: 0,
+      borrowBy: 0,
     };
   },
   computed: {
@@ -134,8 +114,8 @@ export default {
       return (this.maxAllowed / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    supplied() {
-      return (this.supplyOf / (10 ** this.data.token.decimals))
+    borrowed() {
+      return (this.borrowBy / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
   },
@@ -165,10 +145,10 @@ export default {
       })
       .then((marketPrice) => {
         this.price = marketPrice;
-        return this.data.market.updatedSupplyOf(this.account);
+        return this.data.market.updatedBorrowBy(this.account);
       })
-      .then((supplyOf) => {
-        this.supplyOf = supplyOf;
+      .then((borrowBy) => {
+        this.borrowBy = borrowBy;
         this.maxAllowed = this.getMaxAllowed(this.liquidity, this.cash);
       });
   },
