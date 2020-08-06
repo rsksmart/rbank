@@ -35,13 +35,14 @@
       </div>
     </v-row>
     <v-row class="my-5 d-flex justify-center">
-      <component :is="currentComponent"/>
+      <component :is="currentComponent" @listChange="reset"/>
     </v-row>
   </div>
 </template>
 
 <script>
 import SupplyList from '@/components/supplyBorrow/supply/SupplyList.vue';
+import BorrowList from '@/components/supplyBorrow/borrow/BorrowList.vue';
 import { mapState } from 'vuex';
 
 export default {
@@ -57,7 +58,7 @@ export default {
       account: (state) => state.Session.account,
     }),
     healthFactor() {
-      return this.accountHealth * 100;
+      return this.accountHealth >= 1 ? 100 : (this.accountHealth * 100).toFixed(2);
     },
     healthFactorColor() {
       if (this.accountHealth <= 0.3) return '#EB5757';
@@ -65,8 +66,17 @@ export default {
       return '#24BD6B';
     },
   },
+  methods: {
+    reset() {
+      this.$rbank.controller.getAccountHealth(this.account)
+        .then((accountHealth) => {
+          this.accountHealth = accountHealth;
+        });
+    },
+  },
   components: {
     SupplyList,
+    BorrowList,
   },
   created() {
     this.$rbank.controller.getAccountHealth(this.account)
