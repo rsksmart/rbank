@@ -1,0 +1,76 @@
+.landing-1{
+  width: 400px;
+  height: 400px;
+  top: 63px;
+}
+.divider{
+  width: 168px;
+  height: 0px;
+  left: 635px;
+  top: 1263px;
+  border: 1px solid #BDBDBD;
+}
+.simple-text{
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 18px;
+}
+.simple-text-2{
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 24px;
+}
+.health-card{
+  width: 400px;
+  border-radius: 25px;
+  box-shadow: 4px 6px 4px rgba(0, 0, 0, 0.1);
+  .health-card-title{
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #008CFF;
+  }
+  .divider-card{
+    width: 220px;
+    height: 0px;
+    border: 0.5px solid #BDBDBD;
+  }
+  .health-card-text{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    color: #BDBDBD;
+  }
+}
+.divider-card{
+
+}
+h1{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 45px;
+  line-height: 53px;
+  color: #000000;
+}
+h2{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 43px;
+}
+h3{
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 36px;
+}
+h4{
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 30px;
+  color: #008CFF;
+}

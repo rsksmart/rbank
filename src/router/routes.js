@@ -1,4 +1,4 @@
-import Home from '@/views/Home.vue';
+import Landing from '@/views/Landing.vue';
 import store from '@/store';
 
 const requireAuth = (to, from, next) => {
@@ -12,17 +12,17 @@ const requireAuth = (to, from, next) => {
 export default [
   {
     path: '/',
-    name: 'Home',
+    name: 'Landing',
     icon: 'home',
     publicShow: true,
-    component: Home,
+    component: Landing,
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    icon: 'dashboard',
+    path: '/myActivity',
+    name: 'MyActivity',
+    icon: '',
     publicShow: true,
-    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
+    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/MyActivity.vue'),
   },
   {
     path: '/depositLending',
