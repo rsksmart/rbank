@@ -8,7 +8,7 @@
         <div class="text-center">
           You have successfully supplied <br> this Market with
           <span class="greenish">
-                {{ supplied }} {{ data.token.symbol }}
+                {{ data.supplyBalanceInfo }} {{ data.token.symbol }}
               </span>
         </div>
       </v-row>
@@ -62,7 +62,7 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7">
-              <h1>{{ maxBorrowAllowed }}</h1>
+              <h1>{{ maxBorrowAllowedAsDouble }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
               <span v-if="data.borrowLimitInfo">(+{{ data.borrowLimitInfo }})</span>
@@ -111,7 +111,7 @@ export default {
       liquidity: 0,
       cash: 0,
       price: 0,
-      maxAllowed: 0,
+      maxBorrowAllowed: 0,
       supplyOf: 0,
     };
   },
@@ -130,8 +130,8 @@ export default {
     rskExplorerUrl() {
       return `https://explorer.rsk.co/tx/${this.data.hash}`;
     },
-    maxBorrowAllowed() {
-      return (this.maxAllowed / (10 ** this.data.token.decimals))
+    maxBorrowAllowedAsDouble() {
+      return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
     supplied() {
@@ -169,7 +169,7 @@ export default {
       })
       .then((supplyOf) => {
         this.supplyOf = supplyOf;
-        this.maxAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+        this.maxBorrowAllowed = this.getMaxAllowed(this.liquidity, this.cash);
       });
   },
 };

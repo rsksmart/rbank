@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="data.flag" width="50%">
+  <v-dialog v-model="data.flag" width="600">
     <v-card class="dialog container">
       <template v-if="!succeed">
         <borrow-top :data="marketTokenObject"/>

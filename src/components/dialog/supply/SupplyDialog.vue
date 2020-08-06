@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="data.flag" width="50%">
+  <v-dialog v-model="data.flag" width="600">
     <v-card class="dialog container">
       <template v-if="!succeed">
-        <supply-top :data="marketTokenObject"/>
+        <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
           <v-row class="d-flex justify-center">
             <div class="toggle my-5">
@@ -35,6 +35,9 @@ import SupplyTop from '@/components/dialog/supply/SupplyTop.vue';
 import SuccessTop from '@/components/dialog/SuccessTop.vue';
 import SupplySuccess from '@/components/dialog/supply/SupplySuccess.vue';
 import SupplyInput from '@/components/dialog/supply/SupplyInput.vue';
+import WithdrawInput from '@/components/dialog/withdraw/WithdrawInput.vue';
+import WithdrawTop from '@/components/dialog/withdraw/WithdrawTop.vue';
+import WithdrawSuccess from '@/components/dialog/withdraw/WithdrawSuccess.vue';
 
 export default {
   name: 'SupplyDialog',
@@ -48,6 +51,7 @@ export default {
     return {
       currentComponent: 'SupplyInput',
       successComponent: 'SupplySuccess',
+      topComponent: 'SupplyTop',
       succeed: false,
       waiting: false,
       supplyBalanceInfo: null,
@@ -83,7 +87,6 @@ export default {
     },
     actionSucceed(succeedObject) {
       this.hash = succeedObject.hash;
-      this.supplied = succeedObject.supplied;
       this.borrowLimitInfo = succeedObject.borrowLimitInfo;
       this.supplyBalanceInfo = succeedObject.supplyBalanceInfo;
       this.succeed = true;
@@ -99,11 +102,19 @@ export default {
     SuccessTop,
     SupplySuccess,
     SupplyInput,
+    WithdrawInput,
+    WithdrawTop,
+    WithdrawSuccess,
   },
   watch: {
     currentComponent() {
-      this.successComponent = this
-        .currentComponent === 'SupplyInput' ? 'SupplySuccess' : 'WithdrawSuccess';
+      if (this.currentComponent === 'SupplyInput') {
+        this.successComponent = 'SupplySuccess';
+        this.topComponent = 'SupplyTop';
+      } else {
+        this.successComponent = 'WithdrawSuccess';
+        this.topComponent = 'WithdrawTop';
+      }
     },
   },
 };

@@ -6,7 +6,7 @@
     <v-col cols="2" class="item">
       <h1 class="ma-0">{{ data.token.symbol }}</h1>
     </v-col>
-    <v-col cols="3">
+    <v-col cols="3" class="ml-5">
       <v-row>
         <h2>price:</h2>
       </v-row>
@@ -14,12 +14,12 @@
         <span>{{ price | formatPrice }}</span><span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
-    <v-col cols="3">
+    <v-col cols="2">
       <v-row>
-        <h2>in your wallet:</h2>
+        <h2>apr:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ balanceAsDouble }}<span class="ml-2 itemInfo">usd</span>
+        {{ apr }}%
       </v-row>
     </v-col>
     <v-col cols="2">
@@ -34,10 +34,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 export default {
-  name: 'SupplyTop',
+  name: 'WithdrawTop',
   props: {
     data: {
       type: Object,
@@ -48,23 +46,22 @@ export default {
     return {
       earnings: 0,
       price: 0,
-      tokenBalance: 0,
+      borrowRate: 0,
     };
   },
   computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
+    apr() {
+      return this.borrowRate.toFixed(2);
+    },
     balanceAsDouble() {
       return (this.tokenBalance / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
   },
   created() {
-    this.data.market.eventualToken
-      .then((tok) => tok.eventualBalanceOf(this.account))
-      .then((tokenBalance) => {
-        this.tokenBalance = tokenBalance;
+    this.data.market.eventualBorrowRate
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
         return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
       })
       .then((marketPrice) => {

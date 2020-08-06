@@ -56,7 +56,7 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7">
-                <h1>{{ maxBorrowAllowed }}</h1>
+                <h1>{{ maxBorrowAllowedAsDouble }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
                 <span v-if="borrowLimitInfo">(+{{ borrowLimitInfo }})</span>
@@ -103,7 +103,7 @@ export default {
       borrowRate: 0,
       liquidity: 0,
       cash: 0,
-      maxAllowed: 0,
+      maxBorrowAllowed: 0,
       supplyBalanceInfo: null,
       borrowLimitInfo: null,
       tokenBalance: 0,
@@ -122,8 +122,8 @@ export default {
     balanceAsDouble() {
       return this.asDouble(this.tokenBalance);
     },
-    maxBorrowAllowed() {
-      return this.asDouble(this.maxAllowed);
+    maxBorrowAllowedAsDouble() {
+      return this.asDouble(this.maxBorrowAllowed);
     },
     contractAmount() {
       return this.amount * (10 ** this.data.token.decimals);
@@ -138,7 +138,6 @@ export default {
           this.waiting = false;
           this.$emit('succeed', {
             hash: res.transactionHash,
-            supplied: this.asDouble(this.amount),
             borrowLimitInfo: this.borrowLimitInfo,
             supplyBalanceInfo: this.supplyBalanceInfo,
           });
@@ -148,13 +147,13 @@ export default {
       return (value / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    getMaxAllowed(liquidity, cash) {
+    getMaxBorrowAllowed(liquidity, cash) {
       const allowed = this.price > 0 ? Math.floor(liquidity / (this.price * 2)) : 0;
       return allowed >= cash ? cash : allowed;
     },
-    getValues() {
+    async getValues() {
       let oldLiquidity;
-      this.data.market.updatedSupplyOf(this.account)
+      await this.data.market.updatedSupplyOf(this.account)
         .then((supplyOf) => {
           this.supplyOf = supplyOf + this.contractAmount;
           return this.$rbank.controller.getAccountLiquidity(this.account);
@@ -166,18 +165,18 @@ export default {
         })
         .then((oldCash) => {
           this.cash = oldCash + this.contractAmount;
-          this.maxAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+          this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
           this.supplyBalanceInfo = this.asDouble(this.contractAmount);
-          this.borrowLimitInfo = this.asDouble(this.maxAllowed - this
-            .getMaxAllowed(oldLiquidity, oldCash));
+          this.borrowLimitInfo = this.asDouble(this.maxBorrowAllowed - this
+            .getMaxBorrowAllowed(oldLiquidity, oldCash));
         });
     },
   },
   watch: {
     amount() {
+      this.getValues();
       if (this.maxAmount && this.amount !== this.balanceAsDouble) this.maxAmount = false;
       if (this.amount === this.balanceAsDouble) this.maxAmount = true;
-      this.getValues();
     },
     maxAmount() {
       if (this.maxAmount) this.amount = this.balanceAsDouble;
@@ -212,7 +211,7 @@ export default {
       .then((tok) => tok.eventualBalanceOf(this.account))
       .then((tokenBalance) => {
         this.tokenBalance = tokenBalance;
-        this.maxAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+        this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });
   },
 };

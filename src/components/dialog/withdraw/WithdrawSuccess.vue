@@ -6,11 +6,11 @@
       </v-row>
       <v-row class="my-5 d-flex justify-center">
         <div class="text-center">
-          You have successfully borrowed <br>
+          You have successfully withdrawn <br>
           <span class="greenish">
-            {{ data.borrowBalanceInfo }} {{ data.token.symbol }}
+            {{ data.supplyBalanceInfo }} {{ data.token.symbol }}
           </span>
-           from this Market.
+           from this Market
         </div>
       </v-row>
     </div>
@@ -18,10 +18,10 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex justify-end">
-          <h3>in your wallet:</h3>
+          <h3 class="greenish">earnings:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ balanceAsDouble }}</h1>
+          <h1 class="greenish">{{ earnings }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -31,10 +31,10 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex justify-end">
-          <h3>borrow balance:</h3>
+          <h3>supply balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ borrowed }}</h1>
+          <h1>{{ supplied }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -78,7 +78,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: 'BorrowSuccess',
+  name: 'SupplySuccess',
   props: {
     data: {
       type: Object,
@@ -87,22 +87,18 @@ export default {
   },
   data() {
     return {
-      tokenBalance: 0,
+      earnings: 0,
       liquidity: 0,
       cash: 0,
       price: 0,
       maxBorrowAllowed: 0,
-      borrowBy: 0,
+      supplyOf: 0,
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    balanceAsDouble() {
-      return (this.tokenBalance / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
     hashCutOff() {
       return `${this.data.hash.substring(0, 4)}...${this.data.hash
         .substring(this.data.hash.length - 4, this.data.hash.length)}`;
@@ -114,8 +110,8 @@ export default {
       return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    borrowed() {
-      return (this.borrowBy / (10 ** this.data.token.decimals))
+    supplied() {
+      return (this.supplyOf / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
   },
@@ -129,12 +125,7 @@ export default {
     },
   },
   created() {
-    this.data.market.eventualToken
-      .then((tok) => tok.eventualBalanceOf(this.account))
-      .then((tokenBalance) => {
-        this.tokenBalance = tokenBalance;
-        return this.$rbank.controller.getAccountLiquidity(this.account);
-      })
+    this.$rbank.controller.getAccountLiquidity(this.account)
       .then((accountLiquidity) => {
         this.liquidity = accountLiquidity;
         return this.data.market.eventualCash;
@@ -145,10 +136,10 @@ export default {
       })
       .then((marketPrice) => {
         this.price = marketPrice;
-        return this.data.market.updatedBorrowBy(this.account);
+        return this.data.market.updatedSupplyOf(this.account);
       })
-      .then((borrowBy) => {
-        this.borrowBy = borrowBy;
+      .then((supplyOf) => {
+        this.supplyOf = supplyOf;
         this.maxBorrowAllowed = this.getMaxAllowed(this.liquidity, this.cash);
       });
   },
