@@ -11,7 +11,7 @@
         </v-col>
       </v-row>
       <v-row class="ma-0 my-5 d-flex justify-center">
-        <p>Would you like to <a href="https://coinmarketcap.com/">buy more tokens</a></p>
+        <p>Would you like to <a target="_blank" href="https://coinmarketcap.com/">buy more tokens</a></p>
       </v-row>
       <div class="my-5 py-5">
         <v-row class="d-flex align-center">
@@ -20,10 +20,10 @@
             <h3>apr:</h3>
           </v-col>
           <v-col cols="4">
-            <v-col cols="8">
+            <v-col cols="7" class="d-flex justify-center">
               <h1>{{ apr }}%</h1>
             </v-col>
-            <v-col cols="4"/>
+            <v-col cols="5"/>
           </v-col>
           <v-col cols="1"/>
           <v-col cols="2"/>
@@ -35,11 +35,11 @@
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
-              <v-col cols="7">
+              <v-col cols="7" class="d-flex justify-center">
                 <h1>{{ supplied }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span v-if="supplyBalanceInfo">(+{{ supplyBalanceInfo }})</span>
+                <span class="text-center" v-if="supplyBalanceInfo">(+{{ supplyBalanceInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -55,7 +55,7 @@
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
-              <v-col cols="7">
+              <v-col cols="7" class="d-flex justify-center">
                 <h1>{{ maxBorrowAllowedAsDouble }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">

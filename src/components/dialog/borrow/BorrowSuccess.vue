@@ -18,10 +18,10 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex justify-end">
-          <h3>in your wallet:</h3>
+          <h3>borrow balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ balanceAsDouble }}</h1>
+          <h1>{{ borrowed }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -31,10 +31,10 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex justify-end">
-          <h3>borrow balance:</h3>
+          <h3>in your wallet:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ borrowed }}</h1>
+          <h1>{{ balanceAsDouble }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>

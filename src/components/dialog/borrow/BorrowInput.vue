@@ -11,7 +11,7 @@
         </v-col>
       </v-row>
       <v-row class="ma-0 my-5 d-flex justify-center">
-        <p>Would you like to <a href="https://coinmarketcap.com/">buy more tokens</a></p>
+        <p>Would you like to <a target="_blank" href="https://coinmarketcap.com/">buy more tokens</a></p>
       </v-row>
       <div class="my-5 py-5">
         <v-row class="d-flex align-center">
@@ -21,30 +21,10 @@
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
-              <v-col cols="7">
+              <v-col cols="7" class="d-flex justify-center">
                 <h1>{{ cashAsDouble }}</h1>
               </v-col>
               <v-col cols="5"/>
-            </v-row>
-          </v-col>
-          <v-col cols="1">
-            <span class="itemInfo">{{ data.token.symbol }}</span>
-          </v-col>
-          <v-col cols="2"/>
-        </v-row>
-        <v-row class="d-flex align-center">
-          <v-col cols="2"/>
-          <v-col cols="3" class="d-flex justify-end">
-            <h3>borrow balance:</h3>
-          </v-col>
-          <v-col cols="4">
-            <v-row class="ma-0 d-flex align-center">
-              <v-col cols="7">
-                <h1>{{ borrowed }}</h1>
-              </v-col>
-              <v-col cols="5" class="itemInfo">
-                <span v-if="borrowBalanceInfo">(+{{ borrowBalanceInfo }})</span>
-              </v-col>
             </v-row>
           </v-col>
           <v-col cols="1">
@@ -59,11 +39,31 @@
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
-              <v-col cols="7">
+              <v-col cols="7" class="d-flex justify-center">
                 <h1>{{ maxBorrowAllowedAsDouble }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span v-if="borrowLimitInfo">(-{{ borrowLimitInfo }})</span>
+                <span class="text-center" v-if="borrowLimitInfo">(-{{ borrowLimitInfo }})</span>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="1">
+            <span class="itemInfo">{{ data.token.symbol }}</span>
+          </v-col>
+          <v-col cols="2"/>
+        </v-row>
+        <v-row class="d-flex align-center">
+          <v-col cols="2"/>
+          <v-col cols="3" class="d-flex justify-end">
+            <h3>borrow balance:</h3>
+          </v-col>
+          <v-col cols="4">
+            <v-row class="ma-0 d-flex align-center">
+              <v-col cols="7" class="d-flex justify-center">
+                <h1>{{ borrowed }}</h1>
+              </v-col>
+              <v-col cols="5" class="itemInfo">
+                <span class="text-center" v-if="borrowBalanceInfo">(+{{ borrowBalanceInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -151,7 +151,7 @@ export default {
       return (value / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    getMaxAllowed(liquidity, cash) {
+    getMaxBorrowAllowed(liquidity, cash) {
       const allowed = this.price > 0 ? Math.floor(liquidity / (this.price * 2)) : 0;
       return allowed >= cash ? cash : allowed;
     },
@@ -169,10 +169,10 @@ export default {
         })
         .then((oldCash) => {
           this.cash = oldCash - this.contractAmount;
-          this.maxBorrowAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+          this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
           this.borrowBalanceInfo = this.asDouble(this.contractAmount);
           this.borrowLimitInfo = this.asDouble(this
-            .getMaxAllowed(oldLiquidity, oldCash) - this.maxBorrowAllowed);
+            .getMaxBorrowAllowed(oldLiquidity, oldCash) - this.maxBorrowAllowed);
         });
     },
   },
@@ -215,7 +215,7 @@ export default {
       .then((tok) => tok.eventualBalanceOf(this.account))
       .then((tokenBalance) => {
         this.tokenBalance = tokenBalance;
-        this.maxBorrowAllowed = this.getMaxAllowed(this.liquidity, this.cash);
+        this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });
   },
 };

@@ -35,6 +35,8 @@ import BorrowTop from '@/components/dialog/borrow/BorrowTop.vue';
 import SuccessTop from '@/components/dialog/SuccessTop.vue';
 import BorrowSuccess from '@/components/dialog/borrow/BorrowSuccess.vue';
 import BorrowInput from '@/components/dialog/borrow/BorrowInput.vue';
+import RepayInput from '@/components/dialog/repay/RepayInput.vue';
+import RepaySuccess from '@/components/dialog/repay/RepaySuccess.vue';
 
 export default {
   name: 'BorrowDialog',
@@ -95,6 +97,8 @@ export default {
     SuccessTop,
     BorrowSuccess,
     BorrowInput,
+    RepayInput,
+    RepaySuccess,
   },
   watch: {
     currentComponent() {

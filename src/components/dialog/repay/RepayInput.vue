@@ -10,38 +10,35 @@
           <v-btn @click="maxAmount = true" class="pa-0" text color="#008CFF">max</v-btn>
         </v-col>
       </v-row>
-      <v-row class="my-5"/>
       <div class="my-5 py-5">
         <v-row class="d-flex align-center">
           <v-col cols="2"/>
           <v-col cols="3" class="d-flex justify-end">
-            <h3>current cash:</h3>
+            <h3>health factor:</h3>
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ cashAsDouble }}</h1>
+                <h1>{{ healthFactor }}%</h1>
               </v-col>
               <v-col cols="5"/>
             </v-row>
           </v-col>
-          <v-col cols="1">
-            <span class="itemInfo">{{ data.token.symbol }}</span>
-          </v-col>
+          <v-col cols="1"/>
           <v-col cols="2"/>
         </v-row>
         <v-row class="d-flex align-center">
           <v-col cols="2"/>
           <v-col cols="3" class="d-flex justify-end">
-            <h3>supply balance:</h3>
+            <h3>borrow balance:</h3>
           </v-col>
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ supplied }}</h1>
+                <h1>{{ borrowed }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="supplyBalanceInfo">(-{{ supplyBalanceInfo }})</span>
+                <span class="text-center" v-if="borrowBalanceInfo">(-{{ borrowBalanceInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -61,7 +58,7 @@
                 <h1>{{ maxBorrowAllowedAsDouble }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowLimitInfo">(-{{ borrowLimitInfo }})</span>
+                <span class="text-center" v-if="borrowLimitInfo">(+{{ borrowLimitInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -72,8 +69,8 @@
         </v-row>
       </div>
       <v-row class="my-5 d-flex justify-center">
-        <v-btn class="button" rounded color="#008CFF" @click="withdraw">
-          Withdraw my tokens
+        <v-btn class="button" rounded color="#008CFF" @click="repay">
+          Repay tokens
         </v-btn>
       </v-row>
     </template>
@@ -88,7 +85,7 @@ import { mapState } from 'vuex';
 import Loader from '@/components/common/Loader.vue';
 
 export default {
-  name: 'WithdrawInput',
+  name: 'RepayInput',
   props: {
     data: {
       type: Object,
@@ -99,27 +96,29 @@ export default {
     return {
       waiting: false,
       maxAmount: false,
+      price: 0,
       amount: 0,
-      supplyOf: 0,
+      borrowBy: 0,
+      borrowRate: 0,
       liquidity: 0,
       cash: 0,
-      price: 0,
+      maxRepayAllowed: 0,
       maxBorrowAllowed: 0,
-      maxWithdrawAllowed: 0,
-      supplyBalanceInfo: null,
+      borrowBalanceInfo: null,
       borrowLimitInfo: null,
       tokenBalance: 0,
+      accountHealth: 0,
     };
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    supplied() {
-      return this.asDouble(this.supplyOf);
+    healthFactor() {
+      return this.accountHealth >= 1 ? 100 : (this.accountHealth * 100).toFixed(2);
     },
-    cashAsDouble() {
-      return this.asDouble(this.cash);
+    borrowed() {
+      return this.asDouble(this.borrowBy);
     },
     balanceAsDouble() {
       return this.asDouble(this.tokenBalance);
@@ -132,16 +131,16 @@ export default {
     },
   },
   methods: {
-    withdraw() {
+    repay() {
       this.waiting = true;
       this.$emit('wait');
-      this.data.market.redeem(this.contractAmount, this.account)
+      this.data.market.payBorrow(this.contractAmount, this.account)
         .then((res) => {
           this.waiting = false;
           this.$emit('succeed', {
             hash: res.transactionHash,
             borrowLimitInfo: this.borrowLimitInfo,
-            supplyBalanceInfo: this.supplyBalanceInfo,
+            borrowBalanceInfo: this.borrowBalanceInfo,
           });
         });
     },
@@ -149,8 +148,8 @@ export default {
       return (value / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    getMaxWithdrawAllowed(supplyOf, cash) {
-      const allowed = cash > supplyOf ? supplyOf : cash;
+    getMaxRepayAllowed(borrowBy, tokenBalance) {
+      const allowed = borrowBy > tokenBalance ? tokenBalance : borrowBy;
       return this.asDouble(allowed);
     },
     getMaxBorrowAllowed(liquidity, cash) {
@@ -159,60 +158,72 @@ export default {
     },
     async getValues() {
       let oldLiquidity;
-      let oldSupplyOf;
-      await this.data.market.updatedSupplyOf(this.account)
-        .then((supplyOf) => {
-          oldSupplyOf = supplyOf;
-          this.supplyOf = supplyOf - this.contractAmount;
+      let oldBorrowBy;
+      await this.data.market.updatedBorrowBy(this.account)
+        .then((borrowBy) => {
+          oldBorrowBy = borrowBy;
+          this.borrowBy = borrowBy - this.contractAmount;
           return this.$rbank.controller.getAccountLiquidity(this.account);
         })
         .then((accountLiquidity) => {
           oldLiquidity = accountLiquidity;
-          this.liquidity = accountLiquidity - this.contractAmount;
+          this.liquidity = accountLiquidity + this.contractAmount;
           return this.data.market.eventualCash;
         })
         .then((oldCash) => {
-          this.cash = oldCash - this.contractAmount;
-          this.maxWithdrawAllowed = this.getMaxWithdrawAllowed(oldSupplyOf, oldCash);
+          this.cash = oldCash + this.contractAmount;
+          this.maxRepayAllowed = this.getMaxRepayAllowed(oldBorrowBy, this.tokenBalance);
           this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
-          this.supplyBalanceInfo = this.asDouble(this.contractAmount);
-          this.borrowLimitInfo = this.asDouble(this
-            .getMaxBorrowAllowed(oldLiquidity, oldCash) - this.maxBorrowAllowed);
+          this.borrowBalanceInfo = this.asDouble(this.contractAmount);
+          this.borrowLimitInfo = this.asDouble(this.maxBorrowAllowed - this
+            .getMaxBorrowAllowed(oldLiquidity, oldCash));
         });
     },
   },
   watch: {
     amount() {
       this.getValues();
-      if (this.maxAmount && this.amount !== this.maxWithdrawAllowed) this.maxAmount = false;
-      if (this.amount === this.maxWithdrawAllowed) this.maxAmount = true;
+      if (this.maxAmount && this.amount !== this.maxRepayAllowed) this.maxAmount = false;
+      if (this.amount === this.maxRepayAllowed) this.maxAmount = true;
     },
     maxAmount() {
-      this.getValues();
-      if (this.maxAmount) this.amount = this.maxWithdrawAllowed;
-      if (!this.maxAmount && this.amount === this.maxWithdrawAllowed) this.amount = null;
+      if (this.maxAmount) this.amount = this.maxRepayAllowed;
+      if (!this.maxAmount && this.amount === this.maxRepayAllowed) this.amount = null;
     },
   },
   components: {
     Loader,
   },
   created() {
-    this.data.market.updatedSupplyOf(this.account)
-      .then((supplyOf) => {
-        this.supplyOf = supplyOf;
-        return this.data.market.eventualCash;
-      })
-      .then((cash) => {
-        this.cash = cash;
-        return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
-      })
-      .then((marketPrice) => {
-        this.price = marketPrice;
+    this.data.market.updatedBorrowBy(this.account)
+      .then((borrowBy) => {
+        this.borrowBy = borrowBy;
         return this.$rbank.controller.getAccountLiquidity(this.account);
       })
       .then((accountLiquidity) => {
         this.liquidity = accountLiquidity;
-        this.maxWithdrawAllowed = this.getMaxWithdrawAllowed(this.supplyOf, this.cash);
+        return this.data.market.eventualCash;
+      })
+      .then((cash) => {
+        this.cash = cash;
+        return this.data.market.eventualBorrowRate;
+      })
+      .then((borrowRate) => {
+        this.borrowRate = borrowRate;
+        return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
+        return this.data.market.eventualToken;
+      })
+      .then((tok) => tok.eventualBalanceOf(this.account))
+      .then((tokenBalance) => {
+        this.tokenBalance = tokenBalance;
+        return this.$rbank.controller.getAccountHealth(this.account);
+      })
+      .then((accountHealth) => {
+        this.accountHealth = accountHealth;
+        this.maxRepayAllowed = this.getMaxRepayAllowed(this.borrowBy, this.tokenBalance);
         this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });
   },
