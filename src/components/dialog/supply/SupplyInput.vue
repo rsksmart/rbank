@@ -83,7 +83,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import Loader from '@/components/dialog/Loader.vue';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
   name: 'SupplyInput',
