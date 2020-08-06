@@ -30,7 +30,7 @@
           <v-row class="ma-0">
             <v-col cols="9" class="pa-0 d-flex align-center">
               <v-list-item-subtitle class="item">
-                {{ balanceAsDouble }}
+                {{ cashAsDouble }}
               </v-list-item-subtitle>
             </v-col>
             <v-col cols="3" class="pa-0">
@@ -47,16 +47,15 @@
       </v-row>
     </v-list-item>
     <v-divider/>
-    <supply-dialog :data="dataObject" @closeDialog="reset"/>
+    <borrow-dialog :data="dataObject" @closeDialog="reset"/>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import SupplyDialog from '@/components/dialog/supply/SupplyDialog.vue';
+import BorrowDialog from '@/components/dialog/borrow/BorrowDialog.vue';
 
 export default {
-  name: 'SupplyItem',
+  name: 'BorrowItem',
   props: {
     market: {
       type: Object,
@@ -69,24 +68,19 @@ export default {
         name: null,
         symbol: null,
         decimals: 0,
-        balance: 0,
       },
       price: 0,
       borrowRate: 0,
+      cash: 0,
       dialog: false,
-      currentComponent: 'SupplyList',
-      supplyValue: 0,
     };
   },
   computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
     apr() {
       return this.borrowRate.toFixed(2);
     },
-    balanceAsDouble() {
-      return (this.token.balance / (10 ** this.token.decimals))
+    cashAsDouble() {
+      return (this.cash / (10 ** this.token.decimals))
         .toFixed(this.token.decimals);
     },
     dataObject() {
@@ -106,7 +100,7 @@ export default {
     },
   },
   components: {
-    SupplyDialog,
+    BorrowDialog,
   },
   created() {
     this.market.eventualToken
@@ -114,14 +108,12 @@ export default {
         tok.eventualName,
         tok.eventualSymbol,
         tok.eventualDecimals,
-        tok.eventualBalanceOf(this.account),
       ])
       .then((results) => Promise.all(results))
-      .then(([name, symbol, decimals, balance]) => {
+      .then(([name, symbol, decimals]) => {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
-        this.token.balance = balance;
         return this.$rbank.controller.eventualMarketPrice(this.market.address);
       })
       .then((marketPrice) => {
@@ -130,10 +122,10 @@ export default {
       })
       .then((borrowRate) => {
         this.borrowRate = borrowRate;
-        return this.market.updatedSupplyOf(this.account);
+        return this.market.eventualCash;
       })
-      .then((supplyOf) => {
-        this.supplyOf = supplyOf;
+      .then((cash) => {
+        this.cash = cash;
       });
   },
 };

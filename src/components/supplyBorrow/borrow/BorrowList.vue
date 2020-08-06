@@ -13,22 +13,22 @@
             <v-list-item-subtitle class="listTitle">APR</v-list-item-subtitle>
           </v-col>
           <v-col cols="4">
-            <v-list-item-subtitle class="listTitle">Wallet</v-list-item-subtitle>
+            <v-list-item-subtitle class="listTitle">Current Cash</v-list-item-subtitle>
           </v-col>
         </v-row>
       </v-list-item>
       <v-divider/>
-      <supply-item v-for="(market, idx) in markets"
+      <borrow-item v-for="(market, idx) in markets"
                    :key="`market-${idx}`" :market="market" @dialogClosed="reset"/>
     </v-list>
   </v-card>
 </template>
 
 <script>
-import SupplyItem from '@/components/supplyBorrow/supply/SupplyItem.vue';
+import BorrowItem from '@/components/supplyBorrow/borrow/BorrowItem.vue';
 
 export default {
-  name: 'SupplyList',
+  name: 'BorrowList',
   data() {
     return {
       markets: [],
@@ -40,7 +40,7 @@ export default {
     },
   },
   components: {
-    SupplyItem,
+    BorrowItem,
   },
   created() {
     this.$rbank.eventualMarkets
