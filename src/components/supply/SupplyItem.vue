@@ -1,47 +1,59 @@
 <template>
-  <div class="LiquidatedItem">
-    <v-card class="mt-5" outlined>
-      <v-list-item @click="enableForm()">
-        <v-row>
-          <v-col cols="2" class="d-flex justify-end">
-            <v-list-item-avatar>
-              <v-img :src="rif"/>
-            </v-list-item-avatar>
-          </v-col>
-          <v-col cols="2">
-            <v-list-item-content>
-              <v-list-item-title class="text-left">
+  <div class="dialog">
+    <v-list-item>
+      <v-row class="my-5 mx-0 d-flex align-center">
+        <v-col cols="3">
+          <v-row class="d-flex align-center">
+            <v-col cols="6" class="pa-0 d-flex justify-end">
+              <v-list-item-avatar tile size="40">
+                <v-img src="../../assets/rif.png"/>
+              </v-list-item-avatar>
+            </v-col>
+            <v-col cols="6" class="pa-0 d-flex justify-start">
+              <v-list-item-subtitle class="item d-flex justify-start">
                 {{ token.symbol }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-          <v-col cols="4">
-            <v-list-item-content>
-              <v-list-item-title class="text-center">
-                {{ balance }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-          <v-col cols="4">
-            <v-list-item-content>
-              <v-list-item-title class="text-center">
-                {{ apr }} %
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-card>
-    <template v-if="flag">
-      <supply-form @formSucceed="reset" :data="formObject"/>
-    </template>
+              </v-list-item-subtitle>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="3">
+          <v-list-item-subtitle class="item">
+            {{ price | formatPrice }}<span class="ml-2 itemInfo">usd</span>
+          </v-list-item-subtitle>
+        </v-col>
+        <v-col cols="2">
+          <v-list-item-subtitle class="item">
+            {{ apr }}%
+          </v-list-item-subtitle>
+        </v-col>
+        <v-col cols="4" class="px-0">
+          <v-row class="ma-0">
+            <v-col cols="9" class="pa-0 d-flex align-center">
+              <v-list-item-subtitle class="item">
+                {{ balanceAsDouble }}
+              </v-list-item-subtitle>
+            </v-col>
+            <v-col cols="3" class="pa-0">
+              <v-btn class="pa-0" @click="dialog = !dialog" icon>
+                <svg width="11" height="32" viewBox="0 0 11 32" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L9 16L1 31" stroke="#008CFF" stroke-width="2"
+                        stroke-linecap="round"/>
+                </svg>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-list-item>
+    <v-divider/>
+    <supply-dialog :data="dataObject" @closeDialog="reset"/>
   </div>
 </template>
 
 <script>
-import SupplyForm from '@/components/market/SupplyForm.vue';
 import { mapState } from 'vuex';
-import rifImage from '@/assets/rif.png';
+import SupplyDialog from '@/components/dialog/supply/SupplyDialog.vue';
 
 export default {
   name: 'SupplyItem',
@@ -53,15 +65,17 @@ export default {
   },
   data() {
     return {
-      flag: false,
-      tokenBalance: 0,
       token: {
         name: null,
         symbol: null,
         decimals: 0,
+        balance: 0,
       },
+      price: 0,
       borrowRate: 0,
-      rif: rifImage,
+      dialog: false,
+      currentComponent: 'SupplyList',
+      supplyValue: 0,
     };
   },
   computed: {
@@ -69,56 +83,57 @@ export default {
       account: (state) => state.Session.account,
     }),
     apr() {
-      return this.borrowRate.toFixed(3);
+      return this.borrowRate.toFixed(2);
     },
-    balance() {
-      return (this.tokenBalance / (10 ** this.token.decimals))
+    balanceAsDouble() {
+      return (this.token.balance / (10 ** this.token.decimals))
         .toFixed(this.token.decimals);
     },
-    formObject() {
+    dataObject() {
       return {
-        accountBalance: this.tokenBalance,
-        market: this.market,
+        flag: this.dialog,
+        borrowRate: this.borrowRate,
+        price: this.price,
         token: this.token,
+        market: this.market,
       };
     },
   },
   methods: {
     reset() {
-      this.flag = false;
-      this.accountTokenBalance();
-    },
-    enableForm() {
-      this.flag = !this.flag;
-    },
-    accountTokenBalance() {
-      this.market.token
-        .then((tok) => tok.eventualBalanceOf(this.account))
-        .then((balance) => {
-          this.tokenBalance = balance;
-        });
+      this.dialog = false;
+      this.$emit('dialogClosed');
     },
   },
   components: {
-    SupplyForm,
+    SupplyDialog,
   },
   created() {
-    this.market.token
+    this.market.eventualToken
       .then((tok) => [
         tok.eventualName,
         tok.eventualSymbol,
         tok.eventualDecimals,
+        tok.eventualBalanceOf(this.account),
       ])
       .then((results) => Promise.all(results))
-      .then(([name, symbol, decimals]) => {
+      .then(([name, symbol, decimals, balance]) => {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
+        this.token.balance = balance;
+        return this.$rbank.controller.eventualMarketPrice(this.market.address);
+      })
+      .then((marketPrice) => {
+        this.price = marketPrice;
         return this.market.eventualBorrowRate;
       })
       .then((borrowRate) => {
         this.borrowRate = borrowRate;
-        this.accountTokenBalance();
+        return this.market.updatedSupplyOf(this.account);
+      })
+      .then((supplyOf) => {
+        this.supplyOf = supplyOf;
       });
   },
 };

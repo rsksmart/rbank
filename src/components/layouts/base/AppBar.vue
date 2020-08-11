@@ -4,12 +4,14 @@
     <h2>{{ title }}</h2>
     <v-spacer/>
     <div v-if="isLogged">
-      <router-link class="mx-5" :to="{ name: 'Home' }">
-        Home
-      </router-link>
-      <router-link class="mx-5" :to="{ name: 'SupplyBorrow' }">
-        Supply/Borrow
-      </router-link>
+      <template v-if="!isOwner">
+        <router-link class="mx-5" :to="{ name: 'MyActivity' }">
+          Home
+        </router-link>
+        <router-link class="mx-5" :to="{ name: 'SupplyBorrow' }">
+          Supply/Borrow
+        </router-link>
+      </template>
       <v-btn class="mx-5" rounded outlined color="#008CFF">
         {{ accountCutOff }}
       </v-btn>
@@ -32,10 +34,13 @@ export default {
     }),
     ...mapState({
       account: (state) => state.Session.account,
+      isOwner: (state) => state.Session.isOwner,
     }),
     title() {
       if (this.$route.path === '/supplyBorrow') return 'Supply / Borrow';
-      return 'My Activity';
+      if (this.$route.path === '/myActivity') return 'My Activity';
+      if (this.$route.path === '/admin') return 'Admin Dashboard';
+      return '';
     },
     accountCutOff() {
       return `${this.account.substring(0, 4)}...${this.account.substring(this.account.length - 4, this.account.length)}`;
@@ -53,6 +58,15 @@ export default {
         console.log(e);
       }
       this.connectToWeb3();
+    },
+  },
+  watch: {
+    isOwner(val) {
+      if (val) {
+        this.$router.push({ name: 'Admin' });
+      } else {
+        this.$router.push({ name: 'MyActivity' });
+      }
     },
   },
 };

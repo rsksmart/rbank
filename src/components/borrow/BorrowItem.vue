@@ -1,47 +1,58 @@
 <template>
-  <div class="LiquidatedItem">
-    <v-card class="mt-5" outlined>
-      <v-list-item @click="enableForm()">
-        <v-row>
-          <v-col cols="2" class="d-flex justify-end">
-            <v-list-item-avatar>
-              <v-img :src="rif"/>
-            </v-list-item-avatar>
-          </v-col>
-          <v-col cols="2">
-            <v-list-item-content>
-              <v-list-item-title class="text-left">
+  <div class="dialog">
+    <v-list-item>
+      <v-row class="my-5 mx-0 d-flex align-center">
+        <v-col cols="3">
+          <v-row class="d-flex align-center">
+            <v-col cols="6" class="pa-0 d-flex justify-end">
+              <v-list-item-avatar tile size="40">
+                <v-img src="../../assets/rif.png"/>
+              </v-list-item-avatar>
+            </v-col>
+            <v-col cols="6" class="pa-0 d-flex justify-start">
+              <v-list-item-subtitle class="item d-flex justify-start">
                 {{ token.symbol }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-          <v-col cols="4">
-            <v-list-item-content>
-              <v-list-item-title class="text-center">
-                {{ maxBorrowAllowed }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-          <v-col cols="4">
-            <v-list-item-content>
-              <v-list-item-title class="text-center">
-                {{ apr }} %
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-card>
-    <template v-if="flag">
-      <borrow-form @formSucceed="reset" :data="formObject"/>
-    </template>
+              </v-list-item-subtitle>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="3">
+          <v-list-item-subtitle class="item">
+            {{ price | formatPrice }}<span class="ml-2 itemInfo">usd</span>
+          </v-list-item-subtitle>
+        </v-col>
+        <v-col cols="2">
+          <v-list-item-subtitle class="item">
+            {{ apr }}%
+          </v-list-item-subtitle>
+        </v-col>
+        <v-col cols="4" class="px-0">
+          <v-row class="ma-0">
+            <v-col cols="9" class="pa-0 d-flex align-center">
+              <v-list-item-subtitle class="item">
+                {{ cashAsDouble }}
+              </v-list-item-subtitle>
+            </v-col>
+            <v-col cols="3" class="pa-0">
+              <v-btn class="pa-0" @click="dialog = !dialog" icon>
+                <svg width="11" height="32" viewBox="0 0 11 32" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L9 16L1 31" stroke="#008CFF" stroke-width="2"
+                        stroke-linecap="round"/>
+                </svg>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-list-item>
+    <v-divider/>
+    <borrow-dialog :data="dataObject" @closeDialog="reset"/>
   </div>
 </template>
 
 <script>
-import BorrowForm from '@/components/market/BorrowForm.vue';
-import { mapState } from 'vuex';
-import rifImage from '@/assets/rif.png';
+import BorrowDialog from '@/components/dialog/borrow/BorrowDialog.vue';
 
 export default {
   name: 'BorrowItem',
@@ -53,68 +64,46 @@ export default {
   },
   data() {
     return {
-      flag: false,
-      liquidity: null,
-      rif: rifImage,
       token: {
         name: null,
         symbol: null,
         decimals: 0,
       },
-      borrowRate: 0,
       price: 0,
+      borrowRate: 0,
       cash: 0,
+      dialog: false,
     };
   },
   computed: {
-    ...mapState({
-      account: (state) => state.Session.account,
-    }),
     apr() {
       return this.borrowRate.toFixed(2);
     },
-    formObject() {
-      return {
-        market: this.market,
-        max: Number(this.maxBorrowAllowed) * (10 ** this.token.decimals),
-        liquidity: this.liquidity,
-        token: this.token,
-        price: this.price,
-      };
+    cashAsDouble() {
+      return (this.cash / (10 ** this.token.decimals))
+        .toFixed(this.token.decimals);
     },
-    maxBorrowAllowed() {
-      let allowed = this.price > 0 ? Math.floor(this.liquidity / (this.price * 2)) : 0;
-      allowed = allowed >= this.cash ? this.cash : allowed;
-      return (allowed / (10 ** this.token.decimals)).toFixed(this.token.decimals);
+    dataObject() {
+      return {
+        flag: this.dialog,
+        borrowRate: this.borrowRate,
+        price: this.price,
+        token: this.token,
+        market: this.market,
+      };
     },
   },
   methods: {
     reset() {
-      this.flag = false;
-      this.getAccountLiquidity();
-      this.getMarketCash();
-    },
-    enableForm() {
-      this.flag = !this.flag;
-    },
-    async getAccountLiquidity() {
-      await this.$rbank.controller.getAccountLiquidity(this.account)
-        .then((liquidity) => {
-          this.liquidity = liquidity;
-        });
-    },
-    async getMarketCash() {
-      await this.market.eventualCash
-        .then((cash) => {
-          this.cash = cash;
-        });
+      this.dialog = false;
+      this.$emit('dialogClosed');
     },
   },
   components: {
-    BorrowForm,
+    BorrowDialog,
   },
   created() {
-    this.market.token
+    this.market.eventualToken
       .then((tok) => [
         tok.eventualName,
         tok.eventualSymbol,
@@ -133,8 +122,10 @@ export default {
       })
       .then((borrowRate) => {
         this.borrowRate = borrowRate;
-        this.getAccountLiquidity();
-        this.getMarketCash();
+        return this.market.eventualCash;
+      })
+      .then((cash) => {
+        this.cash = cash;
       });
   },
 };
