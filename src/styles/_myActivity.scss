@@ -1,0 +1,95 @@
+h1{
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  text-transform: capitalize;
+  color: #008CFF;
+}
+h2{
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  color: #008CFF;
+}
+h3{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 18px;
+  color: #24BD6B;
+}
+h4{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 18px;
+  color: #000000;
+}
+a{
+  color: inherit;
+  text-decoration: none;
+}
+.upper-banner{
+  background: #E5E5E5;
+}
+.graphics-card{
+  background: #FFFFFF;
+  width: 90%;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  p{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 18px;
+    color: #4F4F4F;
+  }
+  span{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 9px;
+    line-height: 11px;
+    color: #828282;
+  }
+}
+.health-card{
+  width: 500px;
+  border-radius: 25px;
+  box-shadow: 4px 6px 4px rgba(0, 0, 0, 0.1);
+  .health-card-title{
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #008CFF;
+  }
+  .divider-card{
+    width: 220px;
+    height: 0px;
+    border: 0.5px solid #BDBDBD;
+  }
+  .health-card-text{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    color: #BDBDBD;
+  }
+}
+.card-divider-health{
+  width: 237px;
+  height: 0px;
+  border: 0.5px solid #BDBDBD;
+}
+.card-divider{
+  width: 377.68px;
+  height: 0px;
+  border: 0.5px solid #BDBDBD;
+}
+.card-balance{
+  width: 500px;
+  height: 175px;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
