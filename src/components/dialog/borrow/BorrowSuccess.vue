@@ -21,7 +21,7 @@
           <h3>borrow balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ borrowed }}</h1>
+          <h1 class="text-center">{{ borrowed }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -34,7 +34,7 @@
           <h3>in your wallet:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ balanceAsDouble }}</h1>
+          <h1 class="text-center">{{ balanceAsDouble }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -47,7 +47,7 @@
           <h3>borrow limit:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ maxBorrowAllowedAsDouble }}</h1>
+          <h1 class="text-center">{{ maxBorrowAllowedAsDouble }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>

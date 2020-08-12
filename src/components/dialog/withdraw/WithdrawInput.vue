@@ -109,6 +109,8 @@ export default {
       supplyBalanceInfo: null,
       borrowLimitInfo: null,
       tokenBalance: 0,
+      collateralFactor: 0,
+      mantissa: 0,
     };
   },
   computed: {
@@ -160,6 +162,7 @@ export default {
     async getValues() {
       let oldLiquidity;
       let oldSupplyOf;
+      let oldCash;
       await this.data.market.updatedSupplyOf(this.account)
         .then((supplyOf) => {
           oldSupplyOf = supplyOf;
@@ -168,11 +171,18 @@ export default {
         })
         .then((accountLiquidity) => {
           oldLiquidity = accountLiquidity;
-          this.liquidity = accountLiquidity - this.contractAmount;
           return this.data.market.eventualCash;
         })
-        .then((oldCash) => {
-          this.cash = oldCash - this.contractAmount;
+        .then((cash) => {
+          oldCash = cash;
+          this.cash = cash - this.contractAmount;
+          return this.$rbank.controller.getAccountValues(this.account);
+        })
+        .then(({ supplyValue, borrowValue }) => {
+          const newBorrowValue = (borrowValue * (this
+            .collateralFactor + this.mantissa)) / this.mantissa;
+          const newSupplyValue = supplyValue - (this.contractAmount * this.price);
+          this.liquidity = newBorrowValue < newSupplyValue ? newSupplyValue - newBorrowValue : 0;
           this.maxWithdrawAllowed = this.getMaxWithdrawAllowed(oldSupplyOf, oldCash);
           this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
           this.supplyBalanceInfo = this.asDouble(this.contractAmount);
@@ -212,6 +222,14 @@ export default {
       })
       .then((accountLiquidity) => {
         this.liquidity = accountLiquidity;
+        return this.$rbank.controller.eventualMantissa;
+      })
+      .then((mantissa) => {
+        this.mantissa = mantissa;
+        return this.$rbank.controller.eventualCollateralFactor;
+      })
+      .then((collateralFactor) => {
+        this.collateralFactor = collateralFactor * this.mantissa;
         this.maxWithdrawAllowed = this.getMaxWithdrawAllowed(this.supplyOf, this.cash);
         this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });

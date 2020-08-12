@@ -96,6 +96,18 @@ export default {
   methods: {
     reset() {
       this.dialog = false;
+      this.$rbank.controller.eventualMarketPrice(this.market.address)
+        .then((marketPrice) => {
+          this.price = marketPrice;
+          return this.market.eventualBorrowRate;
+        })
+        .then((borrowRate) => {
+          this.borrowRate = borrowRate;
+          return this.market.eventualCash;
+        })
+        .then((cash) => {
+          this.cash = cash;
+        });
       this.$emit('dialogClosed');
     },
   },

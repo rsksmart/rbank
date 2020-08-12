@@ -69,11 +69,11 @@ export default {
         name: null,
         symbol: null,
         decimals: 0,
-        balance: 0,
       },
       price: 0,
       borrowRate: 0,
       dialog: false,
+      tokenBalance: 0,
       currentComponent: 'SupplyList',
       supplyValue: 0,
     };
@@ -86,7 +86,7 @@ export default {
       return this.borrowRate.toFixed(2);
     },
     balanceAsDouble() {
-      return (this.token.balance / (10 ** this.token.decimals))
+      return (this.tokenBalance / (10 ** this.token.decimals))
         .toFixed(this.token.decimals);
     },
     dataObject() {
@@ -102,6 +102,19 @@ export default {
   methods: {
     reset() {
       this.dialog = false;
+      this.$rbank.controller.eventualMarketPrice(this.market.address)
+        .then((marketPrice) => {
+          this.price = marketPrice;
+          return this.market.eventualBorrowRate;
+        })
+        .then((borrowRate) => {
+          this.borrowRate = borrowRate;
+          return this.market.eventualToken;
+        })
+        .then((tok) => tok.eventualBalanceOf(this.account))
+        .then((tokenBalance) => {
+          this.tokenBalance = tokenBalance;
+        });
       this.$emit('dialogClosed');
     },
   },
@@ -121,7 +134,7 @@ export default {
         this.token.name = name;
         this.token.symbol = symbol;
         this.token.decimals = decimals;
-        this.token.balance = balance;
+        this.tokenBalance = balance;
         return this.$rbank.controller.eventualMarketPrice(this.market.address);
       })
       .then((marketPrice) => {
