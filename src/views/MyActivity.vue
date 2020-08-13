@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="my-activity">
     <v-row class="upper-banner">
       <v-col>
         <v-row class="d-flex justify-center">
           <h1> Investment Dashboard</h1>
         </v-row>
         <v-row class="mx-6">
-          <v-col class="ml-6 mr-0 my-6 d-flex justify-center">
+          <v-col class="ml-6 mr-0 mt-6 d-flex justify-center">
             <v-row class="my-6 d-flex justify-center">
               <div class="px-6 graphics-card">
                 <v-row class="d-flex align-center">
@@ -62,11 +62,11 @@
                     </v-row>
                     <v-row>
                       <v-col cols="6">
-                        <h4>Total Supplied:</h4>
+                        <h4>Total Borrowed:</h4>
                       </v-col>
                       <v-col cols="4">
                         <v-row>
-                          <h4>${{totalSupplied}}</h4>
+                          <h4>${{totalBorrowed}}</h4>
                         </v-row>
                       </v-col>
                       <v-col cols="2">
@@ -90,7 +90,7 @@
               </div>
             </v-row>
           </v-col>
-          <v-col class="mr-6 ml-0 my-6 d-flex justify-center">
+          <v-col class="mr-6 ml-0 mt-6 d-flex justify-center">
             <v-row class="my-6 d-flex justify-center">
               <div class="px-6 graphics-card">
                 <v-row>
@@ -127,15 +127,15 @@
           </v-col>
         </v-row>
         <v-row class="mx-6">
-          <v-col class="ml-6 my-6 d-flex justify-center">
-            <v-row class="my-6 d-flex justify-center">
+          <v-col class="ml-6 d-flex justify-center">
+            <v-row class="d-flex justify-center">
               <div class="px-6 graphics-card">
                 <time-balance-graph/>
               </div>
             </v-row>
           </v-col>
-          <v-col class="mr-6 my-6 d-flex justify-center">
-            <v-row class="my-6 d-flex justify-center">
+          <v-col class="mr-6 d-flex justify-center">
+            <v-row class="d-flex justify-center">
               <div class="px-6 graphics-card">
                 <supply-borrow-graph/>
               </div>
@@ -151,6 +151,7 @@
 <script>
 import SupplyBorrowGraph from '@/components/dashboard/SupplyBorrowGraph.vue';
 import TimeBalanceGraph from '@/components/dashboard/TimeBalanceGraph.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MyActivity',
@@ -168,6 +169,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
     risk() {
       if (this.healthFactor >= 20) {
         if (this.healthFactor >= 50) {
@@ -177,6 +181,22 @@ export default {
       }
       return 'high';
     },
+  },
+  methods: {
+    getData() {
+      this.$rbank.controller.getAccountValues(this.account)
+        .then(({ supplyValue, borrowValue }) => {
+          this.totalBorrowed = borrowValue;
+          this.totalSupplied = supplyValue;
+          this.totalBalance = this.totalSupplied - this.totalBorrowed;
+          return this.$rbank.controller.getAccountHealth(this.account);
+        })
+        // eslint-disable-next-line no-return-assign
+        .then((health) => this.healthFactor = health * 100);
+    },
+  },
+  created() {
+    this.getData();
   },
 };
 </script>
