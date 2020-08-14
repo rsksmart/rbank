@@ -4,8 +4,8 @@
     <h2>{{ title }}</h2>
     <v-spacer/>
     <div v-if="isLogged">
-      <router-link class="mx-5" :to="{ name: 'Home' }">
-        Home
+      <router-link class="mx-5" :to="{ name: 'MyActivity' }">
+        My Activity
       </router-link>
       <router-link class="mx-5" :to="{ name: 'SupplyBorrow' }">
         Supply/Borrow

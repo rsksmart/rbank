@@ -3,7 +3,7 @@ import store from '@/store';
 
 const requireAuth = (to, from, next) => {
   if (!store.getters.SESSION_IS_LOGGED) {
-    next({ name: 'Home' });
+    next({ name: 'Landing' });
   } else {
     next();
   }
