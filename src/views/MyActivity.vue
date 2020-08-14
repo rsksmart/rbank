@@ -144,13 +144,16 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row></v-row>
+    <v-row class="mx-6 d-flex justify-center">
+      <tx-list/>
+    </v-row>
   </div>
 </template>
 
 <script>
 import SupplyBorrowGraph from '@/components/dashboard/SupplyBorrowGraph.vue';
 import TimeBalanceGraph from '@/components/dashboard/TimeBalanceGraph.vue';
+import TxList from '@/components/dashboard/TxList.vue';
 import { mapState } from 'vuex';
 
 export default {
@@ -158,6 +161,7 @@ export default {
   components: {
     SupplyBorrowGraph,
     TimeBalanceGraph,
+    TxList,
   },
   data() {
     return {
