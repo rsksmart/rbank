@@ -1,0 +1,84 @@
+.marketDialog {
+  p {
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    color: #828282;
+  }
+
+  h1 {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    text-transform: capitalize;
+    color: #008CFF;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: left;
+    text-transform: capitalize;
+    color: #008CFF;
+  }
+
+  h3 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    text-transform: capitalize;
+    color: #000000;
+  }
+
+  div.col {
+    padding: 0 !important;
+  }
+
+  input {
+    text-align: center;
+    padding: 0 !important;
+    height: 30px;
+  }
+  input::-webkit-inner-spin-button {
+    display: none;
+    -webkit-appearance: none;
+    padding: 0;
+  }
+
+  .v-text-field--solo > .v-input__control > .v-input__slot {
+    background: transparent;
+    min-height: 35px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .v-text-field.v-text-field--enclosed .v-text-field__details {
+    margin: 0 !important;
+  }
+
+  .dataInput {
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    height: 35px;
+    .dataInfo {
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 18px;
+      text-transform: capitalize;
+      color: #828282;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .buttonRight {
+    text-transform: none;
+    .v-btn {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}

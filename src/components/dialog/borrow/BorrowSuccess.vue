@@ -21,7 +21,7 @@
           <h3>borrow balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ borrowed }}</h1>
+          <h1 class="text-center">{{ borrowed }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -34,7 +34,7 @@
           <h3>in your wallet:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ balanceAsDouble }}</h1>
+          <h1 class="text-center">{{ balanceAsDouble }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -47,7 +47,7 @@
           <h3>borrow limit:</h3>
         </v-col>
         <v-col cols="3">
-          <h1>{{ maxBorrowAllowedAsDouble }}</h1>
+          <h1 class="text-center">{{ maxBorrowAllowedAsDouble }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -55,17 +55,7 @@
         <v-col cols="2"/>
       </v-row>
     </div>
-    <v-row class="d-flex justify-center align-center">
-      <v-col cols="2"/>
-      <v-col class="itemInfo">
-        transaction hash: {{ hashCutOff }}
-      </v-col>
-      <v-col class="ml-1">
-        <v-icon small>content_copy</v-icon>
-        <a class="listTitle" target="_blank" :href="rskExplorerUrl">View on RSKExplorer</a>
-      </v-col>
-      <v-col cols="1"/>
-    </v-row>
+    <transaction-hash :hash="data.hash"/>
     <v-row class="my-5 d-flex justify-center">
       <v-btn class="button" rounded color="#008CFF" @click="closeDialog">
         Back to Supply / Borrow
@@ -76,6 +66,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import TransactionHash from '@/components/common/TransactionHash.vue';
 
 export default {
   name: 'BorrowSuccess',
@@ -103,13 +94,6 @@ export default {
       return (this.tokenBalance / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
     },
-    hashCutOff() {
-      return `${this.data.hash.substring(0, 4)}...${this.data.hash
-        .substring(this.data.hash.length - 4, this.data.hash.length)}`;
-    },
-    rskExplorerUrl() {
-      return `https://explorer.rsk.co/tx/${this.data.hash}`;
-    },
     maxBorrowAllowedAsDouble() {
       return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
         .toFixed(this.data.token.decimals);
@@ -127,6 +111,9 @@ export default {
       const allowed = this.price > 0 ? Math.floor(liquidity / (this.price * 2)) : 0;
       return allowed >= cash ? cash : allowed;
     },
+  },
+  components: {
+    TransactionHash,
   },
   created() {
     this.data.market.eventualToken

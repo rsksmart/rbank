@@ -3,7 +3,7 @@ import store from '@/store';
 
 const requireAuth = (to, from, next) => {
   if (!store.getters.SESSION_IS_LOGGED) {
-    next({ name: 'Home' });
+    next({ name: 'Landing' });
   } else {
     next();
   }
@@ -13,16 +13,26 @@ export default [
   {
     path: '/',
     name: 'Landing',
-    icon: 'home',
-    publicShow: true,
+    icon: null,
+    publicShow: false,
     component: Landing,
   },
   {
     path: '/myActivity',
     name: 'MyActivity',
-    icon: '',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/MyActivity.vue'),
+    icon: null,
+    publicShow: false,
+    component: () => import(/* webpackChunkName: "myActivity" */ '@/views/MyActivity.vue'),
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/supplyBorrow',
+    name: 'SupplyBorrow',
+    icon: null,
+    publicShow: false,
+    component: () => import(/* webpackChunkName: "supplyBorrow" */ '@/views/SupplyBorrow.vue'),
+    props: true,
+    beforeEnter: requireAuth,
   },
   {
     path: '/depositLending',
@@ -30,35 +40,7 @@ export default [
     icon: 'local_atm',
     publicShow: true,
     component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DepositLending.vue'),
-  },
-  {
-    path: '/supply',
-    name: 'Supply',
-    icon: 'archive',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Supply.vue'),
-  },
-  {
-    path: '/borrow',
-    name: 'Borrow',
-    icon: 'attach_money',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "market" */ '@/views/Borrow.vue'),
     beforeEnter: requireAuth,
-  },
-  {
-    path: '/payBorrow',
-    name: 'PayBorrow',
-    icon: 'credit_card',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/PayBorrow.vue'),
-  },
-  {
-    path: '/redeem',
-    name: 'Redeem',
-    icon: 'unarchive',
-    publicShow: true,
-    component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Redeem.vue'),
   },
   {
     path: '/liquidate',
@@ -68,11 +50,11 @@ export default [
     component: () => import(/* webpackChunkName: "liquidate" */ '@/views/Liquidated.vue'),
   },
   {
-    path: '/settings',
-    name: 'Settings',
-    icon: 'settings',
+    path: '/admin',
+    name: 'Admin',
+    icon: null,
     publicShow: false,
-    component: () => import(/* webpackChunkName: "settings" */ '@/views/Settings.vue'),
+    component: () => import(/* webpackChunkName: "admin" */ '@/views/Admin.vue'),
     beforeEnter: requireAuth,
   },
   {
@@ -82,17 +64,10 @@ export default [
     publicShow: false,
     component: () => import(/* webpackChunkName: "market" */ '@/views/Market.vue'),
     props: true,
-  },
-  {
-    path: '/supplyBorrow',
-    name: 'SupplyBorrow',
-    icon: '',
-    publicShow: false,
-    component: () => import(/* webpackChunkName: "market" */ '@/views/SupplyBorrow.vue'),
-    props: true,
+    beforeEnter: requireAuth,
   },
   {
     path: '*',
-    redirect: { name: 'Home' },
+    redirect: { name: 'Landing' },
   },
 ];

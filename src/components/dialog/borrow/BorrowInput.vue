@@ -111,6 +111,8 @@ export default {
       borrowBalanceInfo: null,
       borrowLimitInfo: null,
       tokenBalance: 0,
+      collateralFactor: 0,
+      mantissa: 0,
     };
   },
   computed: {
@@ -157,6 +159,7 @@ export default {
     },
     async getValues() {
       let oldLiquidity;
+      let oldCash;
       await this.data.market.updatedBorrowBy(this.account)
         .then((borrowBy) => {
           this.borrowBy = borrowBy + this.contractAmount;
@@ -164,11 +167,18 @@ export default {
         })
         .then((accountLiquidity) => {
           oldLiquidity = accountLiquidity;
-          this.liquidity = accountLiquidity - this.contractAmount;
           return this.data.market.eventualCash;
         })
-        .then((oldCash) => {
-          this.cash = oldCash - this.contractAmount;
+        .then((cash) => {
+          oldCash = cash;
+          this.cash = cash - this.contractAmount;
+          return this.$rbank.controller.getAccountValues(this.account);
+        })
+        .then(({ supplyValue, borrowValue }) => {
+          const newBorrowValue = ((borrowValue + (this.contractAmount * this.price)) * (this
+            .collateralFactor + this.mantissa)) / this.mantissa;
+          const newSupplyValue = supplyValue;
+          this.liquidity = newBorrowValue < newSupplyValue ? newSupplyValue - newBorrowValue : 0;
           this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
           this.borrowBalanceInfo = this.asDouble(this.contractAmount);
           this.borrowLimitInfo = this.asDouble(this
@@ -215,6 +225,14 @@ export default {
       .then((tok) => tok.eventualBalanceOf(this.account))
       .then((tokenBalance) => {
         this.tokenBalance = tokenBalance;
+        return this.$rbank.controller.eventualMantissa;
+      })
+      .then((mantissa) => {
+        this.mantissa = mantissa;
+        return this.$rbank.controller.eventualCollateralFactor;
+      })
+      .then((collateralFactor) => {
+        this.collateralFactor = collateralFactor * this.mantissa;
         this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });
   },

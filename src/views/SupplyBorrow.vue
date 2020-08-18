@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import SupplyList from '@/components/supplyBorrow/supply/SupplyList.vue';
-import BorrowList from '@/components/supplyBorrow/borrow/BorrowList.vue';
+import SupplyList from '@/components/supply/SupplyList.vue';
+import BorrowList from '@/components/borrow/BorrowList.vue';
 import { mapState } from 'vuex';
 
 export default {

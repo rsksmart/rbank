@@ -39,7 +39,7 @@ export default {
   watch: {
     isOwner(val) {
       if (!val) {
-        this.$router.push({ name: 'Home' });
+        this.$router.push({ name: 'MyActivity' });
       }
     },
     marketAddresses() {

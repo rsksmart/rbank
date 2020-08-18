@@ -1,34 +1,40 @@
 <template>
-  <v-card width="50%" flat>
+  <div>
     <v-list>
       <v-list-item>
         <v-row>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-list-item-subtitle class="listTitle">Market</v-list-item-subtitle>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-list-item-subtitle class="listTitle">Price</v-list-item-subtitle>
           </v-col>
           <v-col cols="2">
             <v-list-item-subtitle class="listTitle">APR</v-list-item-subtitle>
           </v-col>
-          <v-col cols="4">
-            <v-list-item-subtitle class="listTitle">Wallet</v-list-item-subtitle>
+          <v-col cols="2">
+            <v-list-item-subtitle class="listTitle">Total Supplied</v-list-item-subtitle>
+          </v-col>
+          <v-col cols="2">
+            <v-list-item-subtitle class="listTitle">Total Borrowed</v-list-item-subtitle>
+          </v-col>
+          <v-col cols="2">
+            <v-list-item-subtitle class="listTitle">Current Cash</v-list-item-subtitle>
           </v-col>
         </v-row>
       </v-list-item>
       <v-divider/>
-      <supply-item v-for="(market, idx) in markets"
+      <market-item v-for="(market, idx) in markets"
                    :key="`market-${idx}`" :market="market" @dialogClosed="reset"/>
     </v-list>
-  </v-card>
+  </div>
 </template>
 
 <script>
-import SupplyItem from '@/components/supplyBorrow/supply/SupplyItem.vue';
+import MarketItem from '@/components/admin/MarketItem.vue';
 
 export default {
-  name: 'SupplyList',
+  name: 'MarketList',
   data() {
     return {
       markets: [],
@@ -36,11 +42,11 @@ export default {
   },
   methods: {
     reset() {
-      this.$emit('listChange');
+      console.log('Reset market item');
     },
   },
   components: {
-    SupplyItem,
+    MarketItem,
   },
   created() {
     this.$rbank.eventualMarkets
