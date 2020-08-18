@@ -88,7 +88,7 @@ export default {
         pieSliceText: 'none',
         fontName: 'Rubik',
         colors: ['#008CFF', '#828282'],
-        pieHole: 0.5,
+        pieHole: 0.7,
         chartArea: {
           width: '100%',
           height: '100%',

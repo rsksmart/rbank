@@ -31,4 +31,35 @@
       line-height: 13px;
     }
   }
+  .toggle-tb {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    border: 1px solid #BDBDBD;
+    width: 82px;
+    .selected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #008CFF;
+      color: #FFFFFF;
+      width: 20px;
+      padding: 0 !important;
+    }
+    .notSelected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #FFFFFF;
+      color: #000000;
+      width: 20px;
+      padding: 0 !important;
+    }
+    .v-btn:not(.v-btn--round).v-size--default {
+      min-width: 20px !important;
+      height: 20px !important;
+      padding: 0 !important;
+
+    }
+  }
 }

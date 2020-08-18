@@ -60,7 +60,7 @@
       <div class="tx-divider"></div>
     </v-row>
     <v-list class="mx-6" v-for="(tx, idx) in transactions"
-             :key="`tx-item-${idx}`">
+            :key="`tx-item-${idx}`">
       <tx-item :transactionHash="tx.transactionHash"
                :marketName="tx.market"
                :amount="tx.transactionAmount"
@@ -84,17 +84,83 @@ export default {
   data() {
     return {
       lastUpdated: '',
-      transactions: [
-        {
-          market: 'TK1',
-          price: 1500,
-          apr: 4.3,
-          transactionHash: 'ox2cb3a4mncmdmd',
-          transactionAmount: 4.65,
-          operation: 'Borrow',
-        },
-      ],
+      transactions: [],
     };
+  },
+  methods: {
+    pushMarketEvents(market, symbol, price, borrowRate) {
+      market.events.supply()
+        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
+          this.transactions.push(
+            {
+              market: symbol,
+              price,
+              apr: borrowRate,
+              transactionHash,
+              transactionAmount: Number(amount),
+              operation: event,
+            },
+          );
+        });
+      market.events.borrow()
+        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
+          this.transactions.push(
+            {
+              market: symbol,
+              price,
+              apr: borrowRate,
+              transactionHash,
+              transactionAmount: Number(amount),
+              operation: event,
+            },
+          );
+        });
+      market.events.redeem()
+        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
+          this.transactions.push(
+            {
+              market: symbol,
+              price,
+              apr: borrowRate,
+              transactionHash,
+              transactionAmount: Number(amount),
+              operation: event,
+            },
+          );
+        });
+      market.events.payBorrow()
+        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
+          this.transactions.push(
+            {
+              market: symbol,
+              price,
+              apr: borrowRate,
+              transactionHash,
+              transactionAmount: Number(amount),
+              operation: event,
+            },
+          );
+        });
+    },
+    getTransactions() {
+      this.$rbank.eventualMarkets
+        .then((markets) => {
+          markets.forEach((market) => {
+            market.eventualToken
+              .then((token) => Promise.all([
+                token.eventualSymbol,
+                this.$rbank.controller.eventualMarketPrice(market.address),
+                market.eventualBorrowRate,
+              ]))
+              .then(([symbol, price, borrowRate]) => {
+                this.pushMarketEvents(market, symbol, price, borrowRate);
+              });
+          });
+        });
+    },
+  },
+  created() {
+    this.getTransactions();
   },
 };
 </script>

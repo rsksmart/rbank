@@ -78,8 +78,8 @@
                   </v-col>
                   <v-col cols="3">
                     <v-row class="d-flex justify-center">
-                      <v-btn fab dark color="#008CFF">
-                        <v-icon dark>mdi-plus</v-icon>
+                      <v-btn small fab dark color="#008CFF">
+                        <v-icon dark color="#FFFFFF">mdi-plus</v-icon>
                       </v-btn>
                     </v-row>
                     <v-row class="d-flex justify-center text-center">
@@ -106,7 +106,7 @@
                     <v-row>
                       <div class="card-divider-health"></div>
                     </v-row>
-                    <v-row class="health-card-text">
+                    <v-row class=" mt-3 health-card-text">
                       <p>Your Account has a <b>{{risk}}</b> risk of liquidation</p>
                     </v-row>
                   </v-col>
