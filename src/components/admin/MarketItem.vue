@@ -116,7 +116,6 @@ export default {
       };
     },
   },
-<<<<<<< HEAD:src/components/supplyBorrow/borrow/BorrowItem.vue
   methods: {
     reset() {
       this.dialog = false;
@@ -135,8 +134,6 @@ export default {
       this.$emit('dialogClosed');
     },
   },
-=======
->>>>>>> feature/admin:src/components/admin/MarketItem.vue
   components: {
     MarketDialog,
   },

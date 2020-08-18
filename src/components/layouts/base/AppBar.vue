@@ -38,14 +38,9 @@ export default {
     }),
     title() {
       if (this.$route.path === '/supplyBorrow') return 'Supply / Borrow';
-<<<<<<< HEAD
-      if (this.$route.path === '/') return '';
-      return 'My Activity';
-=======
       if (this.$route.path === '/myActivity') return 'My Activity';
       if (this.$route.path === '/admin') return 'Admin Dashboard';
       return '';
->>>>>>> feature/admin
     },
     accountCutOff() {
       return `${this.account.substring(0, 4)}...${this.account.substring(this.account.length - 4, this.account.length)}`;
