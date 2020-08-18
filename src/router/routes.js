@@ -2,7 +2,6 @@ import Landing from '@/views/Landing.vue';
 import store from '@/store';
 
 const requireAuth = (to, from, next) => {
-  console.log(`Is logged: ${!store.getters.SESSION_IS_LOGGED}`);
   if (!store.getters.SESSION_IS_LOGGED) {
     next({ name: 'Landing' });
   } else {

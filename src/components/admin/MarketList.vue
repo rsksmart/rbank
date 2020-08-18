@@ -3,13 +3,13 @@
     <v-list>
       <v-list-item>
         <v-row>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-list-item-subtitle class="listTitle">Market</v-list-item-subtitle>
           </v-col>
           <v-col cols="2">
             <v-list-item-subtitle class="listTitle">Price</v-list-item-subtitle>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <v-list-item-subtitle class="listTitle">APR</v-list-item-subtitle>
           </v-col>
           <v-col cols="2">
@@ -31,12 +31,22 @@
 </template>
 
 <script>
+import MarketItem from '@/components/admin/MarketItem.vue';
+
 export default {
   name: 'MarketList',
   data() {
     return {
       markets: [],
     };
+  },
+  methods: {
+    reset() {
+      console.log('Reset market item');
+    },
+  },
+  components: {
+    MarketItem,
   },
   created() {
     this.$rbank.eventualMarkets
