@@ -1,0 +1,65 @@
+.time-balance{
+  h1{
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 21px;
+    color: #008CFF;
+  }
+  span{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    color: #828282;
+  }
+  .divider-balance-graph{
+    width: 295.96px;
+    height: 0px;
+    border: 0.5px solid #BDBDBD;
+  }
+  .period-picker{
+    width: 100px;
+    border: 0.5px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 15px;
+    a{
+      color: #828282;
+      text-decoration: none;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 11px;
+      line-height: 13px;
+    }
+  }
+  .toggle-tb {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    border: 1px solid #BDBDBD;
+    width: 82px;
+    .selected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #008CFF;
+      color: #FFFFFF;
+      width: 20px;
+      padding: 0 !important;
+    }
+    .notSelected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #FFFFFF;
+      color: #000000;
+      width: 20px;
+      padding: 0 !important;
+    }
+    .v-btn:not(.v-btn--round).v-size--default {
+      min-width: 20px !important;
+      height: 20px !important;
+      padding: 0 !important;
+
+    }
+  }
+}

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-6">
+  <div class="mx-6 landing container">
     <v-row class="mx-6 my-6 d-flex align-center">
       <v-col class="mx-6">
         <v-row>
