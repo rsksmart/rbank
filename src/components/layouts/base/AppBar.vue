@@ -63,11 +63,10 @@ export default {
   },
   watch: {
     isOwner(val) {
-      if (val) {
-        this.$router.push({ name: 'Admin' });
-      } else {
-        this.$router.push({ name: 'MyActivity' });
-      }
+      if (val) this.$router.push({ name: 'Admin' });
+    },
+    isLogged() {
+      this.$router.push({ name: 'MyActivity' });
     },
   },
 };
