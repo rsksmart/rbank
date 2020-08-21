@@ -1,26 +1,26 @@
 <template>
-  <div class="mx-6 landing container">
-    <v-row class="mx-6 my-6 d-flex align-center">
-      <v-col class="mx-6">
+  <div class="landing container">
+    <v-row class="d-flex align-center justify-center">
+      <v-col cols="6">
         <v-row>
           <h1> Join the Open Finance revolution on the RSK Network</h1>
         </v-row>
         <v-row class="my-3 simple-text">
           Enjoy the possibilities that Open Finance offers in a safe, clear and understandable way.
         </v-row>
-        <v-row class="d-flex flex-row">
-          <v-btn class="button" rounded color="#008CFF" @click="toMyActivity">
+        <v-row class="d-flex align-start">
+          <v-btn class="ma-0 button" rounded color="#008CFF" @click="toMyActivity">
             Go to RBank Ðapp</v-btn>
         </v-row>
       </v-col>
-      <v-col class="d-flex justify-center">
+      <v-col cols="6" class="d-flex justify-center align-center">
         <img class="landing-1" src="../assets/landing/Ellipse_20.png" alt="">
       </v-col>
     </v-row>
-    <v-row class="my-6 py-6 d-flex justify-center">
-      <div class="divider my-6"></div>
+    <v-row class="my-6 d-flex justify-center">
+      <div class="my-6 divider"></div>
     </v-row>
-    <v-row class="mx-6 my-6 d-flex align-center">
+    <v-row class="d-flex align-center">
       <v-col class="d-flex justify-center">
         <img src="../assets/landing/stats_and_graphs.png" alt="">
       </v-col>
@@ -33,16 +33,16 @@
           financially inclusive world
         </v-row>
         <v-row class="d-flex flex-row-reverse">
-          <v-btn class="button" rounded color="#008CFF" @click="toMyActivity">
+          <v-btn class="ma-0 button" rounded color="#008CFF" @click="toMyActivity">
            Explore the RBank Ðapp
           </v-btn>
         </v-row>
       </v-col>
     </v-row>
-    <v-row class="my-6 py-6 d-flex justify-center">
-      <div class="divider my-6"></div>
+    <v-row class="my-6 d-flex justify-center">
+      <div class="my-6 divider"></div>
     </v-row>
-    <v-row class="mx-6 py-4">
+    <v-row class="ma-0">
       <v-col>
         <v-row class="d-flex justify-center">
           <h2>As easy as 1, 2, 3.</h2>
@@ -52,7 +52,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row class="mx-6 my-6 text-center">
+    <v-row class="my-6 text-center">
       <v-col>
         <v-row class="d-flex justify-center mx-6">
           <h4>1. Connect</h4>
@@ -79,9 +79,9 @@
       </v-col>
     </v-row>
     <v-row class="my-6 py-6 d-flex justify-center">
-      <div class="divider my-6"></div>
+      <div class="divider"></div>
     </v-row>
-    <v-row class="mx-6 my-6">
+    <v-row class="my-6">
       <v-col>
         <v-row class="d-flex justify-center">
           <h2>Say goodbye to unexpected collateral liquidations.</h2>
@@ -119,7 +119,7 @@
         </v-row>
         <v-row class="d-flex justify-center">
           <v-btn class="button" rounded color="#008CFF" @click="toMyActivity">
-            join Rbank Today
+            Join Rbank Today
           </v-btn>
         </v-row>
       </v-col>
@@ -127,22 +127,22 @@
     <v-row class="my-6 py-6 d-flex justify-center">
       <div class="divider my-6"></div>
     </v-row>
-    <v-row class="mx-6 my-6 d-flex align-center">
-      <v-col class="px-4">
+    <v-row class="d-flex align-center">
+      <v-col cols="6">
         <v-row class="text-left">
           <h3>Build your own DeFi App with our RBank Library for Developers</h3>
         </v-row>
-        <v-row class="my-6 text-left">
+        <v-row class="text-left">
           We have created a comprehensible library for the upcoming DeFi Developer.
           Available on GitHub.
         </v-row>
         <v-row>
-          <v-btn class="button" rounded color="#008CFF" @click="toMyActivity">
-            View RBank Library
+          <v-btn class="ma-0 button" rounded color="#008CFF" @click="toMyActivity">
+            Visit RBank Library
           </v-btn>
         </v-row>
       </v-col>
-      <v-col class="d-flex justify-center">
+      <v-col cols="6" class="d-flex justify-center">
         <img src="../assets/landing/Ellipse_29.png" alt="">
       </v-col>
     </v-row>

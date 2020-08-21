@@ -1,9 +1,8 @@
 <template>
   <v-app light>
-    <drawer v-if="isLogged"/>
     <app-bar/>
     <v-content>
-      <v-container class="" fluid>
+      <v-container fluid>
         <slot></slot>
       </v-container>
     </v-content>
@@ -13,7 +12,6 @@
 
 <script>
 import AppBar from '@/components/layouts/base/AppBar.vue';
-import Drawer from '@/components/layouts/base/Drawer.vue';
 import Footing from '@/components/layouts/base/Footing.vue';
 
 import { mapGetters } from 'vuex';
@@ -31,7 +29,6 @@ export default {
   },
   components: {
     AppBar,
-    Drawer,
     Footing,
   },
 };

@@ -3,8 +3,15 @@
     <v-col cols="2" class="d-flex justify-center">
       <v-img class="ml-5" src="../../../assets/rif.png" width="60"/>
     </v-col>
-    <v-col cols="2" class="item">
-      <h1 class="ma-0">{{ data.token.symbol }}</h1>
+    <v-col cols="2">
+      <v-row class="item">
+        <h1 class="ma-0">{{ data.token.symbol }}</h1>
+      </v-row>
+      <v-row class="d-flex justify-center">
+        <a class="ml-2 listTitle" target="_blank" :href="rskExplorerUrl">
+          {{ data.token.symbol }} Addr
+        </a>
+      </v-row>
     </v-col>
     <v-col cols="3">
       <v-row>
@@ -49,6 +56,7 @@ export default {
       price: 0,
       tokenBalance: 0,
       borrowRate: 0,
+      tokenAddress: 0,
     };
   },
   computed: {
@@ -62,6 +70,9 @@ export default {
     apr() {
       return this.borrowRate.toFixed(2);
     },
+    rskExplorerUrl() {
+      return `https://explorer.testnet.rsk.co/address/${this.tokenAddress}`;
+    },
   },
   created() {
     this.$rbank.controller.eventualMarketPrice(this.data.market.address)
@@ -69,8 +80,9 @@ export default {
         this.price = marketPrice;
         return this.data.market.eventualToken;
       })
-      .then((tok) => tok.eventualBalanceOf(this.account))
-      .then((tokenBalance) => {
+      .then((tok) => Promise.all([tok.eventualBalanceOf(this.account), tok.address]))
+      .then(([tokenBalance, tokenAddress]) => {
+        this.tokenAddress = tokenAddress;
         this.tokenBalance = tokenBalance;
         return this.data.market.eventualBorrowRate;
       })

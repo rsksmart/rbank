@@ -43,7 +43,8 @@ export default {
       return '';
     },
     accountCutOff() {
-      return `${this.account.substring(0, 4)}...${this.account.substring(this.account.length - 4, this.account.length)}`;
+      return `${this.account.substring(0, 4)}...${this.account
+        .substring(this.account.length - 4, this.account.length)}`;
     },
   },
   methods: {
