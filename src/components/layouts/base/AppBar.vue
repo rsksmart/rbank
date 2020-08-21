@@ -43,7 +43,8 @@ export default {
       return '';
     },
     accountCutOff() {
-      return `${this.account.substring(0, 4)}...${this.account.substring(this.account.length - 4, this.account.length)}`;
+      return `${this.account.substring(0, 4)}...${this.account
+        .substring(this.account.length - 4, this.account.length)}`;
     },
   },
   methods: {
@@ -62,11 +63,10 @@ export default {
   },
   watch: {
     isOwner(val) {
-      if (val) {
-        this.$router.push({ name: 'Admin' });
-      } else {
-        this.$router.push({ name: 'MyActivity' });
-      }
+      if (val) this.$router.push({ name: 'Admin' });
+    },
+    isLogged() {
+      this.$router.push({ name: 'MyActivity' });
     },
   },
 };

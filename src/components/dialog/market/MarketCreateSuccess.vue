@@ -16,7 +16,10 @@
           <h3 class="text-right mr-2">Market address:</h3>
         </v-col>
         <v-col cols="6" class="d-flex align-center">
-          {{ addressCutOff }}
+          <a class="mr-3 blueish" target="_blank" :href="rskExplorerUrl">{{ addressCutOff }}</a>
+          <v-icon @click="copyHash" small>
+            content_copy
+          </v-icon>
         </v-col>
       </v-row>
       <v-row class="ma-0 pt-3 d-flex align-center">
@@ -68,10 +71,16 @@ export default {
       return `${this.marketAddress.substring(0, 4)}...${this.marketAddress
         .substring(this.marketAddress.length - 4, this.marketAddress.length)}`;
     },
+    rskExplorerUrl() {
+      return `https://explorer.testnet.rsk.co/address/${this.marketAddress}`;
+    },
   },
   methods: {
     closeDialog() {
       this.$emit('close');
+    },
+    copyHash() {
+      navigator.clipboard.writeText(this.marketAddress);
     },
   },
   created() {

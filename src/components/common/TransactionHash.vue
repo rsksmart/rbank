@@ -5,7 +5,9 @@
       transaction hash: {{ hashCutOff }}
     </v-col>
     <v-col class="ml-1">
-      <v-icon small>content_copy</v-icon>
+      <v-icon @click="copyHash" small>
+        content_copy
+      </v-icon>
       <a class="ml-2 listTitle" target="_blank" :href="rskExplorerUrl">View on RSKExplorer</a>
     </v-col>
     <v-col cols="1"/>
@@ -28,6 +30,11 @@ export default {
     },
     rskExplorerUrl() {
       return `https://explorer.testnet.rsk.co/tx/${this.hash}`;
+    },
+  },
+  methods: {
+    copyHash() {
+      navigator.clipboard.writeText(this.hash);
     },
   },
 };

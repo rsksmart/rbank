@@ -82,7 +82,7 @@
                         <v-icon dark color="#FFFFFF">mdi-plus</v-icon>
                       </v-btn>
                     </v-row>
-                    <v-row class="d-flex justify-center text-center">
+                    <v-row class="mt-2 d-flex justify-center text-center">
                       <span>Add Funds</span>
                     </v-row>
                   </v-col>

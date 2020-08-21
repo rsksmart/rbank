@@ -30,7 +30,7 @@
           <v-row class="ma-0">
             <v-col cols="9" class="pa-0 d-flex align-center">
               <v-list-item-subtitle class="item">
-                {{ cashAsDouble }}
+                {{ cash | formatToken(token.decimals) }}
               </v-list-item-subtitle>
             </v-col>
             <v-col cols="3" class="pa-0">
@@ -78,10 +78,6 @@ export default {
   computed: {
     apr() {
       return this.borrowRate.toFixed(2);
-    },
-    cashAsDouble() {
-      return (this.cash / (10 ** this.token.decimals))
-        .toFixed(this.token.decimals);
     },
     dataObject() {
       return {

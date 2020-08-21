@@ -36,10 +36,10 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ supplied }}</h1>
+                <h1>{{ supplyOf | formatToken(data.token.decimals) }}</h1>
               </v-col>
-              <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="supplyBalanceInfo">(+{{ supplyBalanceInfo }})</span>
+              <v-col cols="5" class="itemInfo d-flex justify-center">
+                <span class="text-right" v-if="supplyBalanceInfo">(+{{ supplyBalanceInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -56,10 +56,10 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ maxBorrowAllowedAsDouble }}</h1>
+                <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
               </v-col>
-              <v-col cols="5" class="itemInfo">
-                <span v-if="borrowLimitInfo">(+{{ borrowLimitInfo }})</span>
+              <v-col cols="5" class="itemInfo d-flex justify-center">
+                <span class="text-right" v-if="borrowLimitInfo">(+{{ borrowLimitInfo }})</span>
               </v-col>
             </v-row>
           </v-col>
@@ -118,14 +118,8 @@ export default {
     apr() {
       return this.borrowRate.toFixed(2);
     },
-    supplied() {
-      return this.asDouble(this.supplyOf);
-    },
     balanceAsDouble() {
       return this.asDouble(this.tokenBalance);
-    },
-    maxBorrowAllowedAsDouble() {
-      return this.asDouble(this.maxBorrowAllowed);
     },
     contractAmount() {
       return this.amount * (10 ** this.data.token.decimals);
