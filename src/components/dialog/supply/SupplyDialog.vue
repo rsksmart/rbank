@@ -5,7 +5,11 @@
         <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
           <v-row class="d-flex justify-center">
-            <div class="toggle my-5">
+            <div class="toggle-triple my-5">
+              <v-btn :class="[ currentComponent === 'LiquidateList' ? 'selected' : 'notSelected']"
+                     text @click="currentComponent = 'LiquidateList'">
+                <span>Liquidate</span>
+              </v-btn>
               <v-btn :class="[ currentComponent === 'SupplyInput' ? 'selected' : 'notSelected']"
                      text @click="currentComponent = 'SupplyInput'">
                 <span>Supply</span>
@@ -38,6 +42,7 @@ import SupplyInput from '@/components/dialog/supply/SupplyInput.vue';
 import WithdrawInput from '@/components/dialog/withdraw/WithdrawInput.vue';
 import WithdrawTop from '@/components/dialog/withdraw/WithdrawTop.vue';
 import WithdrawSuccess from '@/components/dialog/withdraw/WithdrawSuccess.vue';
+import LiquidateList from '@/components/dialog/liquidate/LiquidateList.vue';
 
 export default {
   name: 'SupplyDialog',
@@ -105,6 +110,7 @@ export default {
     WithdrawInput,
     WithdrawTop,
     WithdrawSuccess,
+    LiquidateList,
   },
   watch: {
     currentComponent() {
