@@ -71,4 +71,21 @@
   .successBox {
     margin: 50px 0 50px 0;
   }
+
+  .loader {
+    h1 {
+      font-weight: 500;
+      font-size: 25px;
+      line-height: 30px;
+      text-align: center;
+      color: #000000;
+    }
+    p {
+      font-weight: normal;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      color: #000000;
+    }
+  }
 }

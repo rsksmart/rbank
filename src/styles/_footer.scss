@@ -1,5 +1,13 @@
 .footering {
-  background-image: url('../assets/footerBackground.svg');
+  overflow: hidden;
+  height: 160px;
+  .arc {
+    background: #D6D6D6 !important;
+    border-radius: 40%;
+    width: 600%;
+    height: 300%;
+    margin: 0 -200px 0 -200px !important;
+  }
   p {
     font-weight: normal;
     font-size: 12px;
