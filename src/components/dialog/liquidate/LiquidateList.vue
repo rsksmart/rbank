@@ -1,42 +1,36 @@
 <template>
-  <div class="liquidate-list">
-    <template v-if="!waiting">
-      <v-row class="d-flex justify-center">
-        <h1>Select the collaterals you wish to liquidate:</h1>
+  <div v-if="!waiting" class="liquidate-list">
+    <v-row class="d-flex justify-center">
+      <h1>Select the collaterals you wish to liquidate:</h1>
+    </v-row>
+    <div class="container">
+      <v-row>
+        <v-col class="d-flex justify-center">
+          <h2>Address</h2>
+        </v-col>
+        <v-col class="d-flex justify-center">
+          <h2>Collateral to be Liquidated</h2>
+        </v-col>
       </v-row>
-      <div class="container">
-        <v-row>
-          <v-col class="d-flex justify-center">
-            <h2>Address</h2>
-          </v-col>
-          <v-col class="d-flex justify-center">
-            <h2>Collateral to be Liquidated</h2>
-          </v-col>
-        </v-row>
-        <v-row class="ma-0 px-6">
-          <v-divider />
-        </v-row>
-        <v-list class="mx-6" v-for="(borrow, idx) in borrows"
-                :key="`liquidate-item-${idx}`">
-          <liquidate-item :borrower="borrow.borrower"
-                          :amount="borrow.maxToLiquidate"
-                          :debt="borrow.debt"
-                          :borrowMarketAddress="borrow.borrowMarketAddress"
-                          :collateral="data"
-          />
-          <v-divider/>
-        </v-list>
-      </div>
-    </template>
-    <template v-else>
-      <loader/>
-    </template>
+      <v-row class="ma-0 px-6">
+        <v-divider/>
+      </v-row>
+      <v-list class="mx-6" v-for="(borrow, idx) in borrows"
+              :key="`liquidate-item-${idx}`">
+        <liquidate-item :borrower="borrow.borrower"
+                        :amount="borrow.maxToLiquidate"
+                        :debt="borrow.debt"
+                        :borrowMarketAddress="borrow.borrowMarketAddress"
+                        :collateral="data"
+        />
+        <v-divider/>
+      </v-list>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Loader from '@/components/common/Loader.vue';
 import LiquidateItem from '@/components/dialog/liquidate/LiquidateItem.vue';
 
 export default {
@@ -48,7 +42,6 @@ export default {
     },
   },
   components: {
-    Loader,
     LiquidateItem,
   },
   data() {
