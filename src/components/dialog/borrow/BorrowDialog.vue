@@ -14,7 +14,7 @@
                      text @click="currentComponent = 'RepayInput'">
                 <span>Repay</span>
               </v-btn>
-            </div>
+            </div>e este fin no hay partidos entonces
           </v-row>
         </template>
         <template>

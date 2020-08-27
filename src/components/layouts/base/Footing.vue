@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="pa-0 footering" color="transparent">
+  <v-footer class="pa-0 footering d-flex justify-center" color="transparent">
     <div class="arc">
       <v-row class="ma-0 d-flex justify-center">
         <v-col class="my-5">

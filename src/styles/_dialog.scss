@@ -38,7 +38,7 @@
   }
 
   input {
-    margin-left: 20px;
+    margin-left: 75px;
     text-align: center;
   }
   input::-webkit-inner-spin-button {
@@ -55,6 +55,9 @@
     border-radius: 15px;
     display: flex;
     align-items: center;
+    .v-text-field fieldset, .v-text-field .v-input__control, .v-text-field .v-input__slot {
+      margin: 10px 0 24px;
+    }
   }
 
   .inputText {

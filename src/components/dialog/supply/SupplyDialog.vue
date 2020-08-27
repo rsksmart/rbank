@@ -4,8 +4,8 @@
       <template v-if="!succeed">
         <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
-          <v-row class="d-flex justify-center">
-            <div class="toggle my-5">
+          <v-row class="my-5 d-flex justify-center">
+            <div class="toggle">
               <v-btn :class="[ currentComponent === 'SupplyInput' ? 'selected' : 'notSelected']"
                      text @click="currentComponent = 'SupplyInput'">
                 <span>Supply</span>

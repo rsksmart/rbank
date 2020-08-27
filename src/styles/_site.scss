@@ -73,13 +73,14 @@ button {
   border-radius: 30px;
   box-sizing: border-box;
   border: 1px solid #BDBDBD;
-  width: 272px;
+  width: 274px;
   .selected {
     text-transform: none;
     border-radius: 30px;
     background: #008CFF;
     color: #FFFFFF;
-    width: 135px;
+    width: 50%;
+    height: 100%;
     letter-spacing: normal;
   }
   .notSelected {
@@ -87,7 +88,8 @@ button {
     border-radius: 30px;
     background: #FFFFFF;
     color: #000000;
-    width: 135px;
+    width: 50%;
+    height: 100%;
     letter-spacing: normal;
   }
 }

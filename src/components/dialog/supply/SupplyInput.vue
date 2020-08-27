@@ -3,11 +3,12 @@
     <template v-if="!waiting">
       <v-row class="inputBox">
         <v-col cols="10">
-          <v-text-field class="inputText" full-width single-line solo flat hide-details
-                        type="number" v-model="amount"/>
+          <v-text-field class="inputText" full-width single-line solo flat
+                        type="number" v-model="amount" required
+                        :rules="[rules.required, rules.minBalance]"/>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="maxAmount = true" class="pa-0" text color="#008CFF">max</v-btn>
+          <v-btn @click="maxAmount = true" class="mb-12" text color="#008CFF">max</v-btn>
         </v-col>
       </v-row>
       <v-row class="ma-0 my-5 d-flex justify-center">
@@ -70,7 +71,7 @@
         </v-row>
       </div>
       <v-row class="my-5 d-flex justify-center">
-        <v-btn class="button" rounded color="#008CFF" @click="supply">
+        <v-btn class="button" rounded color="#008CFF" @click="supply" :disabled="!validForm">
           Supply tokens
         </v-btn>
       </v-row>
@@ -109,6 +110,10 @@ export default {
       tokenBalance: 0,
       collateralFactor: 0,
       mantissa: 0,
+      rules: {
+        required: () => !!Number(this.amount) || 'Required.',
+        minBalance: () => this.tokenBalance >= Number(this.amount) || 'Not enough funds',
+      },
     };
   },
   computed: {
@@ -123,6 +128,10 @@ export default {
     },
     contractAmount() {
       return this.amount * (10 ** this.data.token.decimals);
+    },
+    validForm() {
+      return typeof this.rules.minBalance() !== 'string'
+        && typeof this.rules.required() !== 'string';
     },
   },
   methods: {
