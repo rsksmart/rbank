@@ -13,7 +13,7 @@
             <span>{{collateral.token.symbol}}</span>
           </v-col>
           <v-col class="d-flex justify-end" cols="2">
-            <v-btn class="pa-0" icon>
+            <v-btn class="pa-0" icon @click="select">
               <svg width="11" height="32" viewBox="0 0 11 32" fill="none"
                    xmlns="http://www.w3.org/2000/svg">
                 <path d="M1 1L9 16L1 31" stroke="#008CFF" stroke-width="2"
@@ -64,6 +64,15 @@ export default {
     },
   },
   methods: {
+    select() {
+      this.$emit('selected',
+        {
+          borrower: this.borrower,
+          debt: this.debt,
+          maxToLiquidate: this.amount,
+          borrowMarketAddress: this.borrowMarketAddress,
+        });
+    },
     getData() {
       //
     },

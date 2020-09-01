@@ -22,6 +22,7 @@
                         :debt="borrow.debt"
                         :borrowMarketAddress="borrow.borrowMarketAddress"
                         :collateral="data"
+                        @selected="accountSelected"
         />
         <v-divider/>
       </v-list>
@@ -56,6 +57,9 @@ export default {
     }),
   },
   methods: {
+    accountSelected(accountObject) {
+      this.$emit('selected', accountObject);
+    },
     getUnhealthyAccounts(market) {
       market.getPastEvents('Borrow', 0)
         .then((borrowEvents) => borrowEvents
@@ -68,7 +72,7 @@ export default {
           .map((borrow) => this.$rbank.controller.getAccountHealth(borrow.borrower))), borrows]))
         .then(([accountsHealth, borrows]) => borrows
           .map((borrow, idx) => ({ health: accountsHealth[idx], ...borrow }))
-          .filter((borrow) => borrow.health > 0))
+          .filter((borrow) => borrow.health <= 0))
         .then((borrows) => Promise.all([
           borrows,
           Promise.all(borrows.map((borrow) => new this.$rbank.Market(borrow.borrowMarketAddress)

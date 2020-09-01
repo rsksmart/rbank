@@ -24,9 +24,10 @@
               <h2>Collateral</h2>
             </v-row>
             <v-row class="d-flex justify-center">
-                  <span>
-                    ETH
-                  </span>
+              {{collateralAmount}}
+              <span>
+                {{data.token.symbol}}
+              </span>
             </v-row>
             <v-row class="d-flex justify-center">
               <h2>Equivalent Collateral</h2>
@@ -53,10 +54,10 @@
                 </h4>
               </v-col>
               <v-col cols="6" class="summary-num d-flex justify-center">
-                0
+                {{collateralAmount}}
               </v-col>
               <v-col cols="2">
-                <span>ETH</span>
+                <span>{{borrowMarketSymbol}}</span>
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
@@ -71,10 +72,10 @@
                 </h4>
               </v-col>
               <v-col cols="6" class="summary-num d-flex justify-center">
-                0
+                {{liquidationAmount}}
               </v-col>
               <v-col cols="2">
-                <span>ETH</span>
+                <span>{{data.token.symbol}}</span>
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
@@ -91,7 +92,7 @@
           </v-col>
         </v-row>
         <v-row class="my-6 d-flex justify-center">
-          <v-btn class="button" rounded color="#008CFF">
+          <v-btn class="button" rounded color="#008CFF" @click="liquidate">
             Liquidate account
           </v-btn>
         </v-row>
@@ -118,23 +119,66 @@ export default {
   data() {
     return {
       waiting: false,
-      currentComponent: '',
       liquidationAccount: '',
       accountSelected: false,
+      accountDebt: 0,
+      borrowMarketAddress: '',
+      borrowMarketPrice: 0,
+      currentMarketPrice: 0,
+      borrowMarketTokenDecimals: 0,
+      maxToLiquidate: 0,
+      borrowMarketSymbol: '',
       amount: 0,
     };
   },
   methods: {
-    initForm() {
-
+    liquidate() {
+      const market = new this.$rbank.Market(this.borrowMarketAddress);
+      console.log(`Liquidation account: ${this.liquidationAccount}`);
+      console.log(`Amount: ${this.collateralAmount * (10 ** this.borrowMarketTokenDecimals)}`);
+      console.log(`Market: ${this.liquidationAccount}`);
+      console.log(`Liquidator account: ${this.account}`);
+      market.liquidateBorrow(
+        this.liquidationAccount,
+        this.collateralAmount * (10 ** this.borrowMarketTokenDecimals),
+        this.data.market.address,
+        this.account,
+      )
+        .then((tx) => {
+          console.log(tx);
+        });
     },
-    setLiquidationAccount(account) {
-      this.liquidationAccount = account;
-      this.initForm();
+    setLiquidationAccount(accountObject) {
+      this.borrowMarketAddress = accountObject.borrowMarketAddress;
+      this.$rbank.controller.eventualMarketPrice(this.borrowMarketAddress)
+        .then((price) => { this.borrowMarketPrice = price; });
+      this.$rbank.controller.eventualMarketPrice(this.data.market.address)
+        .then((price) => { this.currentMarketPrice = price; });
+      this.getCollateralToken();
+      this.liquidationAccount = accountObject.borrower;
+      this.accountDebt = accountObject.debt;
+      this.maxToLiquidate = accountObject.maxToLiquidate;
       this.accountSelected = true;
     },
     actionSucceed(succeedObj) {
       this.emit('succeed', succeedObj);
+    },
+    getCollateralToken() {
+      new this.$rbank.Market(this.borrowMarketAddress).eventualToken
+        .then((token) => Promise.all([token.eventualSymbol, token.eventualDecimals]))
+        .then(([symbol, decimals]) => {
+          this.borrowMarketSymbol = symbol;
+          this.borrowMarketTokenDecimals = decimals;
+        });
+    },
+  },
+  computed: {
+    collateralAmount() {
+      return ((this.amount * this.borrowMarketPrice) / this.currentMarketPrice)
+        .toFixed(this.borrowMarketTokenDecimals);
+    },
+    liquidationAmount() {
+      return Number(Number(this.amount).toFixed(this.data.token.decimals));
     },
   },
   components: {
