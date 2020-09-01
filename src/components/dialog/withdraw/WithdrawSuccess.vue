@@ -8,8 +8,9 @@
         <div class="text-center">
           You have successfully withdrawn <br>
           <span class="greenish">
-            {{ data.supplyBalanceInfo }} {{ data.token.symbol }}
+            {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
           </span>
+          <span class="greenish">{{ data.token.symbol }}</span>
            from this Market
         </div>
       </v-row>
@@ -21,7 +22,7 @@
           <h3 class="greenish">earnings:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="greenish text-center">{{ earnings }}</h1>
+          <h1 class="greenish text-center">{{ earnings | formatToken(data.token.decimals) }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -34,7 +35,7 @@
           <h3>supply balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ supplied }}</h1>
+          <h1 class="text-center">{{ supplyOf | formatToken(data.token.decimals) }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -47,7 +48,7 @@
           <h3>borrow limit:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ maxBorrowAllowedAsDouble }}</h1>
+          <h1 class="text-center">{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -90,14 +91,6 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    maxBorrowAllowedAsDouble() {
-      return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
-    supplied() {
-      return (this.supplyOf / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
   },
   methods: {
     closeDialog() {
@@ -127,6 +120,10 @@ export default {
       })
       .then((supplyOf) => {
         this.supplyOf = supplyOf;
+        return this.data.market.eventualAccountEarnings(this.account);
+      })
+      .then((accountEarnings) => {
+        this.earnings = accountEarnings;
         this.maxBorrowAllowed = this.getMaxAllowed(this.liquidity, this.cash);
       });
   },

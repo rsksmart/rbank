@@ -3,11 +3,13 @@
     <template v-if="!waiting">
       <v-row class="inputBox">
         <v-col cols="10">
-          <v-text-field class="inputText" full-width single-line solo flat hide-details
-                        type="number" v-model="amount"/>
+          <v-text-field class="inputText" full-width single-line solo flat
+                        type="number" v-model="amount" required
+                        :rules="[rules.required, rules.decimals, rules.debtExists,
+                        rules.notBiggerThanDebt, rules.hasEnoughTokens]"/>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="maxAmount = true" class="pa-0" text color="#008CFF">max</v-btn>
+          <v-btn @click="maxAmount = true" class="mb-12" text color="#008CFF">max</v-btn>
         </v-col>
       </v-row>
       <div class="my-5 py-5">
@@ -35,10 +37,12 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ borrowed }}</h1>
+                <h1>{{ borrowBy | formatToken(data.token.decimals) }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowBalanceInfo">(-{{ borrowBalanceInfo }})</span>
+                <span class="text-center" v-if="borrowBalanceInfo">
+                  (-{{ borrowBalanceInfo | formatToken(data.token.decimals) }})
+                </span>
               </v-col>
             </v-row>
           </v-col>
@@ -55,10 +59,12 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ maxBorrowAllowedAsDouble }}</h1>
+                <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowLimitInfo">(+{{ borrowLimitInfo }})</span>
+                <span class="text-center" v-if="borrowLimitInfo">
+                  (+{{ borrowLimitInfo | formatToken(data.token.decimals) }})
+                </span>
               </v-col>
             </v-row>
           </v-col>
@@ -69,7 +75,7 @@
         </v-row>
       </div>
       <v-row class="my-5 d-flex justify-center">
-        <v-btn class="button" rounded color="#008CFF" @click="repay">
+        <v-btn class="button" rounded color="#008CFF" @click="repay" :disabled="!validForm">
           Repay tokens
         </v-btn>
       </v-row>
@@ -97,7 +103,8 @@ export default {
       waiting: false,
       maxAmount: false,
       price: 0,
-      amount: 0,
+      amount: '0',
+      oldBorrowBy: 0,
       borrowBy: 0,
       borrowRate: 0,
       liquidity: 0,
@@ -110,6 +117,17 @@ export default {
       accountHealth: 0,
       collateralFactor: 0,
       mantissa: 0,
+      rules: {
+        required: () => !!Number(this.amount) || 'Required.',
+        decimals: () => this.decimalPositions || `Maximum ${this
+          .data.token.decimals} decimal places for ${this.data.token.symbol}.`,
+        debtExists: () => (this.oldBorrowBy > 0 && !!this.contractAmount)
+          || 'You do not have a debt on this market.',
+        hasEnoughTokens: () => this.tokenBalance >= this.contractAmount
+          || `You do not have enough ${this.data.token.symbol}`,
+        notBiggerThanDebt: () => this.oldBorrowBy >= this.contractAmount
+          || 'You do not owe that much.',
+      },
     };
   },
   computed: {
@@ -129,7 +147,24 @@ export default {
       return this.asDouble(this.maxBorrowAllowed);
     },
     contractAmount() {
-      return this.amount * (10 ** this.data.token.decimals);
+      return Number(this.amount).toFixed(this.data.token.decimals).replace('.', '');
+    },
+    validForm() {
+      return typeof this.rules.required() !== 'string'
+        && typeof this.rules.decimals() !== 'string'
+        && typeof this.rules.debtExists() !== 'string'
+        && typeof this.rules.hasEnoughTokens() !== 'string'
+        && typeof this.rules.notBiggerThanDebt() !== 'string';
+    },
+    hasDecimals() {
+      return !!Number(this.data.token.decimals);
+    },
+    numberOfDecimals() {
+      return this.amount.includes('.') ? (this.amount.substring(this.amount.indexOf('.') + 1, this
+        .amount.length).length <= this.data.token.decimals) : true;
+    },
+    decimalPositions() {
+      return this.hasDecimals ? this.numberOfDecimals : !this.amount.includes('.');
     },
   },
   methods: {
@@ -160,12 +195,11 @@ export default {
     },
     async getValues() {
       let oldLiquidity;
-      let oldBorrowBy;
       let oldCash;
       await this.data.market.updatedBorrowBy(this.account)
         .then((borrowBy) => {
-          oldBorrowBy = borrowBy;
-          this.borrowBy = borrowBy - this.contractAmount;
+          this.oldBorrowBy = borrowBy;
+          this.borrowBy = borrowBy - Number(this.contractAmount);
           return this.$rbank.controller.getAccountLiquidity(this.account);
         })
         .then((accountLiquidity) => {
@@ -174,18 +208,18 @@ export default {
         })
         .then((cash) => {
           oldCash = cash;
-          this.cash = cash + this.contractAmount;
+          this.cash = cash + Number(this.contractAmount);
           return this.$rbank.controller.getAccountValues(this.account);
         })
         .then(({ supplyValue, borrowValue }) => {
-          const newBorrowValue = ((borrowValue - (this.contractAmount * this.price)) * (this
+          const newBorrowValue = ((borrowValue - (Number(this.contractAmount) * this.price)) * (this
             .collateralFactor + this.mantissa)) / this.mantissa;
           const newSupplyValue = supplyValue;
           this.liquidity = newBorrowValue < newSupplyValue ? newSupplyValue - newBorrowValue : 0;
-          this.maxRepayAllowed = this.getMaxRepayAllowed(oldBorrowBy, this.tokenBalance);
+          this.maxRepayAllowed = this.getMaxRepayAllowed(this.oldBorrowBy, this.tokenBalance);
           this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
-          this.borrowBalanceInfo = this.asDouble(this.contractAmount);
-          this.borrowLimitInfo = this.asDouble(this.maxBorrowAllowed - this
+          this.borrowBalanceInfo = Number(this.contractAmount);
+          this.borrowLimitInfo = Number(this.maxBorrowAllowed - this
             .getMaxBorrowAllowed(oldLiquidity, oldCash));
         });
     },
@@ -207,6 +241,7 @@ export default {
   created() {
     this.data.market.updatedBorrowBy(this.account)
       .then((borrowBy) => {
+        this.oldBorrowBy = borrowBy;
         this.borrowBy = borrowBy;
         return this.$rbank.controller.getAccountLiquidity(this.account);
       })

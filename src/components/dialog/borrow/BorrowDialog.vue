@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="data.flag" width="600">
-    <v-card class="dialog container">
+    <v-card class="dialog container" v-click-outside="close">
       <template v-if="!succeed">
         <borrow-top :data="marketTokenObject"/>
         <template v-if="!waiting">
@@ -14,7 +14,7 @@
                      text @click="currentComponent = 'RepayInput'">
                 <span>Repay</span>
               </v-btn>
-            </div>e este fin no hay partidos entonces
+            </div>
           </v-row>
         </template>
         <template>
