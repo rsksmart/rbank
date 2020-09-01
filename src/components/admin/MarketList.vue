@@ -25,7 +25,7 @@
       </v-list-item>
       <v-divider/>
       <market-item v-for="(market, idx) in markets"
-                   :key="`market-${idx}`" :market="market" @dialogClosed="reset"/>
+                   :key="`market-${idx}`" :market="market"/>
     </v-list>
   </div>
 </template>
@@ -39,11 +39,6 @@ export default {
     return {
       markets: [],
     };
-  },
-  methods: {
-    reset() {
-      console.log('Reset market item');
-    },
   },
   components: {
     MarketItem,

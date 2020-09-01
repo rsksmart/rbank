@@ -42,7 +42,7 @@
   }
 
   input {
-    margin-left: 20px;
+    margin-left: 75px;
     text-align: center;
   }
   input::-webkit-inner-spin-button {
@@ -59,6 +59,9 @@
     border-radius: 15px;
     display: flex;
     align-items: center;
+    .v-text-field fieldset, .v-text-field .v-input__control, .v-text-field .v-input__slot {
+      margin: 10px 0 24px;
+    }
   }
 
   .inputText {
@@ -88,14 +91,30 @@
       border-radius: 30px;
       background: #008CFF;
       color: #FFFFFF;
-      width: 135px;
+      width: 100%;
     }
     .notSelected {
       text-transform: none;
       border-radius: 30px;
       background: #FFFFFF;
       color: #000000;
-      width: 135px;
+      width: 100%;
+    }
+  }
+  .loader {
+    h1 {
+      font-weight: 500;
+      font-size: 25px;
+      line-height: 30px;
+      text-align: center;
+      color: #000000;
+    }
+    p {
+      font-weight: normal;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      color: #000000;
     }
   }
 }

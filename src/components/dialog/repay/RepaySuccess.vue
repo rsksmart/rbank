@@ -8,8 +8,9 @@
         <div class="text-center">
           You have successfully repayed <br>
           <span class="greenish">
-            {{ data.borrowBalanceInfo }} {{ data.token.symbol }}
+            {{ data.borrowBalanceInfo | formatToken(data.token.decimals) }}
           </span>
+          <span class="greenish">{{ data.token.symbol }}</span>
           to this Market.
         </div>
       </v-row>
@@ -32,7 +33,7 @@
           <h3>borrow balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ borrowed }}</h1>
+          <h1 class="text-center">{{ borrowBy | formatToken(data.token.decimals) }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -45,7 +46,7 @@
           <h3>borrow limit:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ maxBorrowAllowedAsDouble }}</h1>
+          <h1 class="text-center">{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -91,18 +92,6 @@ export default {
     }),
     healthFactor() {
       return this.accountHealth >= 1 ? 100 : (this.accountHealth * 100).toFixed(2);
-    },
-    balanceAsDouble() {
-      return (this.tokenBalance / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
-    maxBorrowAllowedAsDouble() {
-      return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
-    borrowed() {
-      return (this.borrowBy / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
     },
   },
   methods: {
