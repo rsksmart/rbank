@@ -34,7 +34,8 @@
         <h2>earnings:</h2>
       </v-row>
       <v-row class="item greenish d-flex justify-start">
-        {{ earnings }}<span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
+        {{ earnings | formatToken(data.token.decimals) }}
+        <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
       </v-row>
     </v-col>
   </v-row>

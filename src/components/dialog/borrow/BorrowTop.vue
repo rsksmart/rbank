@@ -26,7 +26,7 @@
         <h2>in your wallet:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ balanceAsDouble }}<span class="ml-2 itemInfo">usd</span>
+        {{ tokenBalance | formatToken(data.token.decimals) }}<span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
     <v-col cols="2">
@@ -63,10 +63,6 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    balanceAsDouble() {
-      return (this.tokenBalance / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
     apr() {
       return this.borrowRate.toFixed(2);
     },

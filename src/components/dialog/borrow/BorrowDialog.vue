@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="data.flag" width="600">
-    <v-card class="dialog container">
+    <v-card class="dialog container" v-click-outside="close">
       <template v-if="!succeed">
         <borrow-top :data="marketTokenObject"/>
         <template v-if="!waiting">

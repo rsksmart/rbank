@@ -34,7 +34,8 @@
         <h2>earnings:</h2>
       </v-row>
       <v-row class="item greenish d-flex justify-start">
-        {{ earnings }}<span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
+        {{ earnings | formatToken(tokenDecimals) }}
+        <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
       </v-row>
     </v-col>
   </v-row>
@@ -55,15 +56,12 @@ export default {
       price: 0,
       borrowRate: 0,
       tokenAddress: 0,
+      tokenDecimals: 0,
     };
   },
   computed: {
     apr() {
       return this.borrowRate.toFixed(2);
-    },
-    balanceAsDouble() {
-      return (this.tokenBalance / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
     },
     rskExplorerUrl() {
       return `https://explorer.testnet.rsk.co/address/${this.tokenAddress}`;
@@ -73,6 +71,10 @@ export default {
     this.data.market.eventualToken
       .then((tok) => {
         this.tokenAddress = tok.address;
+        return tok.eventualDecimals;
+      })
+      .then((tokDecimals) => {
+        this.tokenDecimals = tokDecimals;
         return this.data.market.eventualBorrowRate;
       })
       .then((borrowRate) => {

@@ -8,8 +8,9 @@
         <div class="text-center">
           You have successfully supplied <br> this Market with
           <span class="greenish">
-                {{ data.supplyBalanceInfo }} {{ data.token.symbol }}
-              </span>
+            {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
+          </span>
+          <span class="greenish">{{ data.token.symbol }}</span>
         </div>
       </v-row>
     </div>
@@ -22,10 +23,12 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ balanceAsDouble }}</h1>
+              <h1>{{ tokenBalance | formatToken(data.token.decimals) }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">(-{{ data.supplyBalanceInfo }})</span>
+              <span v-if="data.supplyBalanceInfo">
+                (-{{ data.supplyBalanceInfo  | formatToken(data.token.decimals) }})
+              </span>
             </v-col>
           </v-row>
         </v-col>
@@ -42,10 +45,12 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ supplied }}</h1>
+              <h1>{{ supplyOf | formatToken(data.token.decimals) }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">(+{{ data.supplyBalanceInfo }})</span>
+              <span v-if="data.supplyBalanceInfo">
+                (+{{ data.supplyBalanceInfo | formatToken(data.token.decimals)  }})
+              </span>
             </v-col>
           </v-row>
         </v-col>
@@ -62,10 +67,12 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ maxBorrowAllowedAsDouble }}</h1>
+              <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.borrowLimitInfo">(+{{ data.borrowLimitInfo }})</span>
+              <span v-if="data.borrowLimitInfo">
+                (+{{ data.borrowLimitInfo | formatToken(data.token.decimals) }})
+              </span>
             </v-col>
           </v-row>
         </v-col>
@@ -110,18 +117,6 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
-    balanceAsDouble() {
-      return (this.tokenBalance / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
-    maxBorrowAllowedAsDouble() {
-      return (this.maxBorrowAllowed / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
-    supplied() {
-      return (this.supplyOf / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
-    },
   },
   methods: {
     closeDialog() {
