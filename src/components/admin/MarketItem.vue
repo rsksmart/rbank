@@ -28,13 +28,13 @@
         </v-col>
         <v-col cols="2">
           <v-list-item-subtitle class="item">
-            {{ totalSupplyAsDouble }}
+            {{ totalSupply | formatToken(token.decimals) }}
             <span class="ml-2 itemInfo">{{ token.symbol }}</span>
           </v-list-item-subtitle>
         </v-col>
         <v-col cols="2">
           <v-list-item-subtitle class="item">
-            {{ totalBorrowsAsDouble }}
+            {{ totalBorrow | formatToken(token.decimals) }}
             <span class="ml-2 itemInfo">{{ token.symbol }}</span>
           </v-list-item-subtitle>
         </v-col>
@@ -42,7 +42,7 @@
           <v-row class="ma-0">
             <v-col cols="10" class="pa-0 d-flex align-center">
               <v-list-item-subtitle class="item">
-                {{ cashAsDouble }}
+                {{ cash | formatToken(token.decimals) }}
                 <span class="ml-2 itemInfo">{{ token.symbol }}</span>
               </v-list-item-subtitle>
             </v-col>
@@ -61,7 +61,7 @@
     </v-list-item>
     <v-divider/>
     <template v-if="dialog">
-      <market-dialog :data="dataObject"/>
+      <market-dialog :data="dataObject" @closed="reset"/>
     </template>
   </div>
 </template>
@@ -95,18 +95,6 @@ export default {
   computed: {
     apr() {
       return this.borrowRate.toFixed(2);
-    },
-    cashAsDouble() {
-      return (this.cash / (10 ** this.token.decimals))
-        .toFixed(this.token.decimals);
-    },
-    totalSupplyAsDouble() {
-      return (this.totalSupply / (10 ** this.token.decimals))
-        .toFixed(this.token.decimals);
-    },
-    totalBorrowsAsDouble() {
-      return (this.totalBorrow / (10 ** this.token.decimals))
-        .toFixed(this.token.decimals);
     },
     dataObject() {
       return {

@@ -62,7 +62,7 @@ export default {
       ],
       chartOptions: {
         width: 750,
-        height: 280,
+        height: 320,
         legend: {
           position: 'bottom',
           alignment: 'end',

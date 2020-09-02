@@ -18,8 +18,12 @@ button {
   font-style: normal;
 }
 
+.v-dialog {
+  border-radius: 20px;
+}
+
 .button {
-  text-transform: none;
+  text-transform: capitalize;
   margin: 0 40px 0 40px;
   font-weight: normal;
   font-size: 15px;
