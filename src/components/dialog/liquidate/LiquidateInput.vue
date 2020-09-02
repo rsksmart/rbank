@@ -24,7 +24,9 @@
               <h2>Collateral</h2>
             </v-row>
             <v-row class="d-flex justify-center">
-              {{collateralAmount}}
+              <h3>
+                {{maxToLiquidate}}
+              </h3>
               <span>
                 {{data.token.symbol}}
               </span>
@@ -33,12 +35,12 @@
               <h2>Equivalent Collateral</h2>
             </v-row>
             <v-row class="d-flex justify-center">
-              <h2>145 MTN</h2>
+              <h2>?? {{data.token.symbol}}</h2>
             </v-row>
           </v-col>
           <v-divider vertical inset/>
           <v-col cols="7" class="input-col">
-            <v-row class="inputBox px-3">
+            <v-row class="inputBox">
               <v-col cols="10">
                 <v-text-field class="inputText" full-width single-line solo flat hide-details
                               type="number" v-model="amount"/>
@@ -133,6 +135,8 @@ export default {
   },
   methods: {
     liquidate() {
+      this.waiting = true;
+      this.$emit('wait');
       const market = new this.$rbank.Market(this.borrowMarketAddress);
       console.log(`Liquidation account: ${this.liquidationAccount}`);
       console.log(`Amount: ${this.collateralAmount * (10 ** this.borrowMarketTokenDecimals)}`);
@@ -144,8 +148,14 @@ export default {
         this.data.market.address,
         this.account,
       )
-        .then((tx) => {
-          console.log(tx);
+        .then((res) => {
+          this.waiting = false;
+          this.$emit('succeed', {
+            hash: res.transactionHash,
+            borrowLimitInfo: this.borrowLimitInfo,
+            supplyBalanceInfo: this.supplyBalanceInfo,
+          });
+          console.log(res);
         });
     },
     setLiquidationAccount(accountObject) {
@@ -174,7 +184,7 @@ export default {
   },
   computed: {
     collateralAmount() {
-      return ((this.amount * this.borrowMarketPrice) / this.currentMarketPrice)
+      return ((this.amount * this.currentMarketPrice) / this.borrowMarketPrice)
         .toFixed(this.borrowMarketTokenDecimals);
     },
     liquidationAmount() {
@@ -184,9 +194,6 @@ export default {
   components: {
     Loader,
     LiquidateList,
-  },
-  created() {
-    this.currentComponent = 'LiquidateList';
   },
 };
 </script>

@@ -96,6 +96,8 @@ export default {
       this.supplyBalanceInfo = succeedObject.supplyBalanceInfo;
       this.succeed = true;
       this.waiting = false;
+      this.liquidateValue = succeedObject.liquidateValue;
+      this.costValue = succeedObject.costValue;
     },
     close() {
       this.reset();
@@ -117,7 +119,7 @@ export default {
       if (this.currentComponent === 'SupplyInput') {
         this.successComponent = 'SupplySuccess';
         this.topComponent = 'SupplyTop';
-      } else {
+      } else if (this.currentComponent === 'WithdrawInput') {
         this.successComponent = 'WithdrawSuccess';
         this.topComponent = 'WithdrawTop';
       }

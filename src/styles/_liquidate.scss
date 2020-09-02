@@ -86,6 +86,21 @@
   .inputBox{
     margin: 0;
     height: 52px;
+    .v-text-field fieldset, .v-text-field .v-input__control, .v-text-field .v-input__slot {
+      margin: 0;
+    }
+  }
+  .button span{
+    text-transform: none;
+    margin: 0 40px 0 40px;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    color: white !important;
+    border-radius: 15px;
+    width: 300px;
+    letter-spacing: normal;
   }
   .inputText {
     font-weight: 500;
@@ -112,8 +127,5 @@
   }
   .input-col{
    padding: 3px !important;
-  }
-  .button span{
-    color: #FFFFFF;
   }
 }
