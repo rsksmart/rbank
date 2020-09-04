@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="data.flag" width="800">
-    <v-card class="dialog container">
+  <v-dialog v-model="flag" width="800">
+    <v-card class="dialog container" v-click-outside="onClickOutside">
       <div class="container">
         <v-row class="ma-0 d-flex align-center">
           <v-col cols="1" class="d-flex justify-center">
@@ -43,7 +43,7 @@
           </v-col>
         </v-row>
         <v-row class="marketDialog ma-0 d-flex justify-end">
-          <v-btn class="button" color="#008CFF" @click="modifyPrice">
+          <v-btn class="button" color="#008CFF" @click="priceFlag = true">
             Modify market price
           </v-btn>
         </v-row>
@@ -93,7 +93,7 @@
       <transactions-graph/>
     </v-card>
     <template v-if="priceFlag">
-      <market-price-modify :data="dataObject" @closed="reset"/>
+      <market-price-dialog :data="dataObject" @closed="reset"/>
     </template>
   </v-dialog>
 </template>
@@ -101,7 +101,7 @@
 <script>
 import { mapState } from 'vuex';
 import TransactionsGraph from '@/components/admin/TransactionsGraph.vue';
-import MarketPriceModify from '@/components/dialog/market/MarketPriceModify.vue';
+import MarketPriceDialog from '@/components/dialog/market/MarketPriceDialog.vue';
 
 export default {
   name: 'MarketDialog',
@@ -113,8 +113,7 @@ export default {
   },
   data() {
     return {
-      succeed: false,
-      waiting: false,
+      flag: this.data.flag,
       borrowRate: 0,
       baseBorrowRate: 0,
       price: 0,
@@ -148,9 +147,11 @@ export default {
     },
   },
   methods: {
-    modifyPrice() {
-      console.log('Modify Price');
-      this.priceFlag = true;
+    onClickOutside() {
+      if (!this.priceFlag) {
+        this.flag = false;
+        this.$emit('closed');
+      }
     },
     reset() {
       this.priceFlag = false;
@@ -183,7 +184,7 @@ export default {
   },
   components: {
     TransactionsGraph,
-    MarketPriceModify,
+    MarketPriceDialog,
   },
   created() {
     this.data.market.eventualToken

@@ -21,7 +21,7 @@
         <market-list/>
       </v-card>
       <template v-if="dialog">
-        <market-create-dialog :data="dataObject" @closeDialog="dialog = false"/>
+        <market-create-dialog :data="dataObject" @closed="dialog = false"/>
       </template>
     </div>
   </div>

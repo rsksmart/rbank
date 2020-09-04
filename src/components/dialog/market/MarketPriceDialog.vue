@@ -50,7 +50,7 @@ import Loader from '@/components/common/Loader.vue';
 import MarketPriceSuccess from '@/components/dialog/market/MarketPriceSuccess.vue';
 
 export default {
-  name: 'MarketPriceModify',
+  name: 'MarketPriceDialog',
   props: {
     data: {
       type: Object,

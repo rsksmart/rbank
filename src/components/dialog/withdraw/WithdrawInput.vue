@@ -6,7 +6,7 @@
           <v-text-field class="inputText" full-width single-line solo flat
                         type="number" v-model="amount" required
                         :rules="[rules.required, rules.decimals,
-                        rules.marketSupply, rules.userSupply]"/>
+                        rules.marketSupply, rules.userSupply, rules.userDebts]"/>
         </v-col>
         <v-col cols="2">
           <v-btn @click="maxAmount = true" class="mb-12" text color="#008CFF">max</v-btn>
@@ -119,6 +119,9 @@ export default {
       mantissa: 0,
       oldCash: 0,
       oldSupplyOf: 0,
+      supplyValue: 0,
+      borrowValue: 0,
+      debt: 0,
       rules: {
         required: () => !!Number(this.amount) || 'Required.',
         decimals: () => this.decimalPositions || `Maximum ${this.data.token
@@ -127,6 +130,8 @@ export default {
           || 'Market does not have enough funds',
         userSupply: () => this.oldSupplyOf >= Number(this.contractAmount)
           || 'You do not have enough funds on this market',
+        userDebts: () => (this.oldSupplyOf - this.debt) >= Number(this.contractAmount)
+          || 'You can not withdraw that much, because is compromised as collateral in a debt',
       },
     };
   },
@@ -144,6 +149,7 @@ export default {
       return typeof this.rules.required() !== 'string'
         && typeof this.rules.decimals() !== 'string'
         && typeof this.rules.marketSupply() !== 'string'
+        && typeof this.rules.userDebts() !== 'string'
         && typeof this.rules.userSupply() !== 'string';
     },
     hasDecimals() {
@@ -176,7 +182,7 @@ export default {
         .toFixed(this.data.token.decimals);
     },
     getMaxWithdrawAllowed(supplyOf, cash) {
-      const allowed = cash > supplyOf ? supplyOf : cash;
+      const allowed = cash > (supplyOf - this.debt) ? (supplyOf - this.debt) : cash;
       return this.asDouble(allowed);
     },
     getMaxBorrowAllowed(liquidity, cash) {
@@ -233,6 +239,11 @@ export default {
       .then((supplyOf) => {
         this.oldSupplyOf = supplyOf;
         this.supplyOf = supplyOf;
+        return this.$rbank.controller.getAccountValues(this.account);
+      })
+      .then(({ supplyValue, borrowValue }) => {
+        this.supplyValue = supplyValue;
+        this.borrowValue = borrowValue;
         return this.data.market.eventualCash;
       })
       .then((cash) => {
@@ -254,6 +265,8 @@ export default {
       })
       .then((collateralFactor) => {
         this.collateralFactor = collateralFactor * this.mantissa;
+        this.debt = ((this.borrowValue * (this.mantissa + this.collateralFactor)) / this
+          .mantissa) / this.price;
         this.maxWithdrawAllowed = this.getMaxWithdrawAllowed(this.supplyOf, this.cash);
         this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
       });

@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="data.flag" width="600">
-    <v-card class="dialog container">
+  <v-dialog v-model="flag" width="600" :persistent="waiting || succeed">
+    <v-card class="dialog container" v-click-outside="onClickOutside">
       <template v-if="!succeed">
         <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
@@ -49,6 +49,7 @@ export default {
   },
   data() {
     return {
+      flag: this.data.flag,
       currentComponent: 'SupplyInput',
       successComponent: 'SupplySuccess',
       topComponent: 'SupplyTop',
@@ -78,6 +79,7 @@ export default {
   },
   methods: {
     reset() {
+      this.flag = false;
       this.succeed = false;
       this.waiting = false;
       this.supplyBalanceInfo = null;
@@ -92,9 +94,15 @@ export default {
       this.succeed = true;
       this.waiting = false;
     },
+    onClickOutside() {
+      if (!this.waiting && !this.succeed) {
+        this.reset();
+        this.$emit('closed');
+      }
+    },
     close() {
       this.reset();
-      this.$emit('closeDialog');
+      this.$emit('closed');
     },
   },
   components: {
