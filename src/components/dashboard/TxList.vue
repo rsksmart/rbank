@@ -75,6 +75,7 @@
 
 <script>
 import TxItem from '@/components/dashboard/TxItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'TxList',
@@ -87,59 +88,72 @@ export default {
       transactions: [],
     };
   },
+  computed: {
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
+  },
   methods: {
     pushMarketEvents(market, symbol, price, borrowRate) {
-      market.events.supply()
-        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
-          this.transactions.push(
-            {
-              market: symbol,
-              price,
-              apr: borrowRate,
-              transactionHash,
-              transactionAmount: Number(amount),
-              operation: event,
-            },
-          );
+      market.getPastEvents('Supply', 0, { user: this.account })
+        .then((events) => {
+          events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
+            this.transactions.push(
+              {
+                market: symbol,
+                price,
+                apr: borrowRate,
+                transactionHash,
+                transactionAmount: Number(amount),
+                operation: event,
+              },
+            );
+          });
         });
-      market.events.borrow()
-        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
-          this.transactions.push(
-            {
-              market: symbol,
-              price,
-              apr: borrowRate,
-              transactionHash,
-              transactionAmount: Number(amount),
-              operation: event,
-            },
-          );
+      market.getPastEvents('Borrow', 0, { user: this.account })
+        .then((events) => {
+          events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
+            this.transactions.push(
+              {
+                market: symbol,
+                price,
+                apr: borrowRate,
+                transactionHash,
+                transactionAmount: Number(amount),
+                operation: event,
+              },
+            );
+          });
         });
-      market.events.redeem()
-        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
-          this.transactions.push(
-            {
-              market: symbol,
-              price,
-              apr: borrowRate,
-              transactionHash,
-              transactionAmount: Number(amount),
-              operation: event,
-            },
-          );
+      market.getPastEvents('Redeem', 0, { user: this.account })
+        .then((events) => {
+          events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
+            this.transactions.push(
+              {
+                market: symbol,
+                price,
+                apr: borrowRate,
+                transactionHash,
+                transactionAmount: Number(amount),
+                operation: event,
+              },
+            );
+          });
         });
-      market.events.payBorrow()
-        .on('data', ({ event, transactionHash, returnValues: { amount } }) => {
-          this.transactions.push(
-            {
-              market: symbol,
-              price,
-              apr: borrowRate,
-              transactionHash,
-              transactionAmount: Number(amount),
-              operation: event,
-            },
-          );
+      market.getPastEvents('PayBorrow', 0, { user: this.account })
+        .then((events) => {
+          events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
+            this.transactions.push(
+              {
+                market: symbol,
+                price,
+                apr: borrowRate,
+                transactionHash,
+                transactionAmount: Number(amount),
+                operation: event,
+              },
+            );
+          });
         });
     },
     getTransactions() {

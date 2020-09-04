@@ -37,6 +37,10 @@
     padding: 0 !important;
   }
 
+  div.col.input-col{
+    padding: 20px !important;
+  }
+
   input {
     margin-left: 75px;
     text-align: center;
@@ -74,7 +78,29 @@
   .successBox {
     margin: 50px 0 50px 0;
   }
-
+  .toggle-triple {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    border: 1px solid #BDBDBD;
+    width: 410px;
+    .selected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #008CFF;
+      color: #FFFFFF;
+      width: 33.33%;
+    }
+    .notSelected {
+      text-transform: none;
+      border-radius: 30px;
+      background: #FFFFFF;
+      color: #000000;
+      width: 33.33%;
+    }
+  }
   .loader {
     h1 {
       font-weight: 500;

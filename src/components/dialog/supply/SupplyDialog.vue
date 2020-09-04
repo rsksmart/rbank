@@ -4,8 +4,12 @@
       <template v-if="!succeed">
         <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
-          <v-row class="my-5 d-flex justify-center">
-            <div class="toggle">
+          <v-row class="d-flex justify-center">
+            <div class="toggle-triple my-5">
+              <v-btn :class="[ currentComponent === 'LiquidateInput' ? 'selected' : 'notSelected']"
+                     text @click="currentComponent = 'LiquidateInput'">
+                <span>Liquidate</span>
+              </v-btn>
               <v-btn :class="[ currentComponent === 'SupplyInput' ? 'selected' : 'notSelected']"
                      text @click="currentComponent = 'SupplyInput'">
                 <span>Supply</span>
@@ -38,6 +42,8 @@ import SupplyInput from '@/components/dialog/supply/SupplyInput.vue';
 import WithdrawInput from '@/components/dialog/withdraw/WithdrawInput.vue';
 import WithdrawTop from '@/components/dialog/withdraw/WithdrawTop.vue';
 import WithdrawSuccess from '@/components/dialog/withdraw/WithdrawSuccess.vue';
+import LiquidateInput from '@/components/dialog/liquidate/LiquidateInput.vue';
+import LiquidateSuccess from '@/components/dialog/liquidate/LiquidateSuccess.vue';
 
 export default {
   name: 'SupplyDialog',
@@ -91,6 +97,8 @@ export default {
       this.supplyBalanceInfo = succeedObject.supplyBalanceInfo;
       this.succeed = true;
       this.waiting = false;
+      this.liquidateValue = succeedObject.liquidateValue;
+      this.costValue = succeedObject.costValue;
     },
     close() {
       this.reset();
@@ -105,15 +113,20 @@ export default {
     WithdrawInput,
     WithdrawTop,
     WithdrawSuccess,
+    LiquidateInput,
+    LiquidateSuccess,
   },
   watch: {
     currentComponent() {
       if (this.currentComponent === 'SupplyInput') {
         this.successComponent = 'SupplySuccess';
         this.topComponent = 'SupplyTop';
-      } else {
+      } else if (this.currentComponent === 'WithdrawInput') {
         this.successComponent = 'WithdrawSuccess';
         this.topComponent = 'WithdrawTop';
+      } else {
+        this.successComponent = 'LiquidateSuccess';
+        this.topComponent = 'SupplyTop';
       }
     },
   },
