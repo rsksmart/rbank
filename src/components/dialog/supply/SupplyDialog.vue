@@ -43,6 +43,7 @@ import WithdrawInput from '@/components/dialog/withdraw/WithdrawInput.vue';
 import WithdrawTop from '@/components/dialog/withdraw/WithdrawTop.vue';
 import WithdrawSuccess from '@/components/dialog/withdraw/WithdrawSuccess.vue';
 import LiquidateInput from '@/components/dialog/liquidate/LiquidateInput.vue';
+import LiquidateSuccess from '@/components/dialog/liquidate/LiquidateSuccess.vue';
 
 export default {
   name: 'SupplyDialog',
@@ -113,6 +114,7 @@ export default {
     WithdrawTop,
     WithdrawSuccess,
     LiquidateInput,
+    LiquidateSuccess,
   },
   watch: {
     currentComponent() {
@@ -122,6 +124,9 @@ export default {
       } else if (this.currentComponent === 'WithdrawInput') {
         this.successComponent = 'WithdrawSuccess';
         this.topComponent = 'WithdrawTop';
+      } else {
+        this.successComponent = 'LiquidateSuccess';
+        this.topComponent = 'SupplyTop';
       }
     },
   },

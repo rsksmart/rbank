@@ -116,7 +116,7 @@
                       :size="150"
                       :width="25"
                       :value="healthFactor"
-                      color="#6FCF97"
+                      :color="healthColor"
                     >
                       {{accountHealth}}%
                     </v-progress-circular>
@@ -179,9 +179,14 @@ export default {
     accountHealth() {
       return this.healthFactor.toFixed(2);
     },
+    healthColor() {
+      if (this.risk === 'high') return '#EB5757';
+      if (this.risk === 'medium') return '#F2994A';
+      return '#24BD6B';
+    },
     risk() {
-      if (this.healthFactor >= 20) {
-        if (this.healthFactor >= 50) {
+      if (this.healthFactor >= 30) {
+        if (this.healthFactor >= 60) {
           return 'low';
         }
         return 'medium';
@@ -198,8 +203,9 @@ export default {
           this.totalBalance = this.totalSupplied - this.totalBorrowed;
           return this.$rbank.controller.getAccountHealth(this.account);
         })
-        // eslint-disable-next-line no-return-assign
-        .then((health) => this.healthFactor = health > 1 ? 100 : health * 100);
+        .then((health) => {
+          this.healthFactor = health > 1 ? 100 : health * 100;
+        });
     },
   },
   created() {

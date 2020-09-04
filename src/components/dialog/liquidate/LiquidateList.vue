@@ -18,7 +18,7 @@
       <v-list class="mx-6" v-for="(borrow, idx) in borrows"
               :key="`liquidate-item-${idx}`">
         <liquidate-item :borrower="borrow.borrower"
-                        :amount="borrow.maxToLiquidate"
+                        :maxToLiquidate="borrow.maxToLiquidate"
                         :debt="borrow.debt"
                         :borrowMarketAddress="borrow.borrowMarketAddress"
                         :collateral="data"

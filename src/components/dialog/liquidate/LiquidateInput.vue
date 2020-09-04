@@ -31,19 +31,15 @@
                 {{data.token.symbol}}
               </span>
             </v-row>
-            <v-row class="d-flex justify-center">
-              <h2>Equivalent Collateral</h2>
-            </v-row>
-            <v-row class="d-flex justify-center">
-              <h2>?? {{data.token.symbol}}</h2>
-            </v-row>
           </v-col>
           <v-divider vertical inset/>
           <v-col cols="7" class="input-col">
             <v-row class="inputBox">
               <v-col cols="10">
-                <v-text-field class="inputText" full-width single-line solo flat hide-details
-                              type="number" v-model="amount"/>
+                <v-text-field class="inputText" full-width single-line solo flat
+                              type="number" v-model="amount" required
+                              :rules="[rules.required, rules.decimals,
+                              rules.funds, rules.maxAvailable]"/>
               </v-col>
               <v-col cols="2">
                 <v-btn @click="maxAmount = true" class="pa-0" text color="#008CFF">max</v-btn>
@@ -63,7 +59,7 @@
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
-                  0 USD
+                 {{usdAmount}} USD
                 </span>
               </v-col>
             </v-row>
@@ -81,7 +77,7 @@
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
-                  0 USD
+                  {{usdAmount}} USD
                 </span>
               </v-col>
             </v-row>
@@ -107,6 +103,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import LiquidateList from '@/components/dialog/liquidate/LiquidateList.vue';
 import Loader from '@/components/common/Loader.vue';
 
@@ -130,7 +127,16 @@ export default {
       borrowMarketTokenDecimals: 0,
       maxToLiquidate: 0,
       borrowMarketSymbol: '',
-      amount: 0,
+      amount: '0',
+      funds: 0,
+      rules: {
+        required: () => !!Number(this.amount) || 'Required.',
+        decimals: () => this.decimalPositions || `Maximum ${this.data.token
+          .decimals} decimal places for ${this.data.token.symbol}.`,
+        funds: () => this.funds >= this.amount || 'Not enough funds',
+        maxAvailable: () => this.amount <= this.maxToLiquidate
+          || 'There is not enough collateral to liquidate',
+      },
     };
   },
   methods: {
@@ -138,10 +144,6 @@ export default {
       this.waiting = true;
       this.$emit('wait');
       const market = new this.$rbank.Market(this.borrowMarketAddress);
-      console.log(`Liquidation account: ${this.liquidationAccount}`);
-      console.log(`Amount: ${this.collateralAmount * (10 ** this.borrowMarketTokenDecimals)}`);
-      console.log(`Market: ${this.liquidationAccount}`);
-      console.log(`Liquidator account: ${this.account}`);
       market.liquidateBorrow(
         this.liquidationAccount,
         this.collateralAmount * (10 ** this.borrowMarketTokenDecimals),
@@ -153,7 +155,7 @@ export default {
           this.$emit('succeed', {
             hash: res.transactionHash,
             borrowLimitInfo: this.borrowLimitInfo,
-            supplyBalanceInfo: this.supplyBalanceInfo,
+            liquidationAmount: this.collateralAmount,
           });
           console.log(res);
         });
@@ -175,14 +177,36 @@ export default {
     },
     getCollateralToken() {
       new this.$rbank.Market(this.borrowMarketAddress).eventualToken
-        .then((token) => Promise.all([token.eventualSymbol, token.eventualDecimals]))
-        .then(([symbol, decimals]) => {
+        .then((token) => Promise.all([token.eventualSymbol, token.eventualDecimals,
+          token.eventualBalanceOf(this.account)]))
+        .then(([symbol, decimals, balance]) => {
           this.borrowMarketSymbol = symbol;
           this.borrowMarketTokenDecimals = decimals;
+          this.funds = balance;
         });
     },
   },
   computed: {
+    ...mapState({
+      account: (state) => state.Session.account,
+    }),
+    usdAmount() {
+      return (this.amount * this.currentMarketPrice);
+    },
+    hasDecimals() {
+      return !!Number(this.data.token.decimals);
+    },
+    numberOfDecimals() {
+      return this.amount.includes('.') ? (this.amount.substring(this.amount.indexOf('.') + 1, this
+        .amount.length).length <= this.data.token.decimals) : true;
+    },
+    decimalPositions() {
+      return this.hasDecimals ? this.numberOfDecimals : !this.amount.includes('.');
+    },
+    contractAmount() {
+      return this.borrowMarketTokenDecimals
+        ? this.amount / 10 ** this.borrowMarketTokenDecimals : this.amount;
+    },
     collateralAmount() {
       return ((this.amount * this.currentMarketPrice) / this.borrowMarketPrice)
         .toFixed(this.borrowMarketTokenDecimals);
