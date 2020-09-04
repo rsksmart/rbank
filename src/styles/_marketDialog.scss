@@ -44,6 +44,7 @@
   input {
     text-align: center;
     padding: 0 !important;
+    margin: 0 !important;
     height: 30px;
   }
   input::-webkit-inner-spin-button {
@@ -61,6 +62,25 @@
 
   .v-text-field.v-text-field--enclosed .v-text-field__details {
     margin: 0 !important;
+  }
+
+  .button {
+    margin: 0;
+    width: 200px;
+  }
+
+  .bigger-data-input {
+    border: 1px solid #BDBDBD;
+    box-sizing: border-box;
+    border-radius: 20px;
+    height: 65px;
+    margin: 10px 0 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 30px;
+    display: flex;
+    align-items: flex-end;
   }
 
   .dataInput {

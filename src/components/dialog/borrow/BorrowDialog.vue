@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="data.flag" width="600">
-    <v-card class="dialog container" v-click-outside="close">
+  <v-dialog v-model="flag" width="600" :persistent="waiting || succeed">
+    <v-card class="dialog container" v-click-outside="onClickOutside">
       <template v-if="!succeed">
         <borrow-top :data="marketTokenObject"/>
         <template v-if="!waiting">
@@ -48,6 +48,7 @@ export default {
   },
   data() {
     return {
+      flag: this.data.flag,
       currentComponent: 'BorrowInput',
       successComponent: 'BorrowSuccess',
       succeed: false,
@@ -74,6 +75,7 @@ export default {
   },
   methods: {
     reset() {
+      this.flag = false;
       this.currentComponent = 'BorrowInput';
       this.succeed = false;
       this.waiting = false;
@@ -87,9 +89,15 @@ export default {
       this.succeed = true;
       this.waiting = false;
     },
+    onClickOutside() {
+      if (!this.waiting && !this.succeed) {
+        this.reset();
+        this.$emit('closed');
+      }
+    },
     close() {
       this.reset();
-      this.$emit('closeDialog');
+      this.$emit('closed');
     },
   },
   components: {

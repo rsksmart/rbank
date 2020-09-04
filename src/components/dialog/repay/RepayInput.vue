@@ -81,7 +81,7 @@
       </v-row>
     </template>
     <template v-else>
-      <loader/>
+      <loader class="my-15"/>
     </template>
   </div>
 </template>

@@ -1,13 +1,13 @@
 <template>
-  <v-dialog v-model="data.flag" width="650">
-    <v-card class="marketDialog container">
-      <div v-show="!waiting">
+  <v-dialog v-model="flag" width="650" :persistent="waiting || succeed">
+    <v-card class="container" v-click-outside="onClickOutside">
+      <div v-show="!waiting" class="marketDialog">
         <market-create-top :success="succeed"/>
         <component :is="currentComponent" :marketAddress="marketAddress"
                    @created="actionSucceed" @wait="waiting = true" @close="closeDialog"/>
       </div>
-      <div v-show="waiting">
-        <loader v-show="waiting"/>
+      <div class="dialog" v-show="waiting">
+        <loader class="my-15" v-show="waiting"/>
       </div>
     </v-card>
   </v-dialog>
@@ -29,6 +29,7 @@ export default {
   },
   data() {
     return {
+      flag: this.data.flag,
       succeed: false,
       waiting: false,
       marketAddress: null,
@@ -42,8 +43,15 @@ export default {
       this.currentComponent = 'MarketCreateSuccess';
       this.succeed = true;
     },
+    onClickOutside() {
+      if (!this.waiting && !this.succeed) {
+        this.flag = false;
+        this.$emit('closed');
+      }
+    },
     closeDialog() {
-      this.$emit('closeDialog');
+      this.flag = false;
+      this.$emit('closed');
     },
   },
   components: {

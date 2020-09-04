@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="data.flag" width="800">
-    <v-card class="dialog container">
+  <v-dialog v-model="flag" width="800">
+    <v-card class="dialog container" v-click-outside="onClickOutside">
       <div class="container">
         <v-row class="ma-0 d-flex align-center">
           <v-col cols="1" class="d-flex justify-center">
@@ -42,6 +42,11 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-row class="marketDialog ma-0 d-flex justify-end">
+          <v-btn class="button" color="#008CFF" @click="priceFlag = true">
+            Modify market price
+          </v-btn>
+        </v-row>
       </div>
       <div class="container">
         <v-row class="ma-2 d-flex align-center justify-space-between">
@@ -49,7 +54,7 @@
             <h3>total supplied:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ updatedTotalSupply }}</span>
+            <span>{{ updatedTotalSupply | formatToken(data.token.decimals) }}</span>
           </v-col>
           <v-col cols="1">
             <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
@@ -59,7 +64,7 @@
             <h3>current cash:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ cash }}</span>
+            <span>{{ cash | formatToken(data.token.decimals) }}</span>
           </v-col>
           <v-col cols="1" class="d-flex justify-end">
             <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -70,7 +75,7 @@
             <h3>total borrow:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ updatedTotalBorrow }}</span>
+            <span>{{ updatedTotalBorrow | formatToken(data.token.decimals) }}</span>
           </v-col>
           <v-col cols="1">
             <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
@@ -87,12 +92,16 @@
       </div>
       <transactions-graph/>
     </v-card>
+    <template v-if="priceFlag">
+      <market-price-dialog :data="dataObject" @closed="reset"/>
+    </template>
   </v-dialog>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import TransactionsGraph from '@/components/admin/TransactionsGraph.vue';
+import MarketPriceDialog from '@/components/dialog/market/MarketPriceDialog.vue';
 
 export default {
   name: 'MarketDialog',
@@ -104,8 +113,7 @@ export default {
   },
   data() {
     return {
-      succeed: false,
-      waiting: false,
+      flag: this.data.flag,
       borrowRate: 0,
       baseBorrowRate: 0,
       price: 0,
@@ -114,6 +122,7 @@ export default {
       cash: 0,
       growth: 0,
       tokenAddress: 0,
+      priceFlag: false,
     };
   },
   computed: {
@@ -129,45 +138,59 @@ export default {
     rskExplorerUrl() {
       return `https://explorer.testnet.rsk.co/address/${this.tokenAddress}`;
     },
+    dataObject() {
+      return {
+        flag: this.priceFlag,
+        market: this.data.market,
+        token: this.data.token,
+      };
+    },
   },
   methods: {
-    asDouble(value) {
-      return (value / (10 ** this.data.token.decimals))
-        .toFixed(this.data.token.decimals);
+    onClickOutside() {
+      if (!this.priceFlag) {
+        this.flag = false;
+        this.$emit('closed');
+      }
+    },
+    reset() {
+      this.priceFlag = false;
+      this.$rbank.controller.eventualMarketPrice(this.data.market.address)
+        .then((marketPrice) => {
+          this.price = marketPrice;
+          return this.data.market.eventualBorrowRate;
+        })
+        .then((borrowRate) => {
+          this.borrowRate = borrowRate;
+          return this.data.market.eventualBaseBorrowRate;
+        })
+        .then((baseBorrowRate) => {
+          this.baseBorrowRate = baseBorrowRate;
+          return this.data.market.eventualUpdatedTotalSupply;
+        })
+        .then((updatedTotalSupply) => {
+          this.updatedTotalSupply = updatedTotalSupply;
+          return this.data.market.eventualUpdatedTotalBorrows;
+        })
+        .then((updatedTotalBorrows) => {
+          this.updatedTotalBorrow = updatedTotalBorrows;
+          return this.data.market.eventualCash;
+        })
+        .then((cash) => {
+          this.cash = cash;
+          this.growth = (this.borrowRate - this.baseBorrowRate).toFixed(2);
+        });
     },
   },
   components: {
     TransactionsGraph,
+    MarketPriceDialog,
   },
   created() {
     this.data.market.eventualToken
       .then((tok) => {
         this.tokenAddress = tok.address;
-        return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
-      })
-      .then((marketPrice) => {
-        this.price = marketPrice;
-        return this.data.market.eventualBorrowRate;
-      })
-      .then((borrowRate) => {
-        this.borrowRate = borrowRate;
-        return this.data.market.eventualBaseBorrowRate;
-      })
-      .then((baseBorrowRate) => {
-        this.baseBorrowRate = baseBorrowRate;
-        return this.data.market.eventualUpdatedTotalSupply;
-      })
-      .then((updatedTotalSupply) => {
-        this.updatedTotalSupply = this.asDouble(updatedTotalSupply);
-        return this.data.market.eventualUpdatedTotalBorrows;
-      })
-      .then((updatedTotalBorrows) => {
-        this.updatedTotalBorrow = this.asDouble(updatedTotalBorrows);
-        return this.data.market.eventualCash;
-      })
-      .then((cash) => {
-        this.cash = this.asDouble(cash);
-        this.growth = (this.borrowRate - this.baseBorrowRate).toFixed(2);
+        this.reset();
       });
   },
 };

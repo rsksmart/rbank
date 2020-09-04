@@ -5,7 +5,8 @@
         <v-col cols="10">
           <v-text-field class="inputText" full-width single-line solo flat
                         type="number" v-model="amount" required
-                        :rules="[rules.required, rules.decimals, rules.liquidity]"/>
+                        :rules="[rules.required, rules.decimals,
+                        rules.marketCash, rules.liquidity]"/>
         </v-col>
         <v-col cols="2">
           <v-btn @click="maxAmount = true" class="mb-12" text color="#008CFF">max</v-btn>
@@ -85,7 +86,7 @@
       </v-row>
     </template>
     <template v-else>
-      <loader/>
+      <loader class="my-15"/>
     </template>
   </div>
 </template>
@@ -119,11 +120,14 @@ export default {
       tokenBalance: 0,
       collateralFactor: 0,
       mantissa: 0,
+      oldCash: 0,
       oldLiquidity: 0,
       rules: {
         required: () => !!Number(this.amount) || 'Required.',
         decimals: () => this.decimalPositions || `Maximum ${this.data.token
           .decimals} decimal places for ${this.data.token.symbol}.`,
+        marketCash: () => this.oldCash >= Number(this
+          .contractAmount) || `This market doesn't have enough ${this.data.token.symbol}`,
         liquidity: () => this.oldLiquidity >= (this.price * 2 * Number(this
           .contractAmount)) || 'You don\'t have enough liquidity, supply more collateral.',
       },
@@ -139,7 +143,8 @@ export default {
     validForm() {
       return typeof this.rules.liquidity() !== 'string'
         && typeof this.rules.decimals() !== 'string'
-        && typeof this.rules.required() !== 'string';
+        && typeof this.rules.required() !== 'string'
+        && typeof this.rules.marketCash() !== 'string';
     },
     hasDecimals() {
       return !!Number(this.data.token.decimals);
@@ -175,7 +180,6 @@ export default {
       return allowed >= cash ? cash : allowed;
     },
     async getValues() {
-      let oldCash;
       await this.data.market.updatedBorrowBy(this.account)
         .then((borrowBy) => {
           this.borrowBy = borrowBy + Number(this.contractAmount);
@@ -186,7 +190,7 @@ export default {
           return this.data.market.eventualCash;
         })
         .then((cash) => {
-          oldCash = cash;
+          this.oldCash = cash;
           this.cash = cash - Number(this.contractAmount);
           return this.$rbank.controller.getAccountValues(this.account);
         })
@@ -198,7 +202,7 @@ export default {
           this.maxBorrowAllowed = this.getMaxBorrowAllowed(this.liquidity, this.cash);
           this.borrowBalanceInfo = Number(this.contractAmount);
           this.borrowLimitInfo = Number(this
-            .getMaxBorrowAllowed(this.oldLiquidity, oldCash) - this.maxBorrowAllowed);
+            .getMaxBorrowAllowed(this.oldLiquidity, this.oldCash) - this.maxBorrowAllowed);
         });
     },
   },
@@ -228,6 +232,7 @@ export default {
         return this.data.market.eventualCash;
       })
       .then((cash) => {
+        this.oldCash = cash;
         this.cash = cash;
         return this.data.market.eventualBorrowRate;
       })

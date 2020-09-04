@@ -47,7 +47,9 @@
       </v-row>
     </v-list-item>
     <v-divider/>
-    <supply-dialog :data="dataObject" @closeDialog="reset"/>
+    <template v-if="dialog">
+      <supply-dialog :data="dataObject" @closed="reset"/>
+    </template>
   </div>
 </template>
 
