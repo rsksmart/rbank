@@ -1,28 +1,26 @@
 <template>
   <div class="my-activity">
     <div class="upper-banner">
-      <template v-if="showHealthWarning">
-        <v-dialog v-model="showHealthWarning" width="450">
-          <v-card class="container" v-click-outside="showHealthWarning = false">
-            <v-row class="ma-0 py-2 d-flex justify-center">
-              <v-icon color="#000000" large>report_problem</v-icon>
-            </v-row>
-            <v-row class="ma-0 py-2 d-flex justify-center">
-              <h1 class="blackish">Watch out!</h1>
-            </v-row>
-            <v-row class="ma-0 pt-6 d-flex justify-center">
-              <p class="text-center">Your Health Factor has dropped to
-                <span class="redish"> 0%</span>!</p>
-            </v-row>
-            <v-row class="ma-0 px-3 d-flex justify-center">
-              <p class="text-center">
-                All your collaterals will be liquidated. If you wish to continue trading on RBank,
-                feel free to supply new markets on the network.
-              </p>
-            </v-row>
-          </v-card>
-        </v-dialog>
-      </template>
+      <v-dialog v-model="showHealthWarning" width="450">
+        <v-card class="container">
+          <v-row class="ma-0 py-2 d-flex justify-center">
+            <v-icon color="#000000" large>report_problem</v-icon>
+          </v-row>
+          <v-row class="ma-0 py-2 d-flex justify-center">
+            <h1 class="blackish">Watch out!</h1>
+          </v-row>
+          <v-row class="ma-0 pt-6 d-flex justify-center">
+            <p class="text-center">Your Health Factor has dropped to
+              <span class="redish"> 0%</span>!</p>
+          </v-row>
+          <v-row class="ma-0 px-3 d-flex justify-center">
+            <p class="text-center">
+              All your collaterals will be liquidated. If you wish to continue trading on RBank,
+              feel free to supply new markets on the network.
+            </p>
+          </v-row>
+        </v-card>
+      </v-dialog>
       <v-row class="d-flex justify-center">
         <h1 class="my-5"> Investment Dashboard</h1>
       </v-row>
@@ -166,23 +164,18 @@ export default {
       return 'high';
     },
   },
-  methods: {
-    getData() {
-      this.$rbank.controller.getAccountValues(this.account)
-        .then(({ supplyValue, borrowValue }) => {
-          this.totalBorrowed = borrowValue;
-          this.totalSupplied = supplyValue;
-          this.totalBalance = this.totalSupplied - this.totalBorrowed;
-          return this.$rbank.controller.getAccountHealth(this.account);
-        })
-        .then((health) => {
-          this.healthFactor = health > 1 ? 100 : health * 100;
-          this.showHealthWarning = this.healthFactor <= 0;
-        });
-    },
-  },
   created() {
-    this.getData();
+    this.$rbank.controller.getAccountValues(this.account)
+      .then(({ supplyValue, borrowValue }) => {
+        this.totalBorrowed = borrowValue;
+        this.totalSupplied = supplyValue;
+        this.totalBalance = this.totalSupplied - this.totalBorrowed;
+        return this.$rbank.controller.getAccountHealth(this.account);
+      })
+      .then((health) => {
+        this.healthFactor = health > 1 ? 100 : health * 100;
+        this.showHealthWarning = Number(this.healthFactor) === 0;
+      });
   },
 };
 </script>

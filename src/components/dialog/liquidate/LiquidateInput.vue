@@ -167,6 +167,10 @@ export default {
               symbol: this.borrowMarketSymbol,
             },
           });
+        })
+        .catch(() => {
+          this.waiting = false;
+          this.$emit('error');
         });
     },
     setLiquidationAccount(accountObject) {
@@ -222,11 +226,13 @@ export default {
       return !!Number(this.data.token.decimals);
     },
     numberOfDecimals() {
-      return this.amount.includes('.') ? (this.amount.substring(this.amount.indexOf('.') + 1, this
-        .amount.length).length <= this.data.token.decimals) : true;
+      const amount = this.amount.toString();
+      return amount.includes('.') ? (amount.substring(amount.indexOf('.') + 1, amount.length)
+        .length <= this.data.token.decimals) : true;
     },
     decimalPositions() {
-      return this.hasDecimals ? this.numberOfDecimals : !this.amount.includes('.');
+      const amount = this.amount.toString();
+      return this.hasDecimals ? this.numberOfDecimals : !amount.includes('.');
     },
     contractAmount() {
       return this.borrowMarketTokenDecimals

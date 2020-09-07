@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="flag" width="600" :persistent="waiting || succeed">
     <v-card class="dialog container" v-click-outside="onClickOutside">
-      <template v-if="!succeed">
+      <template v-if="!succeed && !errorDialog">
         <borrow-top :data="marketTokenObject"/>
         <template v-if="!waiting">
           <v-row class="d-flex justify-center">
@@ -19,10 +19,13 @@
         </template>
         <template>
           <component :is="currentComponent" :data="marketTokenObject"
-                     @succeed="actionSucceed" @wait="waiting = true"/>
+                     @succeed="actionSucceed" @wait="waiting = true" @error="actionError"/>
         </template>
       </template>
-      <template v-else>
+      <template v-if="errorDialog && !succeed">
+        <error-dialog @closeDialog="close"/>
+      </template>
+      <template v-if="succeed">
         <success-top :data="marketTokenObject"/>
         <component :is="successComponent" :data="successObject" @closeDialog="close"/>
       </template>
@@ -37,6 +40,7 @@ import BorrowSuccess from '@/components/dialog/borrow/BorrowSuccess.vue';
 import BorrowInput from '@/components/dialog/borrow/BorrowInput.vue';
 import RepayInput from '@/components/dialog/repay/RepayInput.vue';
 import RepaySuccess from '@/components/dialog/repay/RepaySuccess.vue';
+import ErrorDialog from '@/components/dialog/ErrorDialog.vue';
 
 export default {
   name: 'BorrowDialog',
@@ -55,6 +59,7 @@ export default {
       waiting: false,
       borrowBalanceInfo: null,
       hash: null,
+      errorDialog: null,
     };
   },
   computed: {
@@ -81,6 +86,12 @@ export default {
       this.waiting = false;
       this.borrowBalanceInfo = null;
       this.hash = null;
+      this.errorDialog = null;
+    },
+    actionError() {
+      this.succeed = false;
+      this.waiting = false;
+      this.errorDialog = true;
     },
     actionSucceed(succeedObject) {
       this.hash = succeedObject.hash;
@@ -88,6 +99,7 @@ export default {
       this.borrowBalanceInfo = succeedObject.borrowBalanceInfo;
       this.succeed = true;
       this.waiting = false;
+      this.errorDialog = false;
     },
     onClickOutside() {
       if (!this.waiting && !this.succeed) {
@@ -107,6 +119,7 @@ export default {
     BorrowInput,
     RepayInput,
     RepaySuccess,
+    ErrorDialog,
   },
   watch: {
     currentComponent() {

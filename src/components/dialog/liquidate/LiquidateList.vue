@@ -31,13 +31,15 @@
     </div>
     <div v-else class="py-6 empty-liquidate">
       <v-row class="my-6 d-flex justify-center">
-        <v-icon x-large color="darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+        <v-icon class="d-flex justify-center" x-large color="#000000">
+          error_outline
+        </v-icon>
+      </v-row>
+      <v-row class="ma-6 d-flex justify-center">
+        <h1>There are no accounts available to be liquidated</h1>
       </v-row>
       <v-row class="my-6 d-flex justify-center">
-        <h1>There is no account available to liquidation</h1>
-      </v-row>
-      <v-row class="my-6 d-flex justify-center">
-        Please check in other moment.
+        Please check later.
       </v-row>
     </div>
   </div>

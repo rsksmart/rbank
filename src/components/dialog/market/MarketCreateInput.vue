@@ -166,7 +166,9 @@ export default {
           .then(() => this.$rbank.controller
             .setMarketPrice(marketAddress, this.marketPrice))
           .then(() => this.$emit('created', { marketAddress }))
-          .catch(console.error);
+          .catch(() => {
+            this.$emit('error');
+          });
       } else {
         this.error = 'There is already a market for the token address entered!';
         this.showSnackbar = true;

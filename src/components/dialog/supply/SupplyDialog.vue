@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="flag" width="600" :persistent="waiting || succeed">
     <v-card class="dialog container" v-click-outside="onClickOutside">
-      <template v-if="!succeed">
+      <template v-if="!succeed && !errorDialog">
         <component :is="topComponent" :data="marketTokenObject"/>
         <template v-if="!waiting">
           <v-row class="d-flex justify-center">
@@ -23,10 +23,13 @@
         </template>
         <template>
           <component :is="currentComponent" :data="marketTokenObject"
-                     @succeed="actionSucceed" @wait="waiting = true"/>
+                     @succeed="actionSucceed" @wait="waiting = true" @error="actionError"/>
         </template>
       </template>
-      <template v-else>
+      <template v-if="errorDialog && !succeed">
+        <error-dialog @closeDialog="close"/>
+      </template>
+      <template v-if="succeed">
         <success-top :data="marketTokenObject"/>
         <component :is="successComponent" :data="successObject" @closeDialog="close"/>
       </template>
@@ -44,6 +47,7 @@ import WithdrawTop from '@/components/dialog/withdraw/WithdrawTop.vue';
 import WithdrawSuccess from '@/components/dialog/withdraw/WithdrawSuccess.vue';
 import LiquidateInput from '@/components/dialog/liquidate/LiquidateInput.vue';
 import LiquidateSuccess from '@/components/dialog/liquidate/LiquidateSuccess.vue';
+import ErrorDialog from '@/components/dialog/ErrorDialog.vue';
 
 export default {
   name: 'SupplyDialog',
@@ -67,6 +71,7 @@ export default {
       costValue: null,
       collateral: null,
       hash: null,
+      errorDialog: null,
     };
   },
   computed: {
@@ -98,6 +103,12 @@ export default {
       this.borrowLimitInfo = null;
       this.currentComponent = 'SupplyInput';
       this.hash = null;
+      this.errorDialog = null;
+    },
+    actionError() {
+      this.succeed = false;
+      this.waiting = false;
+      this.errorDialog = true;
     },
     actionSucceed(succeedObject) {
       this.hash = succeedObject.hash;
@@ -105,6 +116,7 @@ export default {
       this.supplyBalanceInfo = succeedObject.supplyBalanceInfo;
       this.succeed = true;
       this.waiting = false;
+      this.errorDialog = false;
       this.liquidateValue = succeedObject.liquidateValue;
       this.collateral = succeedObject.collateral;
       this.costValue = succeedObject.costValue;
@@ -130,6 +142,7 @@ export default {
     WithdrawSuccess,
     LiquidateInput,
     LiquidateSuccess,
+    ErrorDialog,
   },
   watch: {
     currentComponent() {

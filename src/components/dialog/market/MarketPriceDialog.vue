@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="flag" width="350" :persistent="waiting || success">
-    <v-card class="dialog" v-click-outside="onClickOutside">
-      <template v-if="!waiting && !success">
-        <div class="container">
+    <v-card class="dialog container" v-click-outside="onClickOutside">
+      <template v-if="!waiting && !success && !error">
+        <div>
           <v-row class="mt-2 d-flex align-center">
             <v-col cols="3" class="ml-2 d-flex justify-end">
               <v-img class="ml-5" src="../../../assets/rif.png" contain height="70"/>
@@ -21,7 +21,7 @@
             </v-col>
           </v-row>
         </div>
-        <div class="marketDialog container">
+        <div class="marketDialog">
           <v-row class="mx-5">
             <h3>Input new price:</h3>
           </v-row>
@@ -38,6 +38,7 @@
         </div>
       </template>
       <template v-else>
+        <error-dialog v-if="error" @closeDialog="closeMarketPrice"/>
         <loader v-if="waiting"/>
         <market-price-success v-if="success" :price="newPrice" @closed="closeMarketPrice"/>
       </template>
@@ -48,6 +49,7 @@
 <script>
 import Loader from '@/components/common/Loader.vue';
 import MarketPriceSuccess from '@/components/dialog/market/MarketPriceSuccess.vue';
+import ErrorDialog from '@/components/dialog/ErrorDialog.vue';
 
 export default {
   name: 'MarketPriceDialog',
@@ -64,6 +66,7 @@ export default {
       success: false,
       price: 0,
       newPrice: 0,
+      error: false,
       rules: {
         required: () => !!Number(this.newPrice) || 'Required.',
         integer: () => !this.newPrice.toString().includes('.') || 'Not decimal positions allowed.',
@@ -94,12 +97,18 @@ export default {
           this.waiting = false;
           this.success = true;
           this.$emit('priceSet');
+        })
+        .catch(() => {
+          this.waiting = false;
+          this.success = false;
+          this.error = true;
         });
     },
   },
   components: {
     Loader,
     MarketPriceSuccess,
+    ErrorDialog,
   },
   created() {
     this.$rbank.controller.eventualMarketPrice(this.data.market.address)
