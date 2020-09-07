@@ -34,18 +34,18 @@
           </v-col>
           <v-divider vertical inset/>
           <v-col cols="7" class="input-col">
-            <v-row class="inputBox">
+            <v-row class="inputBox mb-4">
               <v-col cols="10">
                 <v-text-field class="inputText" full-width single-line solo flat
                               type="number" v-model="amount" required
                               :rules="[rules.required, rules.decimals,
                               rules.funds, rules.maxAvailable]"/>
               </v-col>
-              <v-col cols="2">
-                <v-btn @click="maxAmount = true" class="pa-0" text color="#008CFF">max</v-btn>
+              <v-col cols="2" class="d-flex align-center">
+                <v-btn @click="max = true" class="pa-0" text color="#008CFF">max</v-btn>
               </v-col>
             </v-row>
-            <v-row class="mx-0 my-4 px-1 d-flex align-center">
+            <v-row class="mx-0 mt-6 mb-4 px-1 d-flex align-center">
               <v-col cols="2">
                 <h4>
                   You pay:
@@ -90,7 +90,7 @@
           </v-col>
         </v-row>
         <v-row class="my-6 d-flex justify-center">
-          <v-btn class="button" rounded color="#008CFF" @click="liquidate">
+          <v-btn class="button" rounded color="#008CFF" @click="liquidate" :disabled="!validForm">
             Liquidate account
           </v-btn>
         </v-row>
@@ -125,19 +125,25 @@ export default {
       borrowMarketPrice: 0,
       currentMarketPrice: 0,
       borrowMarketTokenDecimals: 0,
-      maxToLiquidate: 0,
+      maxCollateralSupplied: 0,
       borrowMarketSymbol: '',
       amount: '0',
       funds: 0,
+      max: false,
       rules: {
         required: () => !!Number(this.amount) || 'Required.',
         decimals: () => this.decimalPositions || `Maximum ${this.data.token
           .decimals} decimal places for ${this.data.token.symbol}.`,
-        funds: () => this.funds >= this.amount || 'Not enough funds',
+        funds: () => this.funds >= (this.usdAmount / (this.borrowMarketPrice)) || 'Not enough funds',
         maxAvailable: () => this.amount <= this.maxToLiquidate
           || 'There is not enough collateral to liquidate',
       },
     };
+  },
+  watch: {
+    max() {
+      if (this.max) this.amount = this.maxToLiquidate;
+    },
   },
   methods: {
     liquidate() {
@@ -154,42 +160,61 @@ export default {
           this.waiting = false;
           this.$emit('succeed', {
             hash: res.transactionHash,
-            borrowLimitInfo: this.borrowLimitInfo,
-            liquidationAmount: this.collateralAmount,
+            liquidateValue: this.liquidationAmount,
+            costValue: this.collateralAmount * (10 ** this.borrowMarketTokenDecimals),
+            collateral: {
+              decimals: this.borrowMarketTokenDecimals,
+              symbol: this.borrowMarketSymbol,
+            },
           });
-          console.log(res);
         });
     },
     setLiquidationAccount(accountObject) {
       this.borrowMarketAddress = accountObject.borrowMarketAddress;
-      this.$rbank.controller.eventualMarketPrice(this.borrowMarketAddress)
-        .then((price) => { this.borrowMarketPrice = price; });
-      this.$rbank.controller.eventualMarketPrice(this.data.market.address)
-        .then((price) => { this.currentMarketPrice = price; });
-      this.getCollateralToken();
+      this.getCollateralToken()
+        .then(() => this.$rbank.controller.eventualMarketPrice(this.borrowMarketAddress))
+        .then((price) => {
+          this.borrowMarketPrice = price;
+          this.accountDebt = accountObject.debt * price;
+          return this.$rbank.controller.eventualMarketPrice(this.data.market.address);
+        })
+        .then((price) => {
+          this.currentMarketPrice = price;
+          this.maxCollateralSupplied = accountObject.maxToLiquidate * price;
+          this.accountSelected = true;
+        });
       this.liquidationAccount = accountObject.borrower;
-      this.accountDebt = accountObject.debt;
-      this.maxToLiquidate = accountObject.maxToLiquidate;
-      this.accountSelected = true;
     },
     actionSucceed(succeedObj) {
       this.emit('succeed', succeedObj);
     },
     getCollateralToken() {
-      new this.$rbank.Market(this.borrowMarketAddress).eventualToken
-        .then((token) => Promise.all([token.eventualSymbol, token.eventualDecimals,
-          token.eventualBalanceOf(this.account)]))
-        .then(([symbol, decimals, balance]) => {
-          this.borrowMarketSymbol = symbol;
-          this.borrowMarketTokenDecimals = decimals;
-          this.funds = balance;
-        });
+      return new Promise((resolve, reject) => {
+        new this.$rbank.Market(this.borrowMarketAddress).eventualToken
+          .then((token) => Promise.all([token.eventualSymbol, token.eventualDecimals,
+            token.eventualBalanceOf(this.account)]))
+          .then(([symbol, decimals, balance]) => {
+            this.borrowMarketSymbol = symbol;
+            this.borrowMarketTokenDecimals = decimals;
+            this.funds = balance;
+            resolve();
+          }).catch(reject);
+      });
     },
   },
   computed: {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    validForm() {
+      return typeof this.rules.funds() !== 'string'
+        && typeof this.rules.decimals() !== 'string'
+        && typeof this.rules.required() !== 'string'
+        && typeof this.rules.maxAvailable() !== 'string';
+    },
+    maxToLiquidate() {
+      return Math.min(this.maxCollateralSupplied, this.accountDebt) / this.currentMarketPrice;
+    },
     usdAmount() {
       return (this.amount * this.currentMarketPrice);
     },
@@ -208,7 +233,8 @@ export default {
         ? this.amount / 10 ** this.borrowMarketTokenDecimals : this.amount;
     },
     collateralAmount() {
-      return ((this.amount * this.currentMarketPrice) / this.borrowMarketPrice)
+      return ((this.amount * this.currentMarketPrice)
+        / (this.borrowMarketPrice * (10 ** this.borrowMarketTokenDecimals)))
         .toFixed(this.borrowMarketTokenDecimals);
     },
     liquidationAmount() {

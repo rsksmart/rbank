@@ -8,7 +8,7 @@
         <div class="text-center">
           You have successfully Liquidated <br> this Market with
           <span class="greenish">
-            {{ data.liquidationAmount | formatToken(data.token.decimals) }}
+            {{ data.liquidateValue | formatToken(data.token.decimals) }}
           </span>
           <span class="greenish">{{ data.token.symbol }}</span>
         </div>
@@ -26,31 +26,6 @@
               <h1>{{ tokenBalance | formatToken(data.token.decimals) }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">
-                (-{{ data.supplyBalanceInfo  | formatToken(data.token.decimals) }})
-              </span>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="1">
-          <span class="itemInfo">{{ data.token.symbol }}</span>
-        </v-col>
-        <v-col cols="2"/>
-      </v-row>
-      <v-row class="d-flex align-center">
-        <v-col cols="2"/>
-        <v-col cols="3" class="d-flex justify-end">
-          <h3>supply balance:</h3>
-        </v-col>
-        <v-col cols="4">
-          <v-row class="ma-0 d-flex align-center">
-            <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ supplyOf | formatToken(data.token.decimals) }}</h1>
-            </v-col>
-            <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">
-                (+{{ data.supplyBalanceInfo | formatToken(data.token.decimals)  }})
-              </span>
             </v-col>
           </v-row>
         </v-col>
@@ -62,22 +37,19 @@
       <v-row class="d-flex align-center">
         <v-col cols="2"/>
         <v-col cols="3" class="d-flex align-end justify-end">
-          <h3>borrow limit:</h3>
+          <h3>Cost:</h3>
         </v-col>
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+              <h1>{{ data.costValue | formatToken(data.collateral.decimals) }}</h1>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.borrowLimitInfo">
-                (+{{ data.borrowLimitInfo | formatToken(data.token.decimals) }})
-              </span>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="1">
-          <span class="itemInfo">{{ data.token.symbol }}</span>
+          <span class="itemInfo">{{ data.collateral.symbol }}</span>
         </v-col>
         <v-col cols="2"/>
       </v-row>

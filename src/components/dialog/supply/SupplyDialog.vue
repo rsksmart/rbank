@@ -63,6 +63,9 @@ export default {
       waiting: false,
       supplyBalanceInfo: null,
       borrowLimitInfo: null,
+      liquidateValue: null,
+      costValue: null,
+      collateral: null,
       hash: null,
     };
   },
@@ -79,6 +82,9 @@ export default {
         token: this.data.token,
         borrowLimitInfo: this.borrowLimitInfo,
         supplyBalanceInfo: this.supplyBalanceInfo,
+        liquidateValue: this.liquidateValue,
+        costValue: this.costValue,
+        collateral: this.collateral,
         hash: this.hash,
       };
     },
@@ -100,6 +106,7 @@ export default {
       this.succeed = true;
       this.waiting = false;
       this.liquidateValue = succeedObject.liquidateValue;
+      this.collateral = succeedObject.collateral;
       this.costValue = succeedObject.costValue;
     },
     onClickOutside() {
