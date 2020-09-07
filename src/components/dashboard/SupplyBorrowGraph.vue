@@ -1,63 +1,57 @@
 <template>
-  <div class="supply-borrow-chart pa-4">
-    <v-row>
-      <v-col>
-        <v-row>
-          <h2>My Supply-Borrow Factor:</h2>
-        </v-row>
-        <v-row>
-          <span>
-            RBank Collateral Factor:    75%
-          </span>
-        </v-row>
-        <v-row>
-          <div class="borrow-supply-divider"></div>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row class="mt-6">
+  <div class="supply-borrow-chart">
+    <div>
+      <v-row class="ma-0">
+        <h1>My Supply-Borrow Factor:</h1>
+      </v-row>
+      <v-row class="ma-0">
+        <span>RBank Collateral Factor: </span><span class="ml-4">75%</span>
+      </v-row>
+      <v-row class="ma-0 pt-1">
+        <v-col cols="5" class="pa-0">
+          <v-divider/>
+        </v-col>
+        <v-col/>
+      </v-row>
+    </div>
+    <v-row class="ma-0 d-flex align-center">
       <v-col cols="3">
-        <v-row class="d-flex justify-center">
-          <h2>Supplied</h2>
+        <v-row class="d-flex justify-end">
+          <h2 class="text-center">Supplied</h2>
         </v-row>
-        <v-row class="d-flex justify-center">
-          <p>{{totalSupplied | formatPrice}}</p>
-          <span>USD</span>
+        <v-row class="d-flex justify-end">
+          <p class="blackish">{{ totalSupplied | formatPrice }}</p>
+          <span class="ml-2">USD</span>
         </v-row>
       </v-col>
-      <v-col cols="6">
-        <v-row class="d-flex justify-center">
-          <GChart
-            type="PieChart"
-            :data="chartData"
-            :options="chartOptions"
-            :resizeDebounce="500"
-          />
-        </v-row>
+      <v-col cols="6" class="d-flex justify-center">
+        <GChart v-if="supplyBorrow" type="PieChart" :data="chartData" :options="chartOptions"
+                :resizeDebounce="500"/>
+        <GChart v-else type="PieChart" :data="emptyChart" :options="chartOptions"
+                :resizeDebounce="500"/>
       </v-col>
       <v-col cols="3">
-        <v-row class="d-flex justify-center">
-          <h3>Borrowed</h3>
+        <v-row class="d-flex justify-start">
+          <h3 class="text-center">Borrowed</h3>
         </v-row>
-        <v-row class="d-flex justify-center">
-          <p>{{totalBorrowed | formatPrice}}</p>
-          <span>USD</span>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row class="d-flex justify-center">
-          <h4>Overall Borrow limit</h4>
-        </v-row>
-        <v-row class="borrow-limit d-flex justify-center">
-          {{totalBorrowLimit | formatPrice}}
-        </v-row>
-        <v-row class="d-flex justify-center">
-          <span>USD</span>
+        <v-row class="d-flex justify-start">
+          <p class="blackish text-center">{{ totalBorrowed | formatPrice }}
+            <span class="ml-2">USD</span>
+          </p>
         </v-row>
       </v-col>
     </v-row>
+    <div>
+      <v-row class="d-flex justify-center">
+        <h4>Overall Borrow limit</h4>
+      </v-row>
+      <v-row class="borrow-limit d-flex justify-center">
+        {{ totalBorrowLimit | formatPrice }}
+      </v-row>
+      <v-row class="d-flex justify-center">
+        <span>USD</span>
+      </v-row>
+    </div>
   </div>
 </template>
 
@@ -75,13 +69,16 @@ export default {
       totalBorrowed: 0,
       totalSupplied: 0,
       totalBorrowLimit: 0,
+      emptyChart: [
+        ['Type', 'Value'],
+        ['data', 1],
+      ],
       chartData: [
         ['Type', 'Value'],
         ['Supplied', 0],
         ['Borrowed', 0],
       ],
       chartOptions: {
-        // valores para ser reactive y responsive
         width: 200,
         height: 200,
         legend: 'none',
@@ -100,6 +97,9 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    supplyBorrow() {
+      return !!this.totalBorrowed || !!this.totalSupply;
+    },
   },
   methods: {
     getData() {

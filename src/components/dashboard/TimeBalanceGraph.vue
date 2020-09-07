@@ -1,5 +1,5 @@
 <template>
-  <div class="time-balance">
+  <v-card>
     <v-row class="pa-4">
       <v-col cols="8">
         <v-row>
@@ -67,7 +67,7 @@
         :resizeDebounce="500"
       />
     </v-row>
-  </div>
+  </v-card>
 </template>
 
 <script>
