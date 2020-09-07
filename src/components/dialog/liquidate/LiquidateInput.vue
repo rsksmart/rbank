@@ -41,8 +41,8 @@
                               :rules="[rules.required, rules.decimals,
                               rules.funds, rules.maxAvailable]"/>
               </v-col>
-              <v-col cols="2" class="d-flex align-center">
-                <v-btn @click="max = true" class="pa-0" text color="#008CFF">max</v-btn>
+              <v-col cols="2" class="mb-6 ml-0">
+                <v-btn @click="max = true" text color="#008CFF">max</v-btn>
               </v-col>
             </v-row>
             <v-row class="mx-0 mt-6 mb-4 px-1 d-flex align-center">

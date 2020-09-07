@@ -1,8 +1,8 @@
 <template>
-  <v-list-item>
-    <v-row class="d-flex align-center liquidate-item">
-      <v-col cols="6" >
-        {{borrowerCrop}}
+  <v-list-item class="ma-0 pa-0">
+    <v-row class="ma-0 liquidate-item">
+      <v-col cols="6" class="d-flex justify-center">
+        <div class="text-center">{{ borrowerCrop }}</div>
       </v-col>
       <v-col cols="6">
         <v-row class="d-flex align-center justify-end">
