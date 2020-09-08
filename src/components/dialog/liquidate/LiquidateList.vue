@@ -94,7 +94,6 @@ export default {
               uniqueBorrows.push(borrow);
             }
           });
-          console.log(uniqueBorrows);
           return uniqueBorrows;
         })
         .then((borrows) => Promise.all([Promise.all(borrows
