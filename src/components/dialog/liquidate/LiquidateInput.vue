@@ -19,13 +19,13 @@
           </p>
         </v-row>
         <v-row class="my-4 d-flex align-center">
-          <v-col cols="4">
+          <v-col cols="3">
             <v-row class="d-flex justify-center">
               <h2>Collateral</h2>
             </v-row>
             <v-row class="d-flex justify-center">
               <h3>
-                {{maxToLiquidate}}
+                {{maxToLiquidate | formatToken(data.token.decimals)}}
               </h3>
               <span>
                 {{data.token.symbol}}
@@ -33,7 +33,7 @@
             </v-row>
           </v-col>
           <v-divider vertical inset/>
-          <v-col cols="7" class="input-col">
+          <v-col cols="8" class="input-col">
             <v-row class="inputBox mb-4">
               <v-col cols="10">
                 <v-text-field class="inputText" full-width single-line solo flat
@@ -41,43 +41,59 @@
                               :rules="[rules.required, rules.decimals,
                               rules.funds, rules.maxAvailable]"/>
               </v-col>
-              <v-col cols="2" class="d-flex align-center">
-                <v-btn @click="max = true" class="pa-0" text color="#008CFF">max</v-btn>
+              <v-col cols="2" class="mb-6 ml-0">
+                <v-btn @click="max = true" text color="#008CFF">max</v-btn>
               </v-col>
             </v-row>
-            <v-row class="mx-0 mt-6 mb-4 px-1 d-flex align-center">
+            <v-row class="mx-0 px-1 d-flex align-center">
               <v-col cols="2">
                 <h4>
                   You pay:
                 </h4>
               </v-col>
-              <v-col cols="6" class="summary-num d-flex justify-center">
+              <v-col cols="8" class="summary-num d-flex justify-center">
                 {{collateralAmount}}
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="d-flex justify-end">
                 <span>{{borrowMarketSymbol}}</span>
+              </v-col>
+            </v-row>
+            <v-row class="mx-0 px-1 pt-1 d-flex align-center">
+              <v-col cols="2" />
+              <v-col cols="8" class="d-flex justify-center">
+                <span>
+                 {{usdAmount | formatPrice}}
+                </span>
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
-                 {{usdAmount}} USD
+                 USD
                 </span>
               </v-col>
             </v-row>
-            <v-row class="mx-0 my-4 px-1 d-flex align-center">
+            <v-row class="mx-0 mt-4 px-1 d-flex align-center">
               <v-col cols="2">
                 <h4>
                   You get:
                 </h4>
               </v-col>
-              <v-col cols="6" class="summary-num d-flex justify-center">
-                {{liquidationAmount}}
+              <v-col cols="8" class="summary-num d-flex justify-center">
+                {{liquidationAmount | formatToken(data.token.decimals)}}
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="d-flex justify-end">
                 <span>{{data.token.symbol}}</span>
+              </v-col>
+            </v-row>
+            <v-row class="mx-0 px-1 pt-1 d-flex align-center">
+              <v-col cols="2" />
+              <v-col cols="8" class="d-flex justify-center">
+                <span>
+                 {{usdAmount | formatPrice}}
+                </span>
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
                 <span>
-                  {{usdAmount}} USD
+                 USD
                 </span>
               </v-col>
             </v-row>

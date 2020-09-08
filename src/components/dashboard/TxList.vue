@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="8" class="mx-6 tx-list container">
+  <v-col v-if="hasTransactions" cols="8" class="mx-6 tx-list container">
     <v-row class="mx-6">
       <v-col cols="8">
         <v-row>
@@ -67,6 +67,7 @@
                :apr="tx.apr"
                :price="tx.price"
                :operation="tx.operation"
+               :decimals="tx.decimals"
       />
       <div class="tx-divider"></div>
     </v-list>
@@ -92,9 +93,12 @@ export default {
     ...mapState({
       account: (state) => state.Session.account,
     }),
+    hasTransactions() {
+      return this.transactions.length !== 0;
+    },
   },
   methods: {
-    pushMarketEvents(market, symbol, price, borrowRate) {
+    pushMarketEvents(market, symbol, price, borrowRate, decimals) {
       market.getPastEvents('Supply', 0, { user: this.account })
         .then((events) => {
           events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
@@ -106,6 +110,7 @@ export default {
                 transactionHash,
                 transactionAmount: Number(amount),
                 operation: event,
+                decimals,
               },
             );
           });
@@ -121,6 +126,7 @@ export default {
                 transactionHash,
                 transactionAmount: Number(amount),
                 operation: event,
+                decimals,
               },
             );
           });
@@ -136,6 +142,7 @@ export default {
                 transactionHash,
                 transactionAmount: Number(amount),
                 operation: event,
+                decimals,
               },
             );
           });
@@ -151,6 +158,7 @@ export default {
                 transactionHash,
                 transactionAmount: Number(amount),
                 operation: event,
+                decimals,
               },
             );
           });
@@ -165,9 +173,10 @@ export default {
                 token.eventualSymbol,
                 this.$rbank.controller.eventualMarketPrice(market.address),
                 market.eventualBorrowRate,
+                token.eventualDecimals,
               ]))
-              .then(([symbol, price, borrowRate]) => {
-                this.pushMarketEvents(market, symbol, price, borrowRate);
+              .then(([symbol, price, borrowRate, decimals]) => {
+                this.pushMarketEvents(market, symbol, price, borrowRate, decimals);
               });
           });
         });

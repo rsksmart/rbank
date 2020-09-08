@@ -79,12 +79,23 @@ export default {
     },
     getUnhealthyAccounts(market) {
       market.getPastEvents('Borrow', 0)
-        .then((borrowEvents) => borrowEvents
-          .map(({ address, returnValues: { user } }) => ({
-            borrower: user,
-            borrowMarketAddress: address,
-          }))
-          .filter((borrow) => borrow.borrower !== this.account))
+        .then((borrowEvents) => {
+          const accounts = [];
+          const uniqueBorrows = [];
+          const borrowsTemp = borrowEvents
+            .map(({ address, returnValues: { user } }) => ({
+              borrower: user,
+              borrowMarketAddress: address,
+            }))
+            .filter((borrow) => borrow.borrower !== this.account);
+          borrowsTemp.forEach((borrow) => {
+            if (accounts.indexOf(borrow.borrower) === -1) {
+              accounts.push(borrow.borrower);
+              uniqueBorrows.push(borrow);
+            }
+          });
+          return uniqueBorrows;
+        })
         .then((borrows) => Promise.all([Promise.all(borrows
           .map((borrow) => this.$rbank.controller.getAccountHealth(borrow.borrower))), borrows]))
         .then(([accountsHealth, borrows]) => borrows
