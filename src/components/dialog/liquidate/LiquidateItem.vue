@@ -7,7 +7,7 @@
       <v-col cols="6">
         <v-row class="d-flex align-center justify-end">
           <v-col class="d-flex justify-end" cols="8">
-            {{maxToLiquidate}}
+            {{maxToLiquidate | formatToken(collateral.token.decimals)}}
           </v-col>
           <v-col class="d-flex justify-end" cols="2">
             <span>{{collateral.token.symbol}}</span>
@@ -73,12 +73,6 @@ export default {
           borrowMarketAddress: this.borrowMarketAddress,
         });
     },
-    getData() {
-      //
-    },
-  },
-  created() {
-    this.getData();
   },
 };
 </script>

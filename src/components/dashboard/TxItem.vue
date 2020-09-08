@@ -9,7 +9,7 @@
       </v-col>
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-center">
-          <span class="d-flex align-center">${{price}}</span>
+          <span class="d-flex align-center">{{price | formatPrice}}</span>
           <p class="mt-4 mx-1 ">USD</p>
         </v-row>
       </v-col>
@@ -20,7 +20,7 @@
       </v-col>
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-center">
-          <span class="d-flex align-center">{{amount}}</span>
+          <span class="d-flex align-center">{{amount | formatToken(decimals)}}</span>
           <p class="mt-4 mx-1 ">{{marketName}}</p>
           <v-list-item-avatar tile size="15">
             <v-img :src="operationLogo" ></v-img>
@@ -62,6 +62,10 @@ export default {
     },
     operation: {
       type: String,
+      required: true,
+    },
+    decimals: {
+      type: Number,
       required: true,
     },
   },
