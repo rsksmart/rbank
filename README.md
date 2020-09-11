@@ -35,3 +35,16 @@ To run the Selenium tests with Nightwatch:
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Deployment
+
+In order to run RBank on a production environment you must use a docker container with the following configuration: 
+
+In the project root run:
+```bash
+docker build . -t rbank
+```
+Then you can run the container on the default port:
+```bash
+docker run -d -p 80:80 rbank
+```
