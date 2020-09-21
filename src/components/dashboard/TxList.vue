@@ -98,8 +98,8 @@ export default {
     },
   },
   methods: {
-    pushMarketEvents(market, symbol, price, borrowRate, decimals) {
-      market.getPastEvents('Supply', 0, { user: this.account })
+    pushMarketEvents(market, marketDeployBlock, symbol, price, borrowRate, decimals) {
+      market.getPastEvents('Supply', marketDeployBlock, { user: this.account })
         .then((events) => {
           events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
             this.transactions.push(
@@ -115,7 +115,7 @@ export default {
             );
           });
         });
-      market.getPastEvents('Borrow', 0, { user: this.account })
+      market.getPastEvents('Borrow', marketDeployBlock, { user: this.account })
         .then((events) => {
           events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
             this.transactions.push(
@@ -131,7 +131,7 @@ export default {
             );
           });
         });
-      market.getPastEvents('Redeem', 0, { user: this.account })
+      market.getPastEvents('Redeem', marketDeployBlock, { user: this.account })
         .then((events) => {
           events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
             this.transactions.push(
@@ -147,7 +147,7 @@ export default {
             );
           });
         });
-      market.getPastEvents('PayBorrow', 0, { user: this.account })
+      market.getPastEvents('PayBorrow', marketDeployBlock, { user: this.account })
         .then((events) => {
           events.forEach(({ event, transactionHash, returnValues: { amount } }) => {
             this.transactions.push(
@@ -171,12 +171,13 @@ export default {
             market.eventualToken
               .then((token) => Promise.all([
                 token.eventualSymbol,
+                market.eventualDeployBlock,
                 this.$rbank.controller.eventualMarketPrice(market.address),
                 market.eventualBorrowRate,
                 token.eventualDecimals,
               ]))
-              .then(([symbol, price, borrowRate, decimals]) => {
-                this.pushMarketEvents(market, symbol, price, borrowRate, decimals);
+              .then(([symbol, deployBlock, price, borrowRate, decimals]) => {
+                this.pushMarketEvents(market, deployBlock, symbol, price, borrowRate, decimals);
               });
           });
         });
