@@ -89,6 +89,9 @@
           </v-col>
           <v-col cols="1"/>
         </v-row>
+        <v-row>
+          <transactions-graph :data="dataObject"/>
+        </v-row>
       </div>
     </v-card>
     <template v-if="priceFlag">
@@ -100,6 +103,7 @@
 <script>
 import { mapState } from 'vuex';
 import MarketPriceDialog from '@/components/dialog/market/MarketPriceDialog.vue';
+import TransactionsGraph from '@/components/admin/TransactionsGraph.vue';
 
 export default {
   name: 'MarketDialog',
@@ -182,6 +186,7 @@ export default {
   },
   components: {
     MarketPriceDialog,
+    TransactionsGraph,
   },
   created() {
     this.data.market.eventualToken

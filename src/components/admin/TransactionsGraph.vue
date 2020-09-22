@@ -14,20 +14,20 @@
       </v-col>
       <v-col cols="6" class="d-flex justify-end align-end">
         <div class="toggle-tb d-flex align-center">
-          <v-btn text :class="[period === 'Day' ? 'selected' : 'notSelected']"
-                 @click="switchData('Day')">
+          <v-btn text :class="[period === 'day' ? 'selected' : 'notSelected']"
+                 @click="getChartData('day')">
             1D
           </v-btn>
-          <v-btn text :class="[period === 'Week' ? 'selected' : 'notSelected']"
-                 @click="switchData('Week')">
+          <v-btn text :class="[period === 'week' ? 'selected' : 'notSelected']"
+                 @click="getChartData('week')">
             1W
           </v-btn>
-          <v-btn text :class="[period === 'Month' ? 'selected' : 'notSelected']"
-                 @click="switchData('Month')">
+          <v-btn text :class="[period === 'month' ? 'selected' : 'notSelected']"
+                 @click="getChartData('month')">
             1M
           </v-btn>
-          <v-btn text :class="[period === 'Year' ? 'selected' : 'notSelected']"
-                 @click="switchData('Year')">
+          <v-btn text :class="[period === 'year' ? 'selected' : 'notSelected']"
+                 @click="getChartData('year')">
             1Y
           </v-btn>
         </div>
@@ -41,28 +41,26 @@
 
 <script>
 import { GChart } from 'vue-google-charts';
+// import * as constants from '@/store/constants';
+// import { mapGetters } from 'vuex';
 
 export default {
   name: 'TimeBalanceGraph',
-  components: {
-    GChart,
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       chartData: [
-        ['Time', 'Supplied', 'Borrowed'],
-        ['3', 1000, 1030],
-        ['6', -1170, 660],
-        ['9', 660, -1170],
-        ['12', 1030, 1000],
-        ['15', 1000, 1030],
-        ['18', -1170, 660],
-        ['21', -1170, 660],
-        ['24', 660, -1170],
+        ['Time', 'Supplied', 'Loaned'],
+        ['0', 0, 0],
       ],
       chartOptions: {
         width: 750,
-        height: 320,
+        height: 250,
         legend: {
           position: 'bottom',
           alignment: 'end',
@@ -72,73 +70,71 @@ export default {
         chartArea: {
           left: '8%',
           width: '90%',
-          height: '80%',
+          height: '70%',
         },
       },
-      period: 'Day',
+      weekLabels: [
+        { key: 0, value: 'Sunday' },
+        { key: 1, value: 'Monday' },
+        { key: 2, value: 'Tuesday ' },
+        { key: 3, value: 'Wednesday' },
+        { key: 4, value: 'Thursday' },
+        { key: 5, value: 'Friday' },
+        { key: 6, value: 'Saturday' },
+      ],
+      monthLabels: [
+        { key: 0, value: 'January' },
+        { key: 1, value: 'February' },
+        { key: 2, value: 'March ' },
+        { key: 3, value: 'April' },
+        { key: 4, value: 'May' },
+        { key: 5, value: 'June' },
+        { key: 6, value: 'July' },
+        { key: 7, value: 'August' },
+        { key: 8, value: 'September' },
+        { key: 9, value: 'October' },
+        { key: 10, value: 'November' },
+        { key: 11, value: 'December' },
+      ],
+      period: 'week',
     };
   },
   methods: {
-    switchData(period) {
-      this.period = period;
+    mapTimeToLabel(period, date) {
       switch (period) {
-        case 'Day':
-          this.chartData = [
-            ['Time', 'Supplied', 'Borrowed'],
-            ['3', 1000, 1030],
-            ['6', -1170, 660],
-            ['9', 660, -1170],
-            ['12', 1030, 1000],
-            ['15', 1000, 1030],
-            ['18', -1170, 660],
-            ['21', -1170, 660],
-            ['24', 660, -1170],
-          ];
-          break;
-        case 'Week':
-          this.chartData = [
-            ['Day', 'Supplied', 'Borrowed'],
-            ['01', 1000, 1030],
-            ['02', -1170, 660],
-            ['03', 660, -1170],
-            ['04', 1030, 1000],
-            ['05', 1000, 1030],
-            ['06', -1170, 660],
-            ['07', 660, -1170],
-          ];
-          break;
-        case 'Month':
-          this.chartData = [
-            ['Day', 'Supplied', 'Borrowed'],
-            ['5', 1000, 1030],
-            ['10', -1170, 660],
-            ['15', 660, -1170],
-            ['20', 1030, 1000],
-            ['25', 1000, 1030],
-            ['30', -1170, 660],
-          ];
-          break;
-        case 'Year':
-          this.chartData = [
-            ['Month', 'Supplied', 'Borrowed'],
-            ['01', 1000, 1030],
-            ['02', -1170, 660],
-            ['03', 660, -1170],
-            ['04', 1030, 1000],
-            ['05', 1000, 1030],
-            ['06', -1170, 660],
-            ['07', 1000, 1030],
-            ['08', -1170, 660],
-            ['09', 660, -1170],
-            ['10', 1030, 1000],
-            ['11', 1000, 1030],
-            ['12', -1170, 660],
-          ];
-          break;
+        case 'day':
+          return date.getHours();
+        case 'week':
+          return this.weekLabels[date.getDay()].value;
+        case 'month':
+          return date.getDate().toString();
+        case 'year':
+          return this.monthLabels[date.getMonth()].value;
         default:
-          this.chartData = [];
+          return this.weekLabels[date.getDay()].value;
       }
     },
+    getChartData(period) {
+      this.period = period;
+      this.data.market.getOverallBalance(period)
+        .then((overallBalance) => overallBalance
+          .map(([date, supplied, loaned]) => [
+            this.mapTimeToLabel(period, date),
+            supplied,
+            loaned,
+          ]))
+        .then((overallBalance) => {
+          overallBalance.reverse();
+          this.chartData = Array.from(new Set(overallBalance.map(JSON.stringify)), JSON.parse);
+          this.chartData.unshift(['Time', 'Supplied', 'Loaned']);
+        });
+    },
+  },
+  components: {
+    GChart,
+  },
+  created() {
+    this.getChartData('week');
   },
 };
 </script>

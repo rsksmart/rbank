@@ -110,9 +110,16 @@
         </v-col>
       </v-row>
       <v-row class="ma-0">
-        <v-card class="graphics-card container" width="97%">
-          <supply-borrow-graph/>
-        </v-card>
+        <v-col class="pa-0">
+          <v-card class="graphics-card container" width="94%" height="100%">
+            <time-balance-graph/>
+          </v-card>
+        </v-col>
+        <v-col class="pa-0">
+          <v-card class="graphics-card container" width="94%">
+            <supply-borrow-graph/>
+          </v-card>
+        </v-col>
       </v-row>
     </div>
     <v-row class="mx-6 d-flex justify-center">
@@ -123,15 +130,12 @@
 
 <script>
 import SupplyBorrowGraph from '@/components/dashboard/SupplyBorrowGraph.vue';
+import TimeBalanceGraph from '@/components/dashboard/TimeBalanceGraph.vue';
 import TxList from '@/components/dashboard/TxList.vue';
 import { mapState } from 'vuex';
 
 export default {
   name: 'MyActivity',
-  components: {
-    SupplyBorrowGraph,
-    TxList,
-  },
   data() {
     return {
       healthFactor: 0,
@@ -163,6 +167,11 @@ export default {
       }
       return 'high';
     },
+  },
+  components: {
+    SupplyBorrowGraph,
+    TimeBalanceGraph,
+    TxList,
   },
   created() {
     this.$rbank.controller.getAccountValues(this.account)
