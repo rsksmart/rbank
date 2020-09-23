@@ -24,3 +24,7 @@ export const CONTROLLER_SET_MARKET_TOTAL_SUPPLIES = 'CONTROLLER_SET_MARKET_TOTAL
 
 // Getters
 export const SESSION_IS_LOGGED = 'SESSION_IS_LOGGED';
+export const PERIOD_DAY = 'day';
+export const PERIOD_MONTH = 'month';
+export const PERIOD_WEEK = 'week';
+export const PERIOD_YEAR = 'year';
