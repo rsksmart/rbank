@@ -15,20 +15,20 @@
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-end mr-1">
           <div class="toggle-tb d-flex align-center">
-            <v-btn text :class="[period === 'day' ? 'selected' : 'notSelected']"
-                   @click="getChartData('day')">
+            <v-btn text :class="[period === constants.PERIOD_DAY ? 'selected' : 'notSelected']"
+                   @click="getChartData(constants.PERIOD_DAY)">
               1D
             </v-btn>
-            <v-btn text :class="[period === 'week' ? 'selected' : 'notSelected']"
-                   @click="getChartData('week')">
+            <v-btn text :class="[period === constants.PERIOD_WEEK ? 'selected' : 'notSelected']"
+                   @click="getChartData(constants.PERIOD_WEEK)">
               1W
             </v-btn>
-            <v-btn text :class="[period === 'month' ? 'selected' : 'notSelected']"
-                   @click="getChartData('month')">
+            <v-btn text :class="[period === constants.PERIOD_MONTH ? 'selected' : 'notSelected']"
+                   @click="getChartData(constants.PERIOD_MONTH)">
               1M
             </v-btn>
-            <v-btn text :class="[period === 'year' ? 'selected' : 'notSelected']"
-                   @click="getChartData('year')">
+            <v-btn text :class="[period === constants.PERIOD_YEAR ? 'selected' : 'notSelected']"
+                   @click="getChartData(constants.PERIOD_YEAR)">
               1Y
             </v-btn>
           </div>
@@ -43,12 +43,14 @@
 
 <script>
 import { GChart } from 'vue-google-charts';
+import * as constants from '@/store/constants';
 import { mapState } from 'vuex';
 
 export default {
   name: 'TimeBalanceGraph',
   data() {
     return {
+      constants,
       chartData: [
         ['Date', 'Balance'],
         ['2014', 0],
@@ -99,13 +101,13 @@ export default {
   methods: {
     mapTimeToLabel(period, date) {
       switch (period) {
-        case 'day':
-          return date.getHours();
-        case 'week':
+        case constants.PERIOD_DAY:
+          return date;
+        case constants.PERIOD_WEEK:
           return this.weekLabels[date.getDay()].value;
-        case 'month':
-          return date.getDate().toString();
-        case 'year':
+        case constants.PERIOD_MONTH:
+          return date;
+        case constants.PERIOD_YEAR:
           return this.monthLabels[date.getMonth()].value;
         default:
           return this.weekLabels[date.getDay()].value;

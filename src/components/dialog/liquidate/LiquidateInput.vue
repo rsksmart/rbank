@@ -233,7 +233,8 @@ export default {
         && typeof this.rules.maxAvailable() !== 'string';
     },
     maxToLiquidate() {
-      return Math.min(this.maxCollateralSupplied, this.accountDebt) / this.currentMarketPrice;
+      return Math.min(this.maxCollateralSupplied, this.accountDebt,
+        this.funds * this.borrowMarketPrice) / this.currentMarketPrice;
     },
     usdAmount() {
       return (this.amount * this.currentMarketPrice);
