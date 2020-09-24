@@ -29,7 +29,7 @@ export default {
     BaseLayout,
   },
   created() {
-    this.$rbank.controller = '0xCfEB869F69431e42cdB54A4F4f105C19C080A601'.toLowerCase();
+    this.$rbank.controller = '0xda081f6f794bddfb033492d4b0aeb5e7e3e3ce98'.toLowerCase();
   },
 };
 </script>

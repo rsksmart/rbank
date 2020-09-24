@@ -1,6 +1,6 @@
 {
   "name": "rbank",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
-    "@rsksmart/rbank": "^0.1.4",
+    "@rsksmart/rbank": "^1.0.0",
     "core-js": "^3.6.4",
     "lodash": "^4.17.15",
     "register-service-worker": "^1.7.1",

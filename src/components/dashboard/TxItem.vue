@@ -15,7 +15,7 @@
       </v-col>
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-center">
-          <span>{{apr}}%</span>
+          <span>{{apr | formatPercentage}}</span>
         </v-row>
       </v-col>
       <v-col class="d-flex align-center">

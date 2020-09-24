@@ -1,8 +1,10 @@
 import Vue from 'vue';
 
 Vue.filter('formatPrice', (value) => {
-  const val = (value / 1).toFixed(2).replace(',', '.');
-  return `$ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  const val = (value / 1).toFixed(2)
+    .replace(',', '.');
+  return `$ ${val.toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 });
 
 Vue.filter('formatToken', (value, decimals) => {
@@ -15,3 +17,5 @@ Vue.filter('formatToken', (value, decimals) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${decimal}` : `${int
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 });
+
+Vue.filter('formatPercentage', (value) => `${Number(value).toFixed(2)} %`);

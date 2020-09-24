@@ -1,6 +1,5 @@
 import Vue from 'vue';
-// eslint-disable-next-line import/no-unresolved,import/no-extraneous-dependencies
-import Rbank from '@rsksmart/rbank.js';
+import Rbank from '@rsksmart/rbank';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
