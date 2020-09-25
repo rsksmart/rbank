@@ -30,7 +30,6 @@ export default {
   },
   created() {
     const ctrl = '$RBANK_CONTROLLER';
-    console.log(ctrl);
     this.$rbank.controller = ctrl.toLowerCase();
   },
 };
