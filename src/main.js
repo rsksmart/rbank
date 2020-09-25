@@ -1,6 +1,5 @@
 import Vue from 'vue';
-// eslint-disable-next-line import/no-unresolved,import/no-extraneous-dependencies
-import Rbank from '@rsksmart/rbank.js';
+import Rbank from '@rsksmart/rbank';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
@@ -13,7 +12,6 @@ import './styles/main.scss';
 require('./filters');
 
 Vue.config.productionTip = false;
-
 // eslint-disable-next-line no-multi-assign
 Vue.prototype.$rbank = Vue.rbank = new Rbank();
 

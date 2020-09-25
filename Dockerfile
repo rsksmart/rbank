@@ -1,11 +1,12 @@
-FROM node:latest as build-stage
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY ./ .
-RUN npm run build
+FROM nginx
 
-FROM nginx as production-stage
-RUN mkdir /app
-COPY --from=build-stage /app/dist /app
-COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+EXPOSE 443
+
+COPY nginx.crt /etc/ssl/
+COPY nginx.key /etc/ssl/
+COPY default.conf /etc/nginx/conf.d/
+COPY ./dist/ /usr/share/nginx/html
+COPY entrypoint.sh /
+
+CMD ["sh", "/entrypoint.sh"]
