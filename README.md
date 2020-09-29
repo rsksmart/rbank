@@ -1,50 +1,24 @@
-# rbank
-This is a demo on how to integrate the `rbank-js` library into a JS project.
+# RBank demo ÐApp
+This is a demo on how to integrate [RBank library][1] into a Vue.js project.
 
-## Project setup
-```
-npm install
-```
+| ![Admin](./src/assets/readme/admin.jpeg) | ![My Activity](./src/assets/readme/my_activity.jpeg) |
+| --- | --- |
+| ![Transaction history](./src/assets/readme/TXhistory.jpeg) | ![Supply / Borrow](./src/assets/readme/supply_borrow.jpeg) |
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Requirements
+ * Docker ^19.0.3
+ * Docker compose ^1.25.4
+ * Deploy a [RBank controller][2]
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Usage
+In `docker-compose.yml` modify `RBANK_CONTROLLER` with the address of your RBank controller contract.
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Browser Testing on local network
-
-To run the Selenium tests with Nightwatch:
-
- - Run `ganache-cli`.
- - Create a `.env` file:
-    - `account_passphrase=<12 words MetaMask passphrase>`
-    - `account_password=<MetaMask password>`
- - To run the application `npm run serve`
- - To make sure Selenium was installed and run Selenium server`npm run selenium`
- - To run test on chrome `npm run e2e-chrome`
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-## Deployment
-
-In order to run RBank on a production environment you must use a docker container with the following configuration: 
-
-In the project root run:
+Then run the docker container.
 ```bash
-docker build . -t rbank
+docker-compose up
 ```
-Then you can run the container on the default port:
-```bash
-docker run -d -p 80:80 rbank
-```
+
+Then access the ÐApp in your browser at the given url (<https://localhost> by default)
+
+[1]: https://www.npmjs.com/package/@rsksmart/rbank
+[2]: https://github.com/rsksmart/DeFiProt
