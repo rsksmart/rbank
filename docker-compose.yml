@@ -1,0 +1,10 @@
+version: '3'
+services:
+  dapp:
+    build: .
+    container_name: rbank-dapp
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - RBANK_CONTROLLER=0xda081f6f794bddfb033492d4b0aeb5e7e3e3ce98

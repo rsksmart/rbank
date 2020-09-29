@@ -12,7 +12,6 @@ import './styles/main.scss';
 require('./filters');
 
 Vue.config.productionTip = false;
-
 // eslint-disable-next-line no-multi-assign
 Vue.prototype.$rbank = Vue.rbank = new Rbank();
 
