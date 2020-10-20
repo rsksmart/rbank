@@ -29,7 +29,8 @@ export default {
     BaseLayout,
   },
   created() {
-    const ctrl = '$RBANK_CONTROLLER';
+    // const ctrl = '$RBANK_CONTROLLER';
+    const ctrl = '0xCfEB869F69431e42cdB54A4F4f105C19C080A601';
     this.$rbank.controller = ctrl.toLowerCase();
   },
 };

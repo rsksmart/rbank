@@ -119,7 +119,15 @@ export default {
   components: {
     SupplyDialog,
   },
+  mounted() {
+    this.$parent.$parent.$parent.$on('reload', this.reset);
+  },
   created() {
+    this.market.eventualEvents
+      .then((events) => {
+        events.allEvents()
+          .on('data', this.reset);
+      });
     this.market.eventualToken
       .then((tok) => [
         tok.eventualName,

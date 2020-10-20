@@ -118,6 +118,14 @@ export default {
         })
         .then((cash) => {
           this.cash = cash;
+          return this.market.eventualUpdatedTotalSupply;
+        })
+        .then((updatedTotalSupply) => {
+          this.totalSupply = updatedTotalSupply;
+          return this.market.eventualUpdatedTotalBorrows;
+        })
+        .then((updatedTotalBorrows) => {
+          this.totalBorrow = updatedTotalBorrows;
         });
       this.$emit('dialogClosed');
     },
@@ -125,7 +133,15 @@ export default {
   components: {
     MarketDialog,
   },
+  mounted() {
+    this.$parent.$parent.$on('reload', this.reset);
+  },
   created() {
+    this.market.eventualEvents
+      .then((events) => {
+        events.allEvents()
+          .on('data', this.reset);
+      });
     this.market.eventualToken
       .then((tok) => [
         tok.eventualName,
