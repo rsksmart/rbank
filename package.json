@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
-    "@rsksmart/rbank": "^1.0.0",
+    "@rsksmart/rbank": "^1.0.1",
     "core-js": "^3.6.4",
     "dotenv": "^8.2.0",
     "lodash": "^4.17.15",

@@ -38,6 +38,9 @@ export default {
     reset() {
       this.$emit('listChange');
     },
+    reloadItems() {
+      this.$emit('reload');
+    },
   },
   components: {
     SupplyItem,
@@ -46,6 +49,8 @@ export default {
     this.$rbank.eventualMarkets
       .then((mkts) => {
         this.markets = mkts;
+        this.markets.forEach((market) => market.eventualEvents
+          .then((events) => events.liquidateBorrow().on('data', this.reloadItems)));
       });
   },
 };
