@@ -29,7 +29,7 @@ export default {
     BaseLayout,
   },
   created() {
-    const ctrl = '$RBANK_CONTROLLER';
+    const ctrl = process.env.VUE_APP_RBANK_CONTROLLER;
     this.$rbank.controller = ctrl.toLowerCase();
   },
 };

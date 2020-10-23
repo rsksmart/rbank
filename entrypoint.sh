@@ -11,7 +11,7 @@ do
     cp $file $file.tmpl.js
   fi
 
-  envsubst '$RBANK_CONTROLLER' < $file.tmpl.js > $file
+  envsubst '$VUE_APP_NETWORK_ID:$VUE_APP_WS_PROVIDER:$VUE_APP_RBANK_CONTROLLER' < $file.tmpl.js > $file
 done
 
 echo "Starting Nginx"
