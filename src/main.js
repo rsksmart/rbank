@@ -13,8 +13,11 @@ require('./filters');
 
 Vue.config.productionTip = false;
 // eslint-disable-next-line no-multi-assign
-Vue.prototype.$rbank = Vue.rbank = new Rbank();
-
+Vue.prototype.$rbank = Vue.rbank = new Rbank(
+  {
+    [process.env.VUE_APP_NETWORK_ID]: process.env.VUE_APP_WS_PROVIDER,
+  },
+);
 new Vue({
   router,
   store,
