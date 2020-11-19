@@ -15,7 +15,10 @@ Vue.config.productionTip = false;
 // eslint-disable-next-line no-multi-assign
 Vue.prototype.$rbank = Vue.rbank = new Rbank(
   {
-    [process.env.VUE_APP_NETWORK_ID]: process.env.VUE_APP_WS_PROVIDER,
+    [process.env.VUE_APP_NETWORK_ID]: {
+      wsProvider: process.env.VUE_APP_WS_PROVIDER,
+      httpProvider: process.env.VUE_APP_HTTP_PROVIDER,
+    },
   },
 );
 new Vue({
