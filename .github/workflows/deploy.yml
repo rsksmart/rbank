@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_and_deploy:
-    
+
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +35,7 @@ jobs:
       env:
         VUE_APP_NETWORK_ID: ${{ secrets.TESTNET_VUE_APP_NETWORK_ID }}
         VUE_APP_WS_PROVIDER: ${{ secrets.TESTNET_VUE_APP_WS_PROVIDER }}
+        VUE_APP_HTTP_PROVIDER: ${{ secrets.TESTNET_VUE_APP_HTTP_PROVIDER }}
         VUE_APP_RBANK_CONTROLLER: ${{ secrets.TESTNET_VUE_APP_RBANK_CONTROLLER }}
       run: npm run build
 
