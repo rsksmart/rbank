@@ -108,6 +108,13 @@ export default {
         });
       this.$emit('dialogClosed');
     },
+    handleEvent(error, event) {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(event);
+      }
+    },
   },
   components: {
     BorrowDialog,
@@ -118,8 +125,11 @@ export default {
   created() {
     this.market.eventualEvents
       .then((events) => {
-        events.allEvents()
+        const allEventsEmitter = events.allEvents(this.handleEvent);
+        allEventsEmitter
           .on('data', this.reset);
+        allEventsEmitter
+          .on('error', (error) => console.error(error));
       });
     this.market.eventualToken
       .then((tok) => [
