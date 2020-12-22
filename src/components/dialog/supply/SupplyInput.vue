@@ -46,10 +46,10 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <span class="itemInfo">{{ data.token.symbol }}</span>
           </v-col>
-          <v-col cols="2"/>
+          <v-col cols="1"/>
         </v-row>
         <v-row class="d-flex align-center">
           <v-col cols="2"/>
@@ -68,10 +68,10 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <span class="itemInfo">{{ data.token.symbol }}</span>
           </v-col>
-          <v-col cols="2"/>
+          <v-col cols="1"/>
         </v-row>
       </div>
       <v-row class="my-5 d-flex justify-center">

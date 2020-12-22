@@ -32,7 +32,21 @@
                 <v-row class="d-flex align-center">
                   <v-col cols="6" class="px-0 text-left"><h2>Account balance:</h2></v-col>
                   <v-col cols="5" class="px-0">
-                    <h2 class="text-center">{{ totalBalance | formatPrice }}</h2>
+                    <template v-if="totalBalance.toString().length > 4">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <h2 class="text-center" v-bind="attrs" v-on="on">
+                            {{ totalBalance | formatPrice }}
+                          </h2>
+                        </template>
+                        <span>{{ totalBalance | fullPrice }}</span>
+                      </v-tooltip>
+                    </template>
+                    <template v-else>
+                      <h2 class="text-center">
+                        {{ totalBalance | formatPrice }}
+                      </h2>
+                    </template>
                   </v-col>
                   <v-col cols="1" class="pa-0"><span class="text-left">USD</span></v-col>
                 </v-row>
@@ -42,28 +56,71 @@
                 <v-row>
                   <v-col cols="6" class="px-0"><h3>Overall Earnings:</h3></v-col>
                   <v-col cols="5" class="px-0">
-                    <h3 class="text-center">{{ totalEarnings | formatPrice }}</h3>
+                    <template v-if="totalEarnings.toString().length > 4">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <h3 class="text-center" v-bind="attrs" v-on="on">
+                            {{ totalEarnings | formatPrice }}
+                          </h3>
+                        </template>
+                        <span>{{ totalEarnings | fullPrice }}</span>
+                      </v-tooltip>
+                    </template>
+                    <template v-else>
+                      <h3 class="text-center">
+                        {{ totalEarnings | formatPrice }}
+                      </h3>
+                    </template>
                   </v-col>
                   <v-col cols="1" class="pa-0"><span class="text-left">USD</span></v-col>
                 </v-row>
                 <v-row>
                   <v-col cols="6" class="px-0"><h4>Total Supplied:</h4></v-col>
                   <v-col cols="5" class="px-0">
-                    <h4 class="text-center">{{ totalSupplied | formatPrice }}</h4>
+                    <template v-if="totalSupplied.toString().length > 4">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <h4 class="text-center" v-bind="attrs" v-on="on">
+                            {{ totalSupplied | formatPrice }}
+                          </h4>
+                        </template>
+                        <span>{{ totalSupplied | fullPrice }}</span>
+                      </v-tooltip>
+                    </template>
+                    <template v-else>
+                      <h4 class="text-center">
+                        {{ totalSupplied | formatPrice }}
+                      </h4>
+                    </template>
                   </v-col>
                   <v-col cols="1" class="pa-0"><span class="text-left">USD</span></v-col>
                 </v-row>
                 <v-row>
                   <v-col cols="6" class="px-0"><h4>Total Borrowed:</h4></v-col>
                   <v-col cols="5" class="px-0">
-                    <h4 class="text-center">{{ totalBorrowed | formatPrice }}</h4>
+                    <template v-if="totalBorrowed.toString().length > 4">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <h4 class="text-center" v-bind="attrs" v-on="on">
+                            {{ totalBorrowed | formatPrice }}
+                          </h4>
+                        </template>
+                        <span>{{ totalBorrowed | fullPrice }}</span>
+                      </v-tooltip>
+                    </template>
+                    <template v-else>
+                      <h4 class="text-center">
+                        {{ totalBorrowed | formatPrice }}
+                      </h4>
+                    </template>
                   </v-col>
                   <v-col cols="1" class="pa-0"><span class="text-left">USD</span></v-col>
                 </v-row>
               </v-col>
               <v-col cols="3">
                 <v-row class="d-flex justify-center">
-                  <v-btn small fab dark color="#008CFF">
+                  <v-btn small fab dark color="#008CFF" target="_blank"
+                         href="https://coinmarketcap.com/all/views/all/">
                     <v-icon dark color="#FFFFFF">mdi-plus</v-icon>
                   </v-btn>
                 </v-row>

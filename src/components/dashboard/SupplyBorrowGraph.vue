@@ -20,8 +20,19 @@
           <h2 class="text-center">Supplied</h2>
         </v-row>
         <v-row class="d-flex justify-end">
-          <p class="blackish">{{ totalSupplied | formatPrice }}</p>
-          <span class="ml-2">USD</span>
+          <template v-if="totalSupplied.toString().length > 4">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <p class="blackish" v-bind="attrs" v-on="on">{{ totalSupplied | formatPrice }}</p>
+                <span class="ml-2">USD</span>
+              </template>
+              <span>{{ totalSupplied | fullPrice }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <p class="blackish">{{ totalSupplied | formatPrice }}</p>
+            <span class="ml-2">USD</span>
+          </template>
         </v-row>
       </v-col>
       <v-col cols="6" class="d-flex justify-center">
@@ -35,9 +46,23 @@
           <h3 class="text-center">Borrowed</h3>
         </v-row>
         <v-row class="d-flex justify-start">
-          <p class="blackish text-center">{{ totalBorrowed | formatPrice }}
-            <span class="ml-2">USD</span>
-          </p>
+          <template v-if="totalBorrowed.toString().length > 4">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <p class="blackish text-center" v-bind="attrs" v-on="on">
+                  {{ totalBorrowed | formatPrice }}
+                  <span class="ml-2">USD</span>
+                </p>
+              </template>
+              <span>{{ totalBorrowed | fullPrice }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <p class="blackish text-center">
+              {{ totalBorrowed | formatPrice }}
+              <span class="ml-2">USD</span>
+            </p>
+          </template>
         </v-row>
       </v-col>
     </v-row>
@@ -46,7 +71,19 @@
         <h4>Overall Borrow limit</h4>
       </v-row>
       <v-row class="borrow-limit d-flex justify-center">
-        {{ totalBorrowLimit | formatPrice }}
+        <template v-if="totalSupplied.toString().length > 4">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <p class="blackish mb-0" v-bind="attrs" v-on="on">
+                {{ totalBorrowLimit | formatPrice }}
+              </p>
+            </template>
+            <span>{{ totalBorrowLimit | fullPrice }}</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <p class="blackish" v-bind="attrs" v-on="on">{{ totalBorrowLimit | formatPrice }}</p>
+        </template>
       </v-row>
       <v-row class="d-flex justify-center">
         <span>USD</span>

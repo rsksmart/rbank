@@ -1,9 +1,9 @@
 <template>
   <v-row class="ma-0 d-flex align-center">
-    <v-col cols="2" class="d-flex justify-center">
-      <v-img class="ml-5" src="../../../assets/rif.png" width="60"/>
+    <v-col cols="1" class="d-flex justify-center">
+      <v-img class="ml-5" src="../../../assets/rif.png" height="50" contain/>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="3">
       <v-row class="item">
         <h1 class="ma-0">{{ data.token.symbol }}</h1>
       </v-row>
