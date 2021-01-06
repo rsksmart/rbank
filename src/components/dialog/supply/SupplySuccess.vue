@@ -7,9 +7,22 @@
       <v-row class="my-5 d-flex justify-center">
         <div class="text-center">
           You have successfully supplied <br> this Market with
-          <span class="greenish">
-            {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
-          </span>
+          <template v-if="$options.filters
+                  .formatToken(data.supplyBalanceInfo, data.token.decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <span class="greenish" v-bind="attrs" v-on="on">
+                  {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
+                </span>
+              </template>
+              <span>{{ data.supplyBalanceInfo | fullToken(data.token.decimals) }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <span class="greenish">
+              {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
+            </span>
+          </template>
           <span class="greenish">{{ data.token.symbol }}</span>
         </div>
       </v-row>
@@ -23,12 +36,40 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ tokenBalance | formatToken(data.token.decimals) }}</h1>
+              <template v-if="$options.filters
+                  .formatToken(tokenBalance, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <h1 v-bind="attrs" v-on="on">
+                      {{ tokenBalance | formatToken(data.token.decimals) }}
+                    </h1>
+                  </template>
+                  <span>{{ tokenBalance | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <h1>
+                  {{ tokenBalance | formatToken(data.token.decimals) }}
+                </h1>
+              </template>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">
-                (-{{ data.supplyBalanceInfo  | formatToken(data.token.decimals) }})
-              </span>
+              <template v-if="$options.filters
+                  .formatToken(data.supplyBalanceInfo, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <span v-if="data.supplyBalanceInfo" v-bind="attrs" v-on="on">
+                      (-{{ data.supplyBalanceInfo  | formatToken(data.token.decimals) }})
+                    </span>
+                  </template>
+                  <span>{{ data.supplyBalanceInfo | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <span v-if="data.supplyBalanceInfo">
+                  (-{{ data.supplyBalanceInfo  | formatToken(data.token.decimals) }})
+                </span>
+              </template>
             </v-col>
           </v-row>
         </v-col>
@@ -45,12 +86,38 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ supplyOf | formatToken(data.token.decimals) }}</h1>
+              <template v-if="$options.filters
+                  .formatToken(supplyOf, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <h1 v-bind="attrs" v-on="on">
+                      {{ supplyOf | formatToken(data.token.decimals) }}
+                    </h1>
+                  </template>
+                  <span>{{ supplyOf | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <h1>{{ supplyOf | formatToken(data.token.decimals) }}</h1>
+              </template>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.supplyBalanceInfo">
-                (+{{ data.supplyBalanceInfo | formatToken(data.token.decimals)  }})
-              </span>
+              <template v-if="$options.filters
+                  .formatToken(data.supplyBalanceInfo, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <span v-if="data.supplyBalanceInfo" v-bind="attrs" v-on="on">
+                      (+{{ data.supplyBalanceInfo | formatToken(data.token.decimals)  }})
+                    </span>
+                  </template>
+                  <span>{{ data.supplyBalanceInfo | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <span v-if="data.supplyBalanceInfo">
+                  (+{{ data.supplyBalanceInfo | formatToken(data.token.decimals)  }})
+                </span>
+              </template>
             </v-col>
           </v-row>
         </v-col>
@@ -67,12 +134,36 @@
         <v-col cols="4">
           <v-row class="ma-0 d-flex align-center">
             <v-col cols="7" class="d-flex justify-center">
-              <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+              <template v-if="$options.filters
+                  .formatToken(maxBorrowAllowed, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <h1 v-bind="attrs" v-on="on">
+                      {{ maxBorrowAllowed | formatToken(data.token.decimals) }}
+                    </h1>
+                  </template>
+                  <span>{{ maxBorrowAllowed | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+              </template>
             </v-col>
             <v-col cols="5" class="itemInfo">
-              <span v-if="data.borrowLimitInfo">
-                (+{{ data.borrowLimitInfo | formatToken(data.token.decimals) }})
-              </span>
+              <template v-if="$options.filters
+                  .formatToken(data.borrowLimitInfo, data.token.decimals).toString().length > 6">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <span v-if="data.borrowLimitInfo" v-bind="attrs" v-on="on">
+                      (+{{ data.borrowLimitInfo | formatToken(data.token.decimals) }})
+                    </span>
+                  </template>
+                  <span>{{ data.borrowLimitInfo | fullToken(data.token.decimals) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <h1>{{ data.borrowLimitInfo | formatToken(data.token.decimals) }}</h1>
+              </template>
             </v-col>
           </v-row>
         </v-col>

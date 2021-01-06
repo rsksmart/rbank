@@ -37,12 +37,38 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ borrowBy | formatToken(data.token.decimals) }}</h1>
+                <template v-if="$options.filters
+                  .formatToken(borrowBy, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <h1 v-bind="attrs" v-on="on">
+                        {{ borrowBy | formatToken(data.token.decimals) }}
+                      </h1>
+                    </template>
+                    <span>{{ borrowBy | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <h1>{{ borrowBy | formatToken(data.token.decimals) }}</h1>
+                </template>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowBalanceInfo">
-                  (-{{ borrowBalanceInfo | formatToken(data.token.decimals) }})
-                </span>
+                <template v-if="$options.filters
+                  .formatToken(borrowBalanceInfo, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span class="text-center" v-if="borrowBalanceInfo" v-bind="attrs" v-on="on">
+                        (-{{ borrowBalanceInfo | formatToken(data.token.decimals) }})
+                      </span>
+                    </template>
+                    <span>{{ borrowBalanceInfo | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <span class="text-center" v-if="borrowBalanceInfo">
+                    (-{{ borrowBalanceInfo | formatToken(data.token.decimals) }})
+                  </span>
+                </template>
               </v-col>
             </v-row>
           </v-col>
@@ -59,12 +85,38 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+                <template v-if="$options.filters
+                  .formatToken(maxBorrowAllowed, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <h1 v-bind="attrs" v-on="on">
+                        {{ maxBorrowAllowed | formatToken(data.token.decimals) }}
+                      </h1>
+                    </template>
+                    <span>{{ maxBorrowAllowed | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+                </template>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowLimitInfo">
-                  (+{{ borrowLimitInfo | formatToken(data.token.decimals) }})
-                </span>
+                <template v-if="$options.filters
+                  .formatToken(borrowLimitInfo, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span class="text-center" v-if="borrowLimitInfo" v-bind="attrs" v-on="on">
+                        (+{{ borrowLimitInfo | formatToken(data.token.decimals) }})
+                      </span>
+                    </template>
+                    <span>{{ borrowLimitInfo | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <span class="text-center" v-if="borrowLimitInfo">
+                    (+{{ borrowLimitInfo | formatToken(data.token.decimals) }})
+                  </span>
+                </template>
               </v-col>
             </v-row>
           </v-col>

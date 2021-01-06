@@ -34,7 +34,22 @@
         <h2>earnings:</h2>
       </v-row>
       <v-row class="item greenish d-flex justify-start">
-        {{ earnings | formatToken(tokenDecimals) }}
+        <template v-if="$options.filters
+          .formatToken(earnings, data.token.decimals).toString().length > 6">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on">
+                {{ earnings | formatToken(tokenDecimals) }}
+              </span>
+            </template>
+            <span>{{ earnings | fullToken(tokenDecimals) }}</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <span>
+            {{ earnings | formatToken(tokenDecimals) }}
+          </span>
+        </template>
         <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
       </v-row>
     </v-col>

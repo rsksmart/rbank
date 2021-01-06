@@ -13,7 +13,7 @@
         </a>
       </v-row>
     </v-col>
-    <v-col cols="3">
+    <v-col cols="2">
       <v-row>
         <h2>price:</h2>
       </v-row>
@@ -26,15 +26,46 @@
         <h2>in your wallet:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ tokenBalance | formatToken(data.token.decimals) }}<span class="ml-2 itemInfo">usd</span>
+        <template v-if="$options.filters
+                  .formatToken(tokenBalance, data.token.decimals).toString().length > 6">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span class="d-flex align-center" v-bind="attrs" v-on="on">
+                {{ tokenBalance | formatToken(data.token.decimals) }}
+              </span>
+            </template>
+            <span>{{ tokenBalance | fullToken(data.token.decimals) }}</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <span class="d-flex align-center">
+            {{ tokenBalance | formatToken(data.token.decimals) }}
+          </span>
+        </template>
+        <span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="3">
       <v-row>
         <h2>earnings:</h2>
       </v-row>
       <v-row class="item greenish d-flex justify-start">
-        {{ earnings | formatToken(data.token.decimals) }}
+        <template v-if="$options.filters
+                  .formatToken(earnings, data.token.decimals).toString().length > 6">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span class="d-flex align-center" v-bind="attrs" v-on="on">
+                {{ earnings | formatToken(data.token.decimals) }}
+              </span>
+            </template>
+            <span>{{ earnings | fullToken(data.token.decimals) }}</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <span class="d-flex align-center">
+            {{ earnings | formatToken(data.token.decimals) }}
+          </span>
+        </template>
         <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
       </v-row>
     </v-col>

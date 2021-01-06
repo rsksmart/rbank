@@ -20,7 +20,8 @@
       </v-col>
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-center">
-          <template v-if="amount.toString().length > 6">
+          <template v-if="$options.filters
+                  .formatToken(amount, decimals).toString().length > 6">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
               <span class="d-flex align-center" v-bind="attrs" v-on="on">

@@ -82,7 +82,7 @@
           </v-tooltip>
         </template>
         <template v-else>
-          <p class="blackish" v-bind="attrs" v-on="on">{{ totalBorrowLimit | formatPrice }}</p>
+          <p class="blackish">{{ totalBorrowLimit | formatPrice }}</p>
         </template>
       </v-row>
       <v-row class="d-flex justify-center">

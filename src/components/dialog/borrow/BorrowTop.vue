@@ -26,7 +26,23 @@
         <h2>in your wallet:</h2>
       </v-row>
       <v-row class="item d-flex justify-start">
-        {{ tokenBalance | formatToken(data.token.decimals) }}<span class="ml-2 itemInfo">usd</span>
+        <template v-if="$options.filters
+          .formatToken(tokenBalance, data.token.decimals).toString().length > 6">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on">
+                {{ tokenBalance | formatToken(data.token.decimals) }}
+              </span>
+            </template>
+            <span>{{ tokenBalance | fullToken(data.token.decimals) }}</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <span>
+            {{ tokenBalance | formatToken(data.token.decimals) }}
+          </span>
+        </template>
+        <span class="ml-2 itemInfo">usd</span>
       </v-row>
     </v-col>
     <v-col cols="2">

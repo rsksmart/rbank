@@ -22,7 +22,7 @@ Vue.filter('formatToken', (value, decimals) => {
   const tokens = decimals > 0 ? `${int
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${decimal}`
     : `${int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-  return tokens.length > 7 ? `${tokens.substr(0, 7)}...` : tokens;
+  return tokens.length > 7 ? `${tokens.substr(0, 6)}...` : tokens;
 });
 
 Vue.filter('fullToken', (value, decimals) => {
