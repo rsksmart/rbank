@@ -7,9 +7,22 @@
       <v-row class="my-5 d-flex justify-center">
         <div class="text-center">
           You have successfully withdrawn <br>
-          <span class="greenish">
-            {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
-          </span>
+          <template v-if="$options.filters
+              .formatToken(data.supplyBalanceInfo, data.token.decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <span class="greenish" v-bind="attrs" v-on="on">
+                  {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
+                </span>
+              </template>
+              <span>{{ data.supplyBalanceInfo | fullToken(data.token.decimals) }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <span class="greenish">
+              {{ data.supplyBalanceInfo | formatToken(data.token.decimals) }}
+            </span>
+          </template>
           <span class="greenish">{{ data.token.symbol }}</span>
            from this Market
         </div>
@@ -22,7 +35,20 @@
           <h3 class="greenish">earnings:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="greenish text-center">{{ earnings | formatToken(data.token.decimals) }}</h1>
+          <template v-if="$options.filters
+            .formatToken(earnings, data.token.decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <h1 class="greenish text-center" v-bind="attrs" v-on="on">
+                  {{ earnings | formatToken(data.token.decimals) }}
+                </h1>
+              </template>
+              <span>{{ earnings | fullToken(data.token.decimals) }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <h1 class="greenish text-center">{{ earnings | formatToken(data.token.decimals) }}</h1>
+          </template>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -35,7 +61,20 @@
           <h3>supply balance:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ supplyOf | formatToken(data.token.decimals) }}</h1>
+          <template v-if="$options.filters
+            .formatToken(supplyOf, data.token.decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <h1 class="text-center" v-bind="attrs" v-on="on">
+                  {{ supplyOf | formatToken(data.token.decimals) }}
+                </h1>
+              </template>
+              <span>{{ supplyOf | fullToken(data.token.decimals) }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <h1 class="text-center">{{ supplyOf | formatToken(data.token.decimals) }}</h1>
+          </template>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -48,7 +87,20 @@
           <h3>borrow limit:</h3>
         </v-col>
         <v-col cols="3">
-          <h1 class="text-center">{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+          <template v-if="$options.filters
+            .formatToken(maxBorrowAllowed, data.token.decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <h1 class="text-center" v-bind="attrs" v-on="on">
+                  {{ maxBorrowAllowed | formatToken(data.token.decimals) }}
+                </h1>
+              </template>
+              <span>{{ maxBorrowAllowed | fullToken(data.token.decimals) }}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <h1 class="text-center">{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+          </template>
         </v-col>
         <v-col cols="2">
           <span class="itemInfo">{{ data.token.symbol }}</span>

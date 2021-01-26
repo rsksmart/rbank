@@ -30,7 +30,22 @@
           <v-row class="ma-0">
             <v-col cols="9" class="pa-0 d-flex align-center">
               <v-list-item-subtitle class="item">
-                {{ cash | formatToken(token.decimals) }}
+                <template v-if="$options.filters
+                  .formatToken(cash, token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span class="d-flex align-center" v-bind="attrs" v-on="on">
+                        {{ cash | formatToken(token.decimals) }}
+                      </span>
+                    </template>
+                    <span>{{ cash | fullToken(token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <span class="d-flex align-center">
+                    {{ cash | formatToken(token.decimals) }}
+                  </span>
+                </template>
               </v-list-item-subtitle>
             </v-col>
             <v-col cols="3" class="pa-0">

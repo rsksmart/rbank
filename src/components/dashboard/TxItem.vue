@@ -20,7 +20,22 @@
       </v-col>
       <v-col class="d-flex align-center">
         <v-row class="d-flex justify-center">
-          <span class="d-flex align-center">{{amount | formatToken(decimals)}}</span>
+          <template v-if="$options.filters
+                  .formatToken(amount, decimals).toString().length > 6">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+              <span class="d-flex align-center" v-bind="attrs" v-on="on">
+                {{amount | formatToken(decimals)}}
+              </span>
+              </template>
+              <span>{{amount | fullToken(decimals)}}</span>
+            </v-tooltip>
+          </template>
+          <template v-else>
+            <span class="d-flex align-center">
+                {{amount | formatToken(decimals)}}
+              </span>
+          </template>
           <p class="mt-4 mx-1 ">{{marketName}}</p>
           <v-list-item-avatar tile size="15">
             <v-img :src="operationLogo" ></v-img>

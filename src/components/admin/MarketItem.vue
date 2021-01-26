@@ -28,13 +28,39 @@
         </v-col>
         <v-col cols="2">
           <v-list-item-subtitle class="item">
-            {{ totalSupply | formatToken(token.decimals) }}
+            <template v-if="$options.filters
+            .formatToken(totalSupply, token.decimals).toString().length > 6">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ totalSupply | formatToken(token.decimals) }}
+                  </span>
+                </template>
+                <span>{{ totalSupply | fullToken(token.decimals) }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              {{ totalSupply | formatToken(token.decimals) }}
+            </template>
             <span class="ml-2 itemInfo">{{ token.symbol }}</span>
           </v-list-item-subtitle>
         </v-col>
         <v-col cols="2">
           <v-list-item-subtitle class="item">
-            {{ totalBorrow | formatToken(token.decimals) }}
+            <template v-if="$options.filters
+            .formatToken(totalBorrow, token.decimals).toString().length > 6">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ totalBorrow | formatToken(token.decimals) }}
+                  </span>
+                </template>
+                <span>{{ totalBorrow | fullToken(token.decimals) }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              {{ totalBorrow | formatToken(token.decimals) }}
+            </template>
             <span class="ml-2 itemInfo">{{ token.symbol }}</span>
           </v-list-item-subtitle>
         </v-col>
@@ -42,7 +68,20 @@
           <v-row class="ma-0">
             <v-col cols="10" class="pa-0 d-flex align-center">
               <v-list-item-subtitle class="item">
-                {{ cash | formatToken(token.decimals) }}
+                <template v-if="$options.filters
+                  .formatToken(cash, token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ cash | formatToken(token.decimals) }}
+                  </span>
+                    </template>
+                    <span>{{ cash | fullToken(token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  {{ cash | formatToken(token.decimals) }}
+                </template>
                 <span class="ml-2 itemInfo">{{ token.symbol }}</span>
               </v-list-item-subtitle>
             </v-col>

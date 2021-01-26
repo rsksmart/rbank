@@ -54,7 +54,20 @@
             <h3>total supplied:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ updatedTotalSupply | formatToken(data.token.decimals) }}</span>
+            <template v-if="$options.filters
+                  .formatToken(cash, data.token.decimals).toString().length > 6">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ updatedTotalSupply | formatToken(data.token.decimals) }}
+                  </span>
+                </template>
+                <span>{{ updatedTotalSupply | fullToken(data.token.decimals) }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <span>{{ updatedTotalSupply | formatToken(data.token.decimals) }}</span>
+            </template>
           </v-col>
           <v-col cols="1">
             <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>
@@ -64,7 +77,20 @@
             <h3>current cash:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ cash | formatToken(data.token.decimals) }}</span>
+            <template v-if="$options.filters
+                  .formatToken(cash, data.token.decimals).toString().length > 6">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ cash | formatToken(data.token.decimals) }}
+                  </span>
+                </template>
+                <span>{{ cash | fullToken(data.token.decimals) }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <span>{{ cash | formatToken(data.token.decimals) }}</span>
+            </template>
           </v-col>
           <v-col cols="1" class="d-flex justify-end">
             <span class="itemInfo">{{ data.token.symbol }}</span>
@@ -75,7 +101,20 @@
             <h3>total borrow:</h3>
           </v-col>
           <v-col cols="2" class="item">
-            <span>{{ updatedTotalBorrow | formatToken(data.token.decimals) }}</span>
+            <template v-if="$options.filters
+                  .formatToken(updatedTotalBorrow, data.token.decimals).toString().length > 6">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-bind="attrs" v-on="on">
+                    {{ updatedTotalBorrow | formatToken(data.token.decimals) }}
+                  </span>
+                </template>
+                <span>{{ updatedTotalBorrow | fullToken(data.token.decimals) }}</span>
+              </v-tooltip>
+            </template>
+            <template v-else>
+              <span>{{ updatedTotalBorrow | formatToken(data.token.decimals) }}</span>
+            </template>
           </v-col>
           <v-col cols="1">
             <span class="ml-2 itemInfo">{{ data.token.symbol }}</span>

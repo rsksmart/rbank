@@ -22,15 +22,28 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ cash | formatToken(data.token.decimals) }}</h1>
+                <template v-if="$options.filters
+                  .formatToken(cash, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <h1 v-bind="attrs" v-on="on">
+                        {{ cash | formatToken(data.token.decimals) }}
+                      </h1>
+                    </template>
+                    <span>{{ cash | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <h1>{{ cash | formatToken(data.token.decimals) }}</h1>
+                </template>
               </v-col>
               <v-col cols="5"/>
             </v-row>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <span class="itemInfo">{{ data.token.symbol }}</span>
           </v-col>
-          <v-col cols="2"/>
+          <v-col cols="1"/>
         </v-row>
         <v-row class="d-flex align-center">
           <v-col cols="2"/>
@@ -40,19 +53,45 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ supplyOf | formatToken(data.token.decimals)}}</h1>
+                <template v-if="$options.filters
+                  .formatToken(supplyOf, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <h1 v-bind="attrs" v-on="on">
+                        {{ supplyOf | formatToken(data.token.decimals)}}
+                      </h1>
+                    </template>
+                    <span>{{ supplyOf | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <h1>{{ supplyOf | formatToken(data.token.decimals)}}</h1>
+                </template>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="supplyBalanceInfo">
-                  (-{{ supplyBalanceInfo | formatToken(data.token.decimals) }})
-                </span>
+                <template v-if="$options.filters
+                  .formatToken(supplyBalanceInfo, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span class="text-center" v-if="supplyBalanceInfo" v-bind="attrs" v-on="on">
+                        (-{{ supplyBalanceInfo | formatToken(data.token.decimals) }})
+                      </span>
+                    </template>
+                    <span>{{ supplyBalanceInfo | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <span class="text-center" v-if="supplyBalanceInfo">
+                    (-{{ supplyBalanceInfo | formatToken(data.token.decimals) }})
+                  </span>
+                </template>
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <span class="itemInfo">{{ data.token.symbol }}</span>
           </v-col>
-          <v-col cols="2"/>
+          <v-col cols="1"/>
         </v-row>
         <v-row class="d-flex align-center">
           <v-col cols="2"/>
@@ -62,19 +101,45 @@
           <v-col cols="4">
             <v-row class="ma-0 d-flex align-center">
               <v-col cols="7" class="d-flex justify-center">
-                <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+                <template v-if="$options.filters
+                  .formatToken(maxBorrowAllowed, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <h1 v-bind="attrs" v-on="on">
+                        {{ maxBorrowAllowed | formatToken(data.token.decimals) }}
+                      </h1>
+                    </template>
+                    <span>{{ maxBorrowAllowed | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <h1>{{ maxBorrowAllowed | formatToken(data.token.decimals) }}</h1>
+                </template>
               </v-col>
               <v-col cols="5" class="itemInfo">
-                <span class="text-center" v-if="borrowLimitInfo">
-                  (-{{ borrowLimitInfo | formatToken(data.token.decimals) }})
-                </span>
+                <template v-if="$options.filters
+                  .formatToken(borrowLimitInfo, data.token.decimals).toString().length > 6">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span class="text-center" v-if="borrowLimitInfo" v-bind="attrs" v-on="on">
+                        (-{{ borrowLimitInfo | formatToken(data.token.decimals) }})
+                      </span>
+                    </template>
+                    <span>{{ borrowLimitInfo | fullToken(data.token.decimals) }}</span>
+                  </v-tooltip>
+                </template>
+                <template v-else>
+                  <span class="text-center" v-if="borrowLimitInfo">
+                    (-{{ borrowLimitInfo | formatToken(data.token.decimals) }})
+                  </span>
+                </template>
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <span class="itemInfo">{{ data.token.symbol }}</span>
           </v-col>
-          <v-col cols="2"/>
+          <v-col cols="1"/>
         </v-row>
       </div>
       <v-row class="my-5 d-flex justify-center">
